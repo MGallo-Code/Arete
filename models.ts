@@ -68,8 +68,7 @@ export interface TextStyle {
   letterSpacing?: string;
   textTransform?: "none" | "uppercase" | "capitalize";
 }
-export type Style = Partial<BoxStyle> &
-  Partial<TextStyle> & { custom?: string };
+export type Style = Partial<BoxStyle> & Partial<TextStyle> & { custom?: string };
 
 // default styles for resume templates
 export interface Theme {

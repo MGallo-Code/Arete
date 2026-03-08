@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import type { Block } from "../models";
 
 interface Props {
@@ -5,5 +6,15 @@ interface Props {
 }
 
 export default function BlockView({ block }: Props) {
-  return <>temp blk view</>;
+  let header: JSX.Element | null = null;
+  if (block.header) {
+    const Tag = `h${block.header.level}` as keyof JSX.IntrinsicElements;
+    header = <Tag>{block.header.content.map((r) => r.text).join("")}</Tag>;
+  }
+  return (
+    <div style={block.style}>
+      {header}
+      <>CONTENT HERE</>
+    </div>
+  );
 }

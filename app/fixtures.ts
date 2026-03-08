@@ -227,9 +227,21 @@ export const sampleResume: Resume = {
                   content: {
                     type: "bullets",
                     items: [
-                      [{ text: "Led infrastructure for Next.js edge runtime, reducing cold-start latency by 60%." }],
-                      [{ text: "Designed the rollout system for 40,000+ customer deployments with zero downtime." }],
-                      [{ text: "Mentored 4 engineers to senior level; established team RFC process." }],
+                      [
+                        {
+                          text: "Led infrastructure for Next.js edge runtime, reducing cold-start latency by 60%.",
+                        },
+                      ],
+                      [
+                        {
+                          text: "Designed the rollout system for 40,000+ customer deployments with zero downtime.",
+                        },
+                      ],
+                      [
+                        {
+                          text: "Mentored 4 engineers to senior level; established team RFC process.",
+                        },
+                      ],
                     ],
                   },
                 },
@@ -259,7 +271,11 @@ export const sampleResume: Resume = {
                     type: "bullets",
                     items: [
                       [{ text: "Built Stripe Checkout v3 used by 500k+ merchants worldwide." }],
-                      [{ text: "Reduced checkout abandonment 18% through A/B-tested UX improvements." }],
+                      [
+                        {
+                          text: "Reduced checkout abandonment 18% through A/B-tested UX improvements.",
+                        },
+                      ],
                       [{ text: "Owned PCI-DSS scope for frontend payment field isolation." }],
                     ],
                   },
@@ -289,8 +305,16 @@ export const sampleResume: Resume = {
                   content: {
                     type: "bullets",
                     items: [
-                      [{ text: "Rebuilt the host onboarding flow, increasing listing completion by 32%." }],
-                      [{ text: "Contributed to the open-source React Native Maps library (2.4k GitHub stars)." }],
+                      [
+                        {
+                          text: "Rebuilt the host onboarding flow, increasing listing completion by 32%.",
+                        },
+                      ],
+                      [
+                        {
+                          text: "Contributed to the open-source React Native Maps library (2.4k GitHub stars).",
+                        },
+                      ],
                     ],
                   },
                 },
@@ -347,7 +371,11 @@ export const sampleRichText: RichText = [
   { text: "Full-stack engineer with " },
   { text: "8 years", style: { fontWeight: "bold" } },
   { text: " of experience. See my work at " },
-  { text: "github.com/jordanellis", link: "https://github.com/jordanellis" },
+  {
+    text: "github.com/jordanellis",
+    link: "https://github.com/jordanellis",
+    style: { textDecoration: "underline" },
+  },
   { text: ", specialising in " },
   { text: "React & Node", style: { fontStyle: "italic" } },
   { text: " and " },

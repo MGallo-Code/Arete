@@ -16,15 +16,10 @@ export type RichText = TextRun[];
 
 // --- Bullets ---
 
-export interface BulletMarker {
-  char?: string;  // "•", "–", "▸", any character
-  image?: string; // URL or data URI — takes precedence over char if both set
-  style?: Style;  // marker-specific styling — size, color, spacing
-}
-
 export interface BulletLevel {
-  marker?: BulletMarker;
-  style?: Style; // includes paddingLeft for indentation
+  char?: string;   // marker character, e.g. "•", "–", "▸"
+  image?: string;  // marker image URL or data URI — takes precedence over char
+  style?: Style;   // text style + paddingLeft for indentation
 }
 
 export interface BulletItem {

@@ -1,4 +1,4 @@
-import type { Block, Resume, RichText } from "./models";
+import type { Block, Resume, RichText, Theme } from "./models";
 
 export const sampleResume: Resume = {
   id: "sample-001",
@@ -80,15 +80,9 @@ export const sampleResume: Resume = {
       h6: { fontSize: "9pt" },
       bullets: [
         // level 0 — top-level bullets
-        {
-          marker: { char: "•" },
-          style: { fontSize: "10pt", lineHeight: "1.5", paddingLeft: "0px" },
-        },
+        { char: "•", style: { fontSize: "10pt", lineHeight: "1.5", paddingLeft: "0px" } },
         // level 1 — indented sub-bullets
-        {
-          marker: { char: "–" },
-          style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px" },
-        },
+        { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px" } },
       ],
       link: {
         color: "#2563eb",
@@ -348,6 +342,60 @@ export const sampleResume: Resume = {
   },
 };
 
+// --- Theme fixture ---
+
+export const sampleTheme: Theme = {
+  root: {
+    fontFamily: "Georgia, serif",
+    fontSize: "10pt",
+    lineHeight: "1.4",
+    color: "#1a1a1a",
+    background: "#ffffff",
+  },
+  main: {
+    padding: "0",
+  },
+  body: {
+    fontSize: "10pt",
+    lineHeight: "1.5",
+  },
+  h1: {
+    fontSize: "22pt",
+    fontWeight: "bold",
+    letterSpacing: "0.02em",
+    color: "#1a1a1a",
+  },
+  h2: {
+    fontSize: "9pt",
+    fontWeight: "bold",
+    textTransform: "uppercase",
+    letterSpacing: "0.12em",
+    color: "#2563eb",
+    paddingBottom: "2px",
+    marginBottom: "6px",
+    borderBottom: "1px solid #2563eb",
+  },
+  h3: {
+    fontSize: "10pt",
+    fontWeight: "bold",
+    color: "#1a1a1a",
+  },
+  h4: {
+    fontSize: "10pt",
+    fontStyle: "italic",
+    color: "#555555",
+  },
+  h5: { fontSize: "9pt" },
+  h6: { fontSize: "9pt" },
+  bullets: [
+    { char: "•", style: { fontSize: "10pt", lineHeight: "1.5", paddingLeft: "0px" } },
+    { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px" } },
+  ],
+  link: {
+    color: "#2563eb",
+  },
+};
+
 // --- RichText fixture ---
 
 // Covers: plain text, bold, italic, links, combined styles
@@ -393,8 +441,8 @@ export const sampleBulletsBlock: Block = {
     type: "bullets",
     // per-list override — different marker/indent from theme default
     levels: [
-      { marker: { char: "▸" }, style: { fontSize: "10pt", paddingLeft: "0px" } },
-      { marker: { char: "–" }, style: { fontSize: "9pt", paddingLeft: "14px" } },
+      { char: "▸", style: { fontSize: "10pt", paddingLeft: "0px" } },
+      { char: "–", style: { fontSize: "9pt", paddingLeft: "14px" } },
     ],
     items: [
       { content: [{ text: "Reduced cold-start latency by " }, { text: "60%", style: { fontWeight: "bold" } }] },

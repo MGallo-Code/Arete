@@ -1,5 +1,6 @@
 import BlockView from "./components/BlockView";
 import {
+  sampleTheme,
   sampleTextBlock,
   sampleBlocksBlock,
   sampleBulletsBlock,
@@ -9,10 +10,10 @@ import {
 export default function Home() {
   return (
     <>
-      <BlockView block={sampleTextBlock} />
-      <BlockView block={sampleBlocksBlock} />
-      <BlockView block={sampleBulletsBlock} />
-      <BlockView block={sampleImageBlock} />
+      <BlockView block={sampleTextBlock} theme={sampleTheme} />
+      <BlockView block={sampleBlocksBlock} theme={sampleTheme} />
+      <BlockView block={sampleBulletsBlock} theme={sampleTheme} />
+      <BlockView block={sampleImageBlock} theme={sampleTheme} />
     </>
   );
 }

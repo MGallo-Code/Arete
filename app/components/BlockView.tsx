@@ -1,11 +1,13 @@
 import { JSX } from "react";
-import type { Block } from "../models";
+import type { Block, Theme } from "../models";
+import ContentView from "./ContentView";
 
 interface Props {
   block: Block;
+  theme: Theme;
 }
 
-export default function BlockView({ block }: Props) {
+export default function BlockView({ block, theme }: Props) {
   let header: JSX.Element | null = null;
   if (block.header) {
     const Tag = `h${block.header.level}` as keyof JSX.IntrinsicElements;
@@ -14,7 +16,7 @@ export default function BlockView({ block }: Props) {
   return (
     <div style={block.style}>
       {header}
-      <>CONTENT HERE</>
+      <ContentView content={block.content} theme={theme} />
     </div>
   );
 }

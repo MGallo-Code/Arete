@@ -17,9 +17,9 @@ export type RichText = TextRun[];
 // --- Bullets ---
 
 export interface BulletLevel {
-  char?: string;   // marker character, e.g. "•", "–", "▸"
-  image?: string;  // marker image URL or data URI — takes precedence over char
-  style?: Style;   // text style + paddingLeft for indentation
+  char?: string; // marker character, e.g. "•", "–", "▸"
+  image?: string; // marker image URL or data URI — takes precedence over char
+  style?: Style; // text style + paddingLeft for indentation
 }
 
 export interface BulletItem {
@@ -53,9 +53,9 @@ export interface PageSettings {
 }
 
 export interface Theme {
-  root: Style;          // page container
-  main: Style;          // base styles cascaded across all regions
-  body: Style;          // default text
+  root: Style; // page container
+  main: Style; // base styles cascaded across all regions
+  body: Style; // default text
   h1: Style;
   h2: Style;
   h3: Style;
@@ -70,7 +70,7 @@ export interface Template {
   id: string;
   name: string;
   grid: string; // CSS grid-template value, e.g. '"header header" auto "sidebar main" 1fr / 30% 70%'
-  areas: Record<string, { style?: Style }>; // named grid areas + their styles
+  regionStyles: Record<string, Style>; // style per named grid region
   page: PageSettings;
   fonts?: string[]; // font family names to load (e.g. Google Fonts) for Puppeteer
   theme: Theme;
@@ -85,6 +85,6 @@ export interface Resume {
   updatedAt: string;
   tags?: string[];
   template: Template;
-  blockIdsByRegion: Record<string, string[]>; // ordered block IDs per named grid area
-  blocks: Record<string, Block>;              // block lookup by ID
+  regionBlockIds: Record<string, string[]>; // ordered block IDs per named grid region
+  blocks: Record<string, Block>; // block lookup by ID
 }

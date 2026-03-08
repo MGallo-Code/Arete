@@ -10,24 +10,18 @@ export const sampleResume: Resume = {
     id: "classic-two-col",
     name: "Classic Two-Column",
     grid: '"header header" auto "sidebar main" 1fr / 30% 70%',
-    areas: {
+    regionStyles: {
       header: {
-        style: {
-          background: "#f8fafc",
-          padding: "24px 32px",
-          borderBottom: "2px solid #2563eb",
-        },
+        background: "#f8fafc",
+        padding: "24px 32px",
+        borderBottom: "2px solid #2563eb",
       },
       sidebar: {
-        style: {
-          background: "#f1f5f9",
-          padding: "24px 20px",
-        },
+        background: "#f1f5f9",
+        padding: "24px 20px",
       },
       main: {
-        style: {
-          padding: "24px 32px",
-        },
+        padding: "24px 32px",
       },
     },
     page: {
@@ -90,7 +84,7 @@ export const sampleResume: Resume = {
     },
   },
 
-  blockIdsByRegion: {
+  regionBlockIds: {
     header: ["block-name"],
     sidebar: ["block-contact", "block-skills", "block-education"],
     main: ["block-summary", "block-experience", "block-projects"],

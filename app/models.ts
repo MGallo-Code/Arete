@@ -1,53 +1,48 @@
-// --- Resume ---
+import type { CSSProperties } from "react";
 
-export interface Resume {
-  template: Template;
-  regions: { [regionId: string]: string[] }; // ordered block IDs per region
-  blocks: Record<string, Block>; // block lookup by ID
-}
+// --- Style ---
 
-// --- Structures ---
+export type Style = Partial<CSSProperties>;
 
-export interface Template {
-  id: string;
-  name: string;
-  grid: string; // CSS grid-template value, e.g. '"header" auto "sidebar main" 1fr / 30% 70%'
-  regions: Record<string, { style?: Style }>; // named grid areas + their styles
-  theme: Theme;
-}
-
-export interface Block {
-  id: string;
-  header?: { text: string; level: 1 | 2 | 3 | 4 | 5 | 6 };
-  content: Content;
-  style?: Style;
-}
-
-export type Content =
-  | { type: "text"; value: RichText }
-  | { type: "bullets"; items: RichText[] }
-  | { type: "blocks"; children: Block[]; columns?: number };
-
-// (for inline styles/text formatting)
-export type RichText = TextRun[];
+// --- Rich Text ---
 
 export interface TextRun {
   text: string;
   link?: string;
-  style?: Style; // overrides theme defaults for this run
+  style?: Style;
 }
 
-// --- Styles ---
+export type RichText = TextRun[];
 
-import type { CSSProperties } from "react";
+// --- Content ---
 
-export type Style = Partial<CSSProperties>;
+export type Content =
+  | { type: "text"; value: RichText }
+  | { type: "bullets"; items: RichText[] }
+  | { type: "blocks"; children: Block[] }
+  | { type: "image"; src: string; alt?: string; style?: Style };
 
-// default styles for resume templates
+// --- Block ---
+
+export interface Block {
+  id: string;
+  tags?: string[];
+  header?: { content: RichText; level: 1 | 2 | 3 | 4 | 5 | 6 };
+  content: Content;
+  style?: Style;
+}
+
+// --- Template ---
+
+export interface PageSettings {
+  size: "letter" | "a4";
+  margins: { top: string; right: string; bottom: string; left: string };
+}
+
 export interface Theme {
-  root: Style;
-  main: Style;
-  body: Style;
+  root: Style;  // page container
+  main: Style;  // base styles cascaded across all regions
+  body: Style;  // default text
   h1: Style;
   h2: Style;
   h3: Style;
@@ -55,4 +50,28 @@ export interface Theme {
   h5: Style;
   h6: Style;
   bullet: Style;
+  link: Style;
+}
+
+export interface Template {
+  id: string;
+  name: string;
+  grid: string; // CSS grid-template value, e.g. '"header header" auto "sidebar main" 1fr / 30% 70%'
+  areas: Record<string, { style?: Style }>; // named grid areas + their styles
+  page: PageSettings;
+  fonts?: string[]; // font family names to load (e.g. Google Fonts) for Puppeteer
+  theme: Theme;
+}
+
+// --- Resume ---
+
+export interface Resume {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  tags?: string[];
+  template: Template;
+  blockIdsByRegion: Record<string, string[]>; // ordered block IDs per named grid area
+  blocks: Record<string, Block>;              // block lookup by ID
 }

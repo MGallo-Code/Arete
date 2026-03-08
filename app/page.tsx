@@ -1,7 +1,11 @@
-import ResumePreview from "./components/ResumePreview";
-import RichTextView from "./components/RichTextView";
-import { sampleRichText } from "./fixtures";
+import BlockView from "./components/BlockView";
+import {
+  sampleTextBlock,
+  sampleBlocksBlock,
+  sampleBulletsBlock,
+  sampleImageBlock,
+} from "./fixtures";
 
 export default function Home() {
-  return <RichTextView richText={sampleRichText} />;
+  return <BlockView block={sampleTextBlock} />;
 }

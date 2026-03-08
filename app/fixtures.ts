@@ -1,9 +1,40 @@
-import type { Resume } from "./models";
+import type { Block, Resume } from "./models";
 
 export const sampleResume: Resume = {
+  id: "sample-001",
+  title: "Jordan Ellis — Software Engineer",
+  createdAt: "2026-03-01T00:00:00Z",
+  updatedAt: "2026-03-07T00:00:00Z",
+
   template: {
     id: "classic-two-col",
     name: "Classic Two-Column",
+    grid: '"header header" auto "sidebar main" 1fr / 30% 70%',
+    areas: {
+      header: {
+        style: {
+          background: "#f8fafc",
+          padding: "24px 32px",
+          borderBottom: "2px solid #2563eb",
+        },
+      },
+      sidebar: {
+        style: {
+          background: "#f1f5f9",
+          padding: "24px 20px",
+        },
+      },
+      main: {
+        style: {
+          padding: "24px 32px",
+        },
+      },
+    },
+    page: {
+      size: "letter",
+      margins: { top: "0", right: "0", bottom: "0", left: "0" },
+    },
+    fonts: ["Georgia"],
     theme: {
       root: {
         fontFamily: "Georgia, serif",
@@ -51,31 +82,13 @@ export const sampleResume: Resume = {
         fontSize: "10pt",
         lineHeight: "1.5",
       },
-    },
-    grid: '"header header" auto "sidebar main" 1fr / 30% 70%',
-    regions: {
-      header: {
-        style: {
-          background: "#f8fafc",
-          padding: "24px 32px",
-          borderBottom: "2px solid #2563eb",
-        },
-      },
-      sidebar: {
-        style: {
-          background: "#f1f5f9",
-          padding: "24px 20px",
-        },
-      },
-      main: {
-        style: {
-          padding: "24px 32px",
-        },
+      link: {
+        color: "#2563eb",
       },
     },
   },
 
-  regions: {
+  blockIdsByRegion: {
     header: ["block-name"],
     sidebar: ["block-contact", "block-skills", "block-education"],
     main: ["block-summary", "block-experience", "block-projects"],
@@ -89,7 +102,7 @@ export const sampleResume: Resume = {
         children: [
           {
             id: "block-name-title",
-            header: { text: "Jordan Ellis", level: 1 },
+            header: { content: [{ text: "Jordan Ellis" }], level: 1 },
             content: { type: "text", value: [] },
           },
           {
@@ -110,7 +123,8 @@ export const sampleResume: Resume = {
 
     "block-contact": {
       id: "block-contact",
-      header: { text: "Contact", level: 2 },
+      tags: ["contact"],
+      header: { content: [{ text: "Contact" }], level: 2 },
       content: {
         type: "bullets",
         items: [
@@ -124,33 +138,25 @@ export const sampleResume: Resume = {
 
     "block-skills": {
       id: "block-skills",
-      header: { text: "Skills", level: 2 },
+      tags: ["skills"],
+      header: { content: [{ text: "Skills" }], level: 2 },
       content: {
         type: "blocks",
         children: [
           {
             id: "block-skills-languages",
-            header: { text: "Languages", level: 3 },
-            content: {
-              type: "text",
-              value: [{ text: "TypeScript, Python, Go, SQL" }],
-            },
+            header: { content: [{ text: "Languages" }], level: 3 },
+            content: { type: "text", value: [{ text: "TypeScript, Python, Go, SQL" }] },
           },
           {
             id: "block-skills-frontend",
-            header: { text: "Frontend", level: 3 },
-            content: {
-              type: "text",
-              value: [{ text: "React, Next.js, CSS, Figma" }],
-            },
+            header: { content: [{ text: "Frontend" }], level: 3 },
+            content: { type: "text", value: [{ text: "React, Next.js, CSS, Figma" }] },
           },
           {
             id: "block-skills-backend",
-            header: { text: "Backend & Infra", level: 3 },
-            content: {
-              type: "text",
-              value: [{ text: "Node.js, PostgreSQL, Redis, Docker, AWS" }],
-            },
+            header: { content: [{ text: "Backend & Infra" }], level: 3 },
+            content: { type: "text", value: [{ text: "Node.js, PostgreSQL, Redis, Docker, AWS" }] },
           },
         ],
       },
@@ -158,13 +164,14 @@ export const sampleResume: Resume = {
 
     "block-education": {
       id: "block-education",
-      header: { text: "Education", level: 2 },
+      tags: ["education"],
+      header: { content: [{ text: "Education" }], level: 2 },
       content: {
         type: "blocks",
         children: [
           {
             id: "block-edu-degree",
-            header: { text: "B.S. Computer Science", level: 3 },
+            header: { content: [{ text: "B.S. Computer Science" }], level: 3 },
             content: {
               type: "text",
               value: [
@@ -179,7 +186,8 @@ export const sampleResume: Resume = {
 
     "block-summary": {
       id: "block-summary",
-      header: { text: "Summary", level: 2 },
+      tags: ["summary"],
+      header: { content: [{ text: "Summary" }], level: 2 },
       content: {
         type: "text",
         value: [
@@ -192,19 +200,20 @@ export const sampleResume: Resume = {
 
     "block-experience": {
       id: "block-experience",
-      header: { text: "Experience", level: 2 },
+      tags: ["experience"],
+      header: { content: [{ text: "Experience" }], level: 2 },
       content: {
         type: "blocks",
         children: [
-          // Job 1
           {
             id: "job-1",
+            tags: ["experience"],
             content: {
               type: "blocks",
               children: [
                 {
                   id: "job-1-title",
-                  header: { text: "Staff Engineer", level: 3 },
+                  header: { content: [{ text: "Staff Engineer" }], level: 3 },
                   content: {
                     type: "text",
                     value: [
@@ -227,15 +236,15 @@ export const sampleResume: Resume = {
               ],
             },
           },
-          // Job 2
           {
             id: "job-2",
+            tags: ["experience"],
             content: {
               type: "blocks",
               children: [
                 {
                   id: "job-2-title",
-                  header: { text: "Senior Software Engineer", level: 3 },
+                  header: { content: [{ text: "Senior Software Engineer" }], level: 3 },
                   content: {
                     type: "text",
                     value: [
@@ -258,15 +267,15 @@ export const sampleResume: Resume = {
               ],
             },
           },
-          // Job 3
           {
             id: "job-3",
+            tags: ["experience"],
             content: {
               type: "blocks",
               children: [
                 {
                   id: "job-3-title",
-                  header: { text: "Software Engineer", level: 3 },
+                  header: { content: [{ text: "Software Engineer" }], level: 3 },
                   content: {
                     type: "text",
                     value: [
@@ -294,13 +303,15 @@ export const sampleResume: Resume = {
 
     "block-projects": {
       id: "block-projects",
-      header: { text: "Projects", level: 2 },
+      tags: ["projects"],
+      header: { content: [{ text: "Projects" }], level: 2 },
       content: {
         type: "blocks",
         children: [
           {
             id: "project-1",
-            header: { text: "Arete", level: 3 },
+            tags: ["project"],
+            header: { content: [{ text: "Arete" }], level: 3 },
             content: {
               type: "text",
               value: [
@@ -312,7 +323,8 @@ export const sampleResume: Resume = {
           },
           {
             id: "project-2",
-            header: { text: "pgvibe", level: 3 },
+            tags: ["project"],
+            header: { content: [{ text: "pgvibe" }], level: 3 },
             content: {
               type: "text",
               value: [
@@ -325,5 +337,85 @@ export const sampleResume: Resume = {
         ],
       },
     },
+  },
+};
+
+// --- Block fixtures — one sample per content type ---
+
+// type: "text" — rich text with inline styling
+export const sampleTextBlock: Block = {
+  id: "fixture-text",
+  header: { content: [{ text: "Summary" }], level: 2 },
+  content: {
+    type: "text",
+    value: [
+      { text: "Full-stack engineer with " },
+      { text: "8 years", style: { fontWeight: "bold" } },
+      { text: " building scalable products. Comfortable across the stack — " },
+      { text: "React, Node, PostgreSQL, AWS", style: { fontStyle: "italic" } },
+      { text: "." },
+    ],
+  },
+};
+
+// type: "bullets" — list of rich text items
+export const sampleBulletsBlock: Block = {
+  id: "fixture-bullets",
+  header: { content: [{ text: "Highlights" }], level: 2 },
+  content: {
+    type: "bullets",
+    items: [
+      [{ text: "Reduced cold-start latency by " }, { text: "60%", style: { fontWeight: "bold" } }],
+      [{ text: "Shipped to 40,000+ customers with zero downtime." }],
+      [
+        { text: "Open source contributor — " },
+        { text: "react-native-maps", style: { fontStyle: "italic" } },
+        { text: " (2.4k stars)." },
+      ],
+    ],
+  },
+};
+
+// type: "blocks" — nested child blocks (e.g. a job entry)
+export const sampleBlocksBlock: Block = {
+  id: "fixture-blocks",
+  tags: ["experience"],
+  header: { content: [{ text: "Experience" }], level: 2 },
+  content: {
+    type: "blocks",
+    children: [
+      {
+        id: "fixture-blocks-title",
+        header: { content: [{ text: "Staff Engineer" }], level: 3 },
+        content: {
+          type: "text",
+          value: [
+            { text: "Vercel", style: { fontStyle: "italic" } },
+            { text: "  ·  2022 – Present" },
+          ],
+        },
+      },
+      {
+        id: "fixture-blocks-bullets",
+        content: {
+          type: "bullets",
+          items: [
+            [{ text: "Led infrastructure for the Next.js edge runtime." }],
+            [{ text: "Mentored 4 engineers to senior level." }],
+          ],
+        },
+      },
+    ],
+  },
+};
+
+// type: "image" — profile photo or logo
+export const sampleImageBlock: Block = {
+  id: "fixture-image",
+  content: {
+    type: "image",
+    src: "https://via.placeholder.com/80",
+    alt: "Profile photo",
+    style: { borderRadius: "50%", width: "80px", height: "80px" },
   },
 };

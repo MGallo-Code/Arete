@@ -78,10 +78,20 @@ export const sampleResume: Resume = {
       },
       h5: { fontSize: "9pt" },
       h6: { fontSize: "9pt" },
-      bullet: {
-        fontSize: "10pt",
-        lineHeight: "1.5",
-      },
+      bullets: [
+        // level 0 — top-level bullets
+        {
+          marker: { char: "•" },
+          indent: "0px",
+          style: { fontSize: "10pt", lineHeight: "1.5" },
+        },
+        // level 1 — indented sub-bullets
+        {
+          marker: { char: "–" },
+          indent: "12px",
+          style: { fontSize: "9pt", lineHeight: "1.5" },
+        },
+      ],
       link: {
         color: "#2563eb",
       },
@@ -128,10 +138,10 @@ export const sampleResume: Resume = {
       content: {
         type: "bullets",
         items: [
-          [{ text: "jordan@ellisdev.io" }],
-          [{ text: "linkedin.com/in/jordanellis", link: "https://linkedin.com/in/jordanellis" }],
-          [{ text: "github.com/jordanellis", link: "https://github.com/jordanellis" }],
-          [{ text: "San Francisco, CA" }],
+          { content: [{ text: "jordan@ellisdev.io" }] },
+          { content: [{ text: "linkedin.com/in/jordanellis", link: "https://linkedin.com/in/jordanellis" }] },
+          { content: [{ text: "github.com/jordanellis", link: "https://github.com/jordanellis" }] },
+          { content: [{ text: "San Francisco, CA" }] },
         ],
       },
     },
@@ -227,21 +237,9 @@ export const sampleResume: Resume = {
                   content: {
                     type: "bullets",
                     items: [
-                      [
-                        {
-                          text: "Led infrastructure for Next.js edge runtime, reducing cold-start latency by 60%.",
-                        },
-                      ],
-                      [
-                        {
-                          text: "Designed the rollout system for 40,000+ customer deployments with zero downtime.",
-                        },
-                      ],
-                      [
-                        {
-                          text: "Mentored 4 engineers to senior level; established team RFC process.",
-                        },
-                      ],
+                      { content: [{ text: "Led infrastructure for Next.js edge runtime, reducing cold-start latency by 60%." }] },
+                      { content: [{ text: "Designed the rollout system for 40,000+ customer deployments with zero downtime." }] },
+                      { content: [{ text: "Mentored 4 engineers to senior level; established team RFC process." }] },
                     ],
                   },
                 },
@@ -270,13 +268,9 @@ export const sampleResume: Resume = {
                   content: {
                     type: "bullets",
                     items: [
-                      [{ text: "Built Stripe Checkout v3 used by 500k+ merchants worldwide." }],
-                      [
-                        {
-                          text: "Reduced checkout abandonment 18% through A/B-tested UX improvements.",
-                        },
-                      ],
-                      [{ text: "Owned PCI-DSS scope for frontend payment field isolation." }],
+                      { content: [{ text: "Built Stripe Checkout v3 used by 500k+ merchants worldwide." }] },
+                      { content: [{ text: "Reduced checkout abandonment 18% through A/B-tested UX improvements." }] },
+                      { content: [{ text: "Owned PCI-DSS scope for frontend payment field isolation." }] },
                     ],
                   },
                 },
@@ -305,16 +299,8 @@ export const sampleResume: Resume = {
                   content: {
                     type: "bullets",
                     items: [
-                      [
-                        {
-                          text: "Rebuilt the host onboarding flow, increasing listing completion by 32%.",
-                        },
-                      ],
-                      [
-                        {
-                          text: "Contributed to the open-source React Native Maps library (2.4k GitHub stars).",
-                        },
-                      ],
+                      { content: [{ text: "Rebuilt the host onboarding flow, increasing listing completion by 32%." }] },
+                      { content: [{ text: "Contributed to the open-source React Native Maps library (2.4k GitHub stars)." }] },
                     ],
                   },
                 },
@@ -401,20 +387,29 @@ export const sampleTextBlock: Block = {
   },
 };
 
-// type: "bullets" — list of rich text items
+// type: "bullets" — BulletItems with levels and per-list override
 export const sampleBulletsBlock: Block = {
   id: "fixture-bullets",
   header: { content: [{ text: "Highlights" }], level: 2 },
   content: {
     type: "bullets",
+    // per-list override — different marker/indent from theme default
+    levels: [
+      { marker: { char: "▸" }, indent: "0px", style: { fontSize: "10pt" } },
+      { marker: { char: "–" }, indent: "14px", style: { fontSize: "9pt" } },
+    ],
     items: [
-      [{ text: "Reduced cold-start latency by " }, { text: "60%", style: { fontWeight: "bold" } }],
-      [{ text: "Shipped to 40,000+ customers with zero downtime." }],
-      [
-        { text: "Open source contributor — " },
-        { text: "react-native-maps", style: { fontStyle: "italic" } },
-        { text: " (2.4k stars)." },
-      ],
+      { content: [{ text: "Reduced cold-start latency by " }, { text: "60%", style: { fontWeight: "bold" } }] },
+      { content: [{ text: "Shipped to 40,000+ customers with zero downtime." }] },
+      // level 1 — indented sub-bullet
+      { content: [{ text: "Zero downtime across 3 regions simultaneously." }], level: 1 },
+      {
+        content: [
+          { text: "Open source contributor — " },
+          { text: "react-native-maps", style: { fontStyle: "italic" } },
+          { text: " (2.4k stars)." },
+        ],
+      },
     ],
   },
 };
@@ -443,8 +438,8 @@ export const sampleBlocksBlock: Block = {
         content: {
           type: "bullets",
           items: [
-            [{ text: "Led infrastructure for the Next.js edge runtime." }],
-            [{ text: "Mentored 4 engineers to senior level." }],
+            { content: [{ text: "Led infrastructure for the Next.js edge runtime." }] },
+            { content: [{ text: "Mentored 4 engineers to senior level." }] },
           ],
         },
       },

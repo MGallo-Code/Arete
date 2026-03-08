@@ -14,11 +14,30 @@ export interface TextRun {
 
 export type RichText = TextRun[];
 
+// --- Bullets ---
+
+export interface BulletMarker {
+  char?: string;  // "•", "–", "▸", any character
+  image?: string; // URL or data URI — takes precedence over char if both set
+  style?: Style;  // marker-specific styling — size, color, spacing
+}
+
+export interface BulletLevel {
+  marker?: BulletMarker;
+  indent?: string; // CSS value, e.g. "0px", "12px", "1.5em"
+  style?: Style;   // text style for items at this level
+}
+
+export interface BulletItem {
+  content: RichText;
+  level?: number; // index into BulletLevel[]
+}
+
 // --- Content ---
 
 export type Content =
   | { type: "text"; value: RichText }
-  | { type: "bullets"; items: RichText[] }
+  | { type: "bullets"; items: BulletItem[]; levels?: BulletLevel[] } // levels overrides theme.bullets for this list
   | { type: "blocks"; children: Block[] }
   | { type: "image"; src: string; alt?: string; style?: Style };
 
@@ -40,16 +59,16 @@ export interface PageSettings {
 }
 
 export interface Theme {
-  root: Style;  // page container
-  main: Style;  // base styles cascaded across all regions
-  body: Style;  // default text
+  root: Style;          // page container
+  main: Style;          // base styles cascaded across all regions
+  body: Style;          // default text
   h1: Style;
   h2: Style;
   h3: Style;
   h4: Style;
   h5: Style;
   h6: Style;
-  bullet: Style;
+  bullets: BulletLevel[]; // template-wide defaults per indent level
   link: Style;
 }
 

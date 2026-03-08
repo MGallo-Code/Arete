@@ -82,14 +82,12 @@ export const sampleResume: Resume = {
         // level 0 — top-level bullets
         {
           marker: { char: "•" },
-          indent: "0px",
-          style: { fontSize: "10pt", lineHeight: "1.5" },
+          style: { fontSize: "10pt", lineHeight: "1.5", paddingLeft: "0px" },
         },
         // level 1 — indented sub-bullets
         {
           marker: { char: "–" },
-          indent: "12px",
-          style: { fontSize: "9pt", lineHeight: "1.5" },
+          style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px" },
         },
       ],
       link: {
@@ -395,8 +393,8 @@ export const sampleBulletsBlock: Block = {
     type: "bullets",
     // per-list override — different marker/indent from theme default
     levels: [
-      { marker: { char: "▸" }, indent: "0px", style: { fontSize: "10pt" } },
-      { marker: { char: "–" }, indent: "14px", style: { fontSize: "9pt" } },
+      { marker: { char: "▸" }, style: { fontSize: "10pt", paddingLeft: "0px" } },
+      { marker: { char: "–" }, style: { fontSize: "9pt", paddingLeft: "14px" } },
     ],
     items: [
       { content: [{ text: "Reduced cold-start latency by " }, { text: "60%", style: { fontWeight: "bold" } }] },

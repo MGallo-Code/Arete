@@ -24,8 +24,7 @@ export interface BulletMarker {
 
 export interface BulletLevel {
   marker?: BulletMarker;
-  indent?: string; // CSS value, e.g. "0px", "12px", "1.5em"
-  style?: Style;   // text style for items at this level
+  style?: Style; // includes paddingLeft for indentation
 }
 
 export interface BulletItem {

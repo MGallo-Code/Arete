@@ -52,60 +52,33 @@ export const sampleResume: Resume = {
         lineHeight: "1.5",
       },
     },
-    rows: [
-      // Row 1: Full-width header
-      {
-        id: "row-header",
+    grid: '"header header" auto "sidebar main" 1fr / 30% 70%',
+    regions: {
+      header: {
         style: {
           background: "#f8fafc",
           padding: "24px 32px",
           borderBottom: "2px solid #2563eb",
         },
-        columns: [
-          {
-            id: "col-header",
-            width: 100,
-            style: {},
-          },
-        ],
       },
-      // Row 2: Sidebar (30%) + Main content (70%)
-      {
-        id: "row-body",
-        style: {},
-        columns: [
-          {
-            id: "col-sidebar",
-            width: 30,
-            style: {
-              background: "#f1f5f9",
-              padding: "24px 20px",
-            },
-          },
-          {
-            id: "col-main",
-            width: 70,
-            style: {
-              padding: "24px 32px",
-            },
-          },
-        ],
+      sidebar: {
+        style: {
+          background: "#f1f5f9",
+          padding: "24px 20px",
+        },
       },
-    ],
+      main: {
+        style: {
+          padding: "24px 32px",
+        },
+      },
+    },
   },
 
   regions: {
-    "col-header": ["block-name"],
-    "col-sidebar": [
-      "block-contact",
-      "block-skills",
-      "block-education",
-    ],
-    "col-main": [
-      "block-summary",
-      "block-experience",
-      "block-projects",
-    ],
+    header: ["block-name"],
+    sidebar: ["block-contact", "block-skills", "block-education"],
+    main: ["block-summary", "block-experience", "block-projects"],
   },
 
   blocks: {

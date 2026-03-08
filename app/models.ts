@@ -11,20 +11,9 @@ export interface Resume {
 export interface Template {
   id: string;
   name: string;
-  rows: Row[];
+  grid: string; // CSS grid-template value, e.g. '"header" auto "sidebar main" 1fr / 30% 70%'
+  regions: Record<string, { style?: Style }>; // named grid areas + their styles
   theme: Theme;
-}
-
-export interface Column {
-  id: string;
-  width: number; // percentage of the row, e.g. 50 or 33.33
-  style: Style;
-}
-
-export interface Row {
-  id: string;
-  columns: Column[];
-  style: Style;
 }
 
 export interface Block {

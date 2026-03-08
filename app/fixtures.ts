@@ -1,4 +1,4 @@
-import type { Block, Resume } from "./models";
+import type { Block, Resume, RichText } from "./models";
 
 export const sampleResume: Resume = {
   id: "sample-001",
@@ -339,6 +339,21 @@ export const sampleResume: Resume = {
     },
   },
 };
+
+// --- RichText fixture ---
+
+// Covers: plain text, bold, italic, links, combined styles
+export const sampleRichText: RichText = [
+  { text: "Full-stack engineer with " },
+  { text: "8 years", style: { fontWeight: "bold" } },
+  { text: " of experience. See my work at " },
+  { text: "github.com/jordanellis", link: "https://github.com/jordanellis" },
+  { text: ", specialising in " },
+  { text: "React & Node", style: { fontStyle: "italic" } },
+  { text: " and " },
+  { text: "distributed systems", style: { fontWeight: "bold", fontStyle: "italic" } },
+  { text: "." },
+];
 
 // --- Block fixtures — one sample per content type ---
 

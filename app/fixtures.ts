@@ -457,7 +457,7 @@ export const sampleImageBlock: Block = {
   id: "fixture-image",
   content: {
     type: "image",
-    src: "https://via.placeholder.com/80",
+    src: "https://picsum.photos/seed/picsum/200/300",
     alt: "Profile photo",
     style: { borderRadius: "50%", width: "80px", height: "80px" },
   },

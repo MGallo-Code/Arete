@@ -33,7 +33,7 @@ export const sampleResume: Resume = {
         color: "#2563eb",
         padding: "0 0 2px 0",
         margin: "0 0 6px 0",
-        custom: "border-bottom: 1px solid #2563eb;",
+        borderBottom: "1px solid #2563eb",
       },
       h3: {
         fontSize: "10pt",
@@ -59,7 +59,7 @@ export const sampleResume: Resume = {
         style: {
           background: "#f8fafc",
           padding: "24px 32px",
-          custom: "border-bottom: 2px solid #2563eb;",
+          borderBottom: "2px solid #2563eb",
         },
         columns: [
           {

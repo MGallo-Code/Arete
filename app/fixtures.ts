@@ -1,5 +1,8 @@
 import type { Block, Resume, RichText, Theme } from "./models";
 
+// Fixture convention: use block.style for colors/font sizes so the editor can change them
+// (Theme panel, Block style panel). Use run-level style only for semantic formatting (bold, italic).
+
 export const sampleResume: Resume = {
   id: "sample-001",
   title: "Jordan Ellis — Software Engineer",
@@ -12,12 +15,12 @@ export const sampleResume: Resume = {
     grid: '"header header" auto "sidebar main" 1fr / 30% 70%',
     regionStyles: {
       header: {
-        background: "#f8fafc",
+        background: "var(--palette-background)",
         padding: "24px 32px",
-        borderBottom: "2px solid #2563eb",
+        borderBottom: "2px solid var(--palette-primary)",
       },
       sidebar: {
-        background: "#f1f5f9",
+        background: "var(--palette-background)",
         padding: "24px 20px",
       },
       main: {
@@ -49,10 +52,10 @@ export const sampleResume: Resume = {
         fontWeight: "bold",
         textTransform: "uppercase",
         letterSpacing: "0.12em",
-        color: "#2563eb",
+        color: "var(--palette-primary)",
         padding: "0 0 2px 0",
         margin: "0 0 6px 0",
-        borderBottom: "1px solid #2563eb",
+        borderBottom: "1px solid var(--palette-primary)",
       },
       h3: {
         fontSize: "10pt",
@@ -73,7 +76,7 @@ export const sampleResume: Resume = {
         { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px", gap: "0.35em" } },
       ],
       link: {
-        color: "#2563eb",
+        color: "var(--palette-accent)",
       },
       palette: {
         primary: "#2563eb",
@@ -104,14 +107,10 @@ export const sampleResume: Resume = {
           },
           {
             id: "block-name-subtitle",
+            style: { color: "var(--palette-primary)", fontSize: "12pt" },
             content: {
               type: "text",
-              value: [
-                {
-                  text: "Senior Software Engineer",
-                  style: { fontSize: "12pt" },
-                },
-              ],
+              value: [{ text: "Senior Software Engineer" }],
             },
           },
         ],
@@ -125,9 +124,9 @@ export const sampleResume: Resume = {
       content: {
         type: "bullets",
         items: [
-          { content: [{ text: "jordan@ellisdev.io" }] },
-          { content: [{ text: "linkedin.com/in/jordanellis", link: "https://linkedin.com/in/jordanellis" }] },
-          { content: [{ text: "github.com/jordanellis", link: "https://github.com/jordanellis" }] },
+          { content: [{ text: "hello@example.dev" }] },
+          { content: [{ text: "linkedin.com/in/example", link: "https://example.com/linkedin" }] },
+          { content: [{ text: "github.com/example", link: "https://example.com/github" }] },
           { content: [{ text: "San Francisco, CA" }] },
         ],
       },
@@ -384,19 +383,19 @@ export const sampleResume2: Resume = {
         fontWeight: "bold",
         textTransform: "uppercase",
         letterSpacing: "0.15em",
-        color: "#6b7280",
+        color: "var(--palette-secondary)",
         marginBottom: "8px",
         marginTop: "20px",
       },
       h3: { fontSize: "10pt", fontWeight: "bold" },
-      h4: { fontSize: "10pt", color: "#6b7280" },
+      h4: { fontSize: "10pt", color: "var(--palette-secondary)" },
       h5: { fontSize: "9pt" },
       h6: { fontSize: "9pt" },
       bullets: [
         { char: "–", style: { fontSize: "10pt", lineHeight: "1.6", gap: "0.35em" } },
         { char: "·", style: { fontSize: "9pt", lineHeight: "1.6", paddingLeft: "12px", gap: "0.35em" } },
       ],
-      link: { color: "#2563eb" },
+      link: { color: "var(--palette-accent)" },
       palette: {
         primary: "#111827",
         secondary: "#6b7280",
@@ -425,13 +424,14 @@ export const sampleResume2: Resume = {
           },
           {
             id: "mc-name-subtitle",
+            style: { color: "var(--palette-muted)" },
             content: {
               type: "text",
               value: [
-                { text: "Product Designer  ·  ", style: { color: "#9ca3af" } },
-                { text: "maya@mayachen.design", link: "mailto:maya@mayachen.design", style: { color: "#9ca3af" } },
-                { text: "  ·  ", style: { color: "#9ca3af" } },
-                { text: "mayachen.design", link: "https://mayachen.design", style: { color: "#9ca3af" } },
+                { text: "Product Designer  ·  " },
+                { text: "hello@example.design", link: "mailto:hello@example.design" },
+                { text: "  ·  " },
+                { text: "example.design", link: "https://example.design" },
               ],
             },
           },
@@ -557,7 +557,7 @@ export const sampleResume3: Resume = {
     grid: '"sidebar main" 1fr / 45% 55%',
     regionStyles: {
       sidebar: {
-        background: "#1e3a5f",
+        background: "var(--palette-primary)",
         padding: "36px 28px",
         color: "#ffffff",
       },
@@ -590,21 +590,21 @@ export const sampleResume3: Resume = {
         fontWeight: "bold",
         textTransform: "uppercase",
         letterSpacing: "0.14em",
-        color: "#7eb8f7",
+        color: "var(--palette-accent)",
         marginBottom: "6px",
         marginTop: "20px",
-        borderBottom: "1px solid #2d5a8e",
+        borderBottom: "1px solid var(--palette-secondary)",
         paddingBottom: "3px",
       },
       h3: { fontSize: "10pt", fontWeight: "bold", color: "#ffffff" },
-      h4: { fontSize: "9pt", color: "#93c5fd" },
+      h4: { fontSize: "9pt", color: "var(--palette-muted)" },
       h5: { fontSize: "9pt" },
       h6: { fontSize: "9pt" },
       bullets: [
         { char: "▸", style: { fontSize: "10pt", lineHeight: "1.5", gap: "0.35em", color: "#ffffff" } },
         { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "10px", gap: "0.35em", color: "#93c5fd" } },
       ],
-      link: { color: "#93c5fd" },
+      link: { color: "var(--palette-muted)" },
       palette: {
         primary: "#1e3a5f",
         secondary: "#2d5a8e",
@@ -633,9 +633,10 @@ export const sampleResume3: Resume = {
           },
           {
             id: "ar-name-subtitle",
+            style: { color: "var(--palette-muted)", fontSize: "11pt" },
             content: {
               type: "text",
-              value: [{ text: "Data Scientist", style: { color: "#93c5fd", fontSize: "11pt" } }],
+              value: [{ text: "Data Scientist" }],
             },
           },
         ],
@@ -649,8 +650,8 @@ export const sampleResume3: Resume = {
       content: {
         type: "bullets",
         items: [
-          { content: [{ text: "alex@riveraml.io" }] },
-          { content: [{ text: "github.com/alexrivera", link: "https://github.com/alexrivera" }] },
+          { content: [{ text: "hello@example.io" }] },
+          { content: [{ text: "github.com/example", link: "https://example.com/github" }] },
           { content: [{ text: "Seattle, WA" }] },
         ],
       },
@@ -906,11 +907,10 @@ export const testResume: Resume = {
           },
           {
             id: "test-name-subtitle",
+            style: { color: "#93c5fd", fontSize: "12pt" },
             content: {
               type: "text",
-              value: [
-                { text: "Resume Tailoring Specialist", style: { fontSize: "12pt", color: "#93c5fd" } },
-              ],
+              value: [{ text: "Resume Tailoring Specialist" }],
             },
           },
         ],
@@ -976,7 +976,7 @@ export const testResume: Resume = {
           { text: ", " },
           { text: "italic", style: { fontStyle: "italic" } },
           { text: ", and " },
-          { text: "link", link: "https://arete.example", style: { color: "#2563eb" } },
+          { text: "link", link: "https://arete.example" },
           { text: "." },
         ],
       },
@@ -1063,10 +1063,10 @@ export const sampleTheme: Theme = {
     fontWeight: "bold",
     textTransform: "uppercase",
     letterSpacing: "0.12em",
-    color: "#2563eb",
+    color: "var(--palette-primary)",
     paddingBottom: "2px",
     marginBottom: "6px",
-    borderBottom: "1px solid #2563eb",
+    borderBottom: "1px solid var(--palette-primary)",
   },
   h3: {
     fontSize: "10pt",
@@ -1085,7 +1085,14 @@ export const sampleTheme: Theme = {
     { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px", gap: "0.35em" } },
   ],
   link: {
-    color: "#2563eb",
+    color: "var(--palette-accent)",
+  },
+  palette: {
+    primary: "#2563eb",
+    secondary: "#1e40af",
+    accent: "#3b82f6",
+    muted: "#94a3b8",
+    background: "#f8fafc",
   },
 };
 
@@ -1097,8 +1104,8 @@ export const sampleRichText: RichText = [
   { text: "8 years", style: { fontWeight: "bold" } },
   { text: " of experience. See my work at " },
   {
-    text: "github.com/jordanellis",
-    link: "https://github.com/jordanellis",
+    text: "github.com/example",
+    link: "https://example.com/github",
     style: { textDecoration: "underline" },
   },
   { text: ", specialising in " },

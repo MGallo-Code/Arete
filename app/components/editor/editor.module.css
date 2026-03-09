@@ -793,6 +793,20 @@
   color: #dc2626;
 }
 
+.toolbarBtnConfirmDelete {
+  background: #dc2626;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+
+.toolbarBtnConfirmDelete:hover:not(:disabled) {
+  background: #b91c1c;
+  color: #fff;
+}
+
 /* --- Box Model Diagram --- */
 
 .boxModel {

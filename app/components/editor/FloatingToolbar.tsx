@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { EditorAction } from "../../contexts/EditorContext";
 import styles from "./editor.module.css";
 
@@ -20,6 +21,30 @@ export default function FloatingToolbar({
   dispatch,
   onRequestInsert,
 }: Props) {
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const confirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Reset confirmation state when selected block changes
+  useEffect(() => {
+    setConfirmingDelete(false);
+    return () => {
+      if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+    };
+  }, [blockId]);
+
+  const handleDelete = useCallback(() => {
+    if (confirmingDelete) {
+      if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+      dispatch({ type: "REMOVE_BLOCK", regionId, blockId });
+      setConfirmingDelete(false);
+    } else {
+      setConfirmingDelete(true);
+      confirmTimerRef.current = setTimeout(() => {
+        setConfirmingDelete(false);
+      }, 2000);
+    }
+  }, [confirmingDelete, dispatch, regionId, blockId]);
+
   const handleInsert = () => {
     if (onRequestInsert) {
       onRequestInsert(regionId, blockIndex + 1);
@@ -88,12 +113,12 @@ export default function FloatingToolbar({
       </button>
       <button
         type="button"
-        className={`${styles.toolbarBtn} ${styles.toolbarBtnDanger}`}
-        title="Delete block"
-        aria-label="Delete block"
-        onClick={() => dispatch({ type: "REMOVE_BLOCK", regionId, blockId })}
+        className={`${styles.toolbarBtn} ${confirmingDelete ? styles.toolbarBtnConfirmDelete : styles.toolbarBtnDanger}`}
+        title={confirmingDelete ? "Click again to confirm" : "Delete block"}
+        aria-label={confirmingDelete ? "Confirm delete" : "Delete block"}
+        onClick={handleDelete}
       >
-        &#215;
+        {confirmingDelete ? "Delete?" : "\u00D7"}
       </button>
     </div>
   );

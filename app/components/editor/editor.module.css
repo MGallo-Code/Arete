@@ -1054,9 +1054,8 @@
 
 .borderSideLabel {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 500;
   color: #888;
-  font-family: var(--font-geist-mono), monospace;
-  width: 12px;
-  text-align: center;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  width: 38px;
 }

@@ -234,7 +234,7 @@ export default function RegionStylePanel() {
           const borderWidth = match ? `${match[1]}${match[2]}` : "";
           const borderColor = match ? match[3] : "#000000";
           return [
-            <span key={`${side}-label`} className={styles.borderSideLabel}>{side[0]}</span>,
+            <span key={`${side}-label`} className={styles.borderSideLabel}>{side}</span>,
             <SpacingInput
               key={`${side}-width`}
               compact
@@ -270,20 +270,32 @@ export default function RegionStylePanel() {
       </div>
 
       {/* Border radius */}
-      <div className={styles.propRow} style={{ marginTop: 6 }}>
-        <label className={styles.propLabel}>Border radius</label>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <SpacingInput
-            value={(regionStyle.borderRadius as string) ?? ""}
-            placeholder="0"
-            onChange={(v) => updateStyle({ borderRadius: v })}
-          />
-          {regionStyle.borderRadius && (
-            <button className={styles.clearBtn} onClick={() => clearStyle("borderRadius")} title="Clear">
-              ×
-            </button>
-          )}
-        </div>
+      <div className={styles.themeSectionTitle} style={{ marginTop: 8 }}>Border Radius</div>
+      <div className={styles.bordersGrid}>
+        {(["TopLeft", "TopRight", "BottomRight", "BottomLeft"] as const).map((corner) => {
+          const key = `border${corner}Radius` as keyof typeof regionStyle;
+          const val = (regionStyle[key] as string) ?? "";
+          return [
+            <span key={`${corner}-label`} className={styles.borderSideLabel}>
+              {corner.replace(/([A-Z])/g, " $1").trim()}
+            </span>,
+            <SpacingInput
+              key={`${corner}-input`}
+              compact
+              value={val}
+              placeholder="0"
+              onChange={(v) => updateStyle({ [key]: v })}
+            />,
+            <span key={`${corner}-spacer`} />,
+            val ? (
+              <button key={`${corner}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear">
+                ×
+              </button>
+            ) : (
+              <span key={`${corner}-none`} />
+            ),
+          ];
+        })}
       </div>
     </div>
   );

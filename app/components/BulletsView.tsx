@@ -37,6 +37,7 @@ function EditableBulletContent({
   index,
   onKeyDown,
   onBlur,
+  onPaste,
   registerRef,
 }: {
   itemKey: string;
@@ -44,6 +45,7 @@ function EditableBulletContent({
   index: number;
   onKeyDown: (e: React.KeyboardEvent, index: number) => void;
   onBlur: (e: React.FocusEvent) => void;
+  onPaste: (e: React.ClipboardEvent, index: number) => void;
   registerRef: (key: string, el: HTMLDivElement | null) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -69,6 +71,7 @@ function EditableBulletContent({
       style={{ flex: 1, outline: "none", cursor: "text", minHeight: "1em" }}
       onKeyDown={(e) => onKeyDown(e, index)}
       onBlur={onBlur}
+      onPaste={(e) => onPaste(e, index)}
     />
   );
 }
@@ -156,6 +159,46 @@ export default function BulletsView({ items, levels, blockId }: Props) {
       rect.width > 0 || rect.height > 0 ? { top: rect.bottom, left: rect.left } : undefined;
     setLinkModal({ initialUrl: existingUrl, anchorRect, savedRange });
   }, []);
+
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent, index: number) => {
+      if (!editingItems) return;
+      e.preventDefault();
+      const text = e.clipboardData.getData("text/plain");
+      const lines = text.split(/\r?\n/).filter((line) => line.length > 0);
+
+      if (lines.length <= 1) {
+        // Single line — just insert as plain text in the current bullet
+        document.execCommand("insertText", false, text);
+        return;
+      }
+
+      // Multi-line paste: insert first line at cursor, create new bullets for the rest
+      document.execCommand("insertText", false, lines[0]);
+
+      // Read back the current bullet content after inserting the first line
+      const currentKey = editingItems[index].key;
+      const currentContent = readRef(currentKey);
+      const currentLevel = editingItems[index].item.level;
+
+      const newEditingItems = [...editingItems];
+      newEditingItems[index] = {
+        ...newEditingItems[index],
+        item: { ...newEditingItems[index].item, content: currentContent },
+      };
+
+      // Create new bullets for remaining lines
+      const newBullets: EditingItem[] = lines.slice(1).map((line) => ({
+        key: genKey(),
+        item: { content: [{ text: line }], level: currentLevel },
+      }));
+      newEditingItems.splice(index + 1, 0, ...newBullets);
+
+      setEditingItems(newEditingItems);
+      setFocusIndex(index + newBullets.length);
+    },
+    [editingItems, readRef],
+  );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent, index: number) => {
@@ -405,6 +448,7 @@ export default function BulletsView({ items, levels, blockId }: Props) {
                 index={index}
                 onKeyDown={handleKeyDown}
                 onBlur={handleBlur}
+                onPaste={handlePaste}
                 registerRef={registerRef}
               />
             </li>

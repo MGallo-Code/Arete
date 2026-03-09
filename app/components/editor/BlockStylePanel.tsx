@@ -445,12 +445,13 @@ export default function BlockStylePanel() {
             })}
             <button
               className={styles.propBtn}
+              disabled={effectiveLevels.length >= 6}
               onClick={() => {
                 const newLevels = [...effectiveLevels, { char: "\u2022" }];
                 dispatch({ type: "UPDATE_BULLET_LEVELS", blockId: selectedBlockId, levels: newLevels });
               }}
             >
-              + Add Level
+              + Add Level{effectiveLevels.length >= 6 ? " (max)" : ""}
             </button>
           </>
         );

@@ -118,6 +118,12 @@ export default function EditableRichText({
     [onCancel, save, saveOnEnter, openLinkModal],
   );
 
+  const handlePaste = useCallback((e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text/plain");
+    document.execCommand("insertText", false, text);
+  }, []);
+
   const handleBlur = useCallback(
     (e: React.FocusEvent) => {
       // If the link modal is open, don't treat blur as save/cancel —
@@ -181,6 +187,7 @@ export default function EditableRichText({
         style={{ ...style, outline: "none", cursor: "text" }}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
+        onPaste={handlePaste}
       />
       <InlineToolbar containerRef={ref} onLinkClick={openLinkModal} />
       {linkModal && (

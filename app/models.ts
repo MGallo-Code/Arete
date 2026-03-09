@@ -40,7 +40,7 @@ export type Content =
 export interface Block {
   id: string;
   tags?: string[];
-  header?: { content: RichText; level: 1 | 2 | 3 | 4 | 5 | 6 };
+  header?: { content: RichText; tag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" };
   content: Content;
   style?: Style;
 }

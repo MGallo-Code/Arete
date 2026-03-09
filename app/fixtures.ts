@@ -92,7 +92,7 @@ export const sampleResume: Resume = {
         children: [
           {
             id: "block-name-title",
-            header: { content: [{ text: "Jordan Ellis" }], level: 1 },
+            header: { content: [{ text: "Jordan Ellis" }], tag: "h1" },
             content: { type: "text", value: [] },
           },
           {
@@ -114,7 +114,7 @@ export const sampleResume: Resume = {
     "block-contact": {
       id: "block-contact",
       tags: ["contact"],
-      header: { content: [{ text: "Contact" }], level: 2 },
+      header: { content: [{ text: "Contact" }], tag: "h2" },
       content: {
         type: "bullets",
         items: [
@@ -129,23 +129,23 @@ export const sampleResume: Resume = {
     "block-skills": {
       id: "block-skills",
       tags: ["skills"],
-      header: { content: [{ text: "Skills" }], level: 2 },
+      header: { content: [{ text: "Skills" }], tag: "h2" },
       content: {
         type: "blocks",
         children: [
           {
             id: "block-skills-languages",
-            header: { content: [{ text: "Languages" }], level: 3 },
+            header: { content: [{ text: "Languages" }], tag: "h3" },
             content: { type: "text", value: [{ text: "TypeScript, Python, Go, SQL" }] },
           },
           {
             id: "block-skills-frontend",
-            header: { content: [{ text: "Frontend" }], level: 3 },
+            header: { content: [{ text: "Frontend" }], tag: "h3" },
             content: { type: "text", value: [{ text: "React, Next.js, CSS, Figma" }] },
           },
           {
             id: "block-skills-backend",
-            header: { content: [{ text: "Backend & Infra" }], level: 3 },
+            header: { content: [{ text: "Backend & Infra" }], tag: "h3" },
             content: { type: "text", value: [{ text: "Node.js, PostgreSQL, Redis, Docker, AWS" }] },
           },
         ],
@@ -155,13 +155,13 @@ export const sampleResume: Resume = {
     "block-education": {
       id: "block-education",
       tags: ["education"],
-      header: { content: [{ text: "Education" }], level: 2 },
+      header: { content: [{ text: "Education" }], tag: "h2" },
       content: {
         type: "blocks",
         children: [
           {
             id: "block-edu-degree",
-            header: { content: [{ text: "B.S. Computer Science" }], level: 3 },
+            header: { content: [{ text: "B.S. Computer Science" }], tag: "h3" },
             content: {
               type: "text",
               value: [
@@ -177,7 +177,7 @@ export const sampleResume: Resume = {
     "block-summary": {
       id: "block-summary",
       tags: ["summary"],
-      header: { content: [{ text: "Summary" }], level: 2 },
+      header: { content: [{ text: "Summary" }], tag: "h2" },
       content: {
         type: "text",
         value: [
@@ -191,7 +191,7 @@ export const sampleResume: Resume = {
     "block-experience": {
       id: "block-experience",
       tags: ["experience"],
-      header: { content: [{ text: "Experience" }], level: 2 },
+      header: { content: [{ text: "Experience" }], tag: "h2" },
       content: {
         type: "blocks",
         children: [
@@ -203,7 +203,7 @@ export const sampleResume: Resume = {
               children: [
                 {
                   id: "job-1-title",
-                  header: { content: [{ text: "Staff Engineer" }], level: 3 },
+                  header: { content: [{ text: "Staff Engineer" }], tag: "h3" },
                   content: {
                     type: "text",
                     value: [
@@ -234,7 +234,7 @@ export const sampleResume: Resume = {
               children: [
                 {
                   id: "job-2-title",
-                  header: { content: [{ text: "Senior Software Engineer" }], level: 3 },
+                  header: { content: [{ text: "Senior Software Engineer" }], tag: "h3" },
                   content: {
                     type: "text",
                     value: [
@@ -265,7 +265,7 @@ export const sampleResume: Resume = {
               children: [
                 {
                   id: "job-3-title",
-                  header: { content: [{ text: "Software Engineer" }], level: 3 },
+                  header: { content: [{ text: "Software Engineer" }], tag: "h3" },
                   content: {
                     type: "text",
                     value: [
@@ -294,14 +294,14 @@ export const sampleResume: Resume = {
     "block-projects": {
       id: "block-projects",
       tags: ["projects"],
-      header: { content: [{ text: "Projects" }], level: 2 },
+      header: { content: [{ text: "Projects" }], tag: "h2" },
       content: {
         type: "blocks",
         children: [
           {
             id: "project-1",
             tags: ["project"],
-            header: { content: [{ text: "Arete" }], level: 3 },
+            header: { content: [{ text: "Arete" }], tag: "h3" },
             content: {
               type: "text",
               value: [
@@ -314,7 +314,7 @@ export const sampleResume: Resume = {
           {
             id: "project-2",
             tags: ["project"],
-            header: { content: [{ text: "pgvibe" }], level: 3 },
+            header: { content: [{ text: "pgvibe" }], tag: "h3" },
             content: {
               type: "text",
               value: [
@@ -406,7 +406,7 @@ export const sampleResume2: Resume = {
         children: [
           {
             id: "mc-name-title",
-            header: { content: [{ text: "Maya Chen" }], level: 1 },
+            header: { content: [{ text: "Maya Chen" }], tag: "h1" },
             content: { type: "text", value: [] },
           },
           {
@@ -428,7 +428,7 @@ export const sampleResume2: Resume = {
     "mc-block-experience": {
       id: "mc-block-experience",
       tags: ["experience"],
-      header: { content: [{ text: "Experience" }], level: 2 },
+      header: { content: [{ text: "Experience" }], tag: "h2" },
       content: {
         type: "blocks",
         children: [
@@ -439,7 +439,7 @@ export const sampleResume2: Resume = {
               children: [
                 {
                   id: "mc-job-1-title",
-                  header: { content: [{ text: "Senior Product Designer" }], level: 3 },
+                  header: { content: [{ text: "Senior Product Designer" }], tag: "h3" },
                   content: {
                     type: "text",
                     value: [
@@ -469,7 +469,7 @@ export const sampleResume2: Resume = {
               children: [
                 {
                   id: "mc-job-2-title",
-                  header: { content: [{ text: "Product Designer" }], level: 3 },
+                  header: { content: [{ text: "Product Designer" }], tag: "h3" },
                   content: {
                     type: "text",
                     value: [
@@ -498,7 +498,7 @@ export const sampleResume2: Resume = {
     "mc-block-skills": {
       id: "mc-block-skills",
       tags: ["skills"],
-      header: { content: [{ text: "Skills" }], level: 2 },
+      header: { content: [{ text: "Skills" }], tag: "h2" },
       content: {
         type: "text",
         value: [{ text: "Figma, Framer, Prototyping, Design Systems, User Research, Accessibility, Webflow" }],
@@ -508,13 +508,13 @@ export const sampleResume2: Resume = {
     "mc-block-education": {
       id: "mc-block-education",
       tags: ["education"],
-      header: { content: [{ text: "Education" }], level: 2 },
+      header: { content: [{ text: "Education" }], tag: "h2" },
       content: {
         type: "blocks",
         children: [
           {
             id: "mc-edu-degree",
-            header: { content: [{ text: "B.F.A. Interaction Design" }], level: 3 },
+            header: { content: [{ text: "B.F.A. Interaction Design" }], tag: "h3" },
             content: {
               type: "text",
               value: [
@@ -607,7 +607,7 @@ export const sampleResume3: Resume = {
         children: [
           {
             id: "ar-name-title",
-            header: { content: [{ text: "Alex Rivera" }], level: 1 },
+            header: { content: [{ text: "Alex Rivera" }], tag: "h1" },
             content: { type: "text", value: [] },
           },
           {
@@ -624,7 +624,7 @@ export const sampleResume3: Resume = {
     "ar-block-contact": {
       id: "ar-block-contact",
       tags: ["contact"],
-      header: { content: [{ text: "Contact" }], level: 2 },
+      header: { content: [{ text: "Contact" }], tag: "h2" },
       content: {
         type: "bullets",
         items: [
@@ -638,23 +638,23 @@ export const sampleResume3: Resume = {
     "ar-block-skills": {
       id: "ar-block-skills",
       tags: ["skills"],
-      header: { content: [{ text: "Skills" }], level: 2 },
+      header: { content: [{ text: "Skills" }], tag: "h2" },
       content: {
         type: "blocks",
         children: [
           {
             id: "ar-skills-languages",
-            header: { content: [{ text: "Languages" }], level: 3 },
+            header: { content: [{ text: "Languages" }], tag: "h3" },
             content: { type: "text", value: [{ text: "Python, R, SQL, Scala" }] },
           },
           {
             id: "ar-skills-tools",
-            header: { content: [{ text: "Tools & Frameworks" }], level: 3 },
+            header: { content: [{ text: "Tools & Frameworks" }], tag: "h3" },
             content: { type: "text", value: [{ text: "PyTorch, scikit-learn, Spark, dbt, Airflow" }] },
           },
           {
             id: "ar-skills-cloud",
-            header: { content: [{ text: "Cloud" }], level: 3 },
+            header: { content: [{ text: "Cloud" }], tag: "h3" },
             content: { type: "text", value: [{ text: "AWS SageMaker, GCP BigQuery, Databricks" }] },
           },
         ],
@@ -664,13 +664,13 @@ export const sampleResume3: Resume = {
     "ar-block-education": {
       id: "ar-block-education",
       tags: ["education"],
-      header: { content: [{ text: "Education" }], level: 2 },
+      header: { content: [{ text: "Education" }], tag: "h2" },
       content: {
         type: "blocks",
         children: [
           {
             id: "ar-edu-ms",
-            header: { content: [{ text: "M.S. Statistics" }], level: 3 },
+            header: { content: [{ text: "M.S. Statistics" }], tag: "h3" },
             content: {
               type: "text",
               value: [
@@ -681,7 +681,7 @@ export const sampleResume3: Resume = {
           },
           {
             id: "ar-edu-bs",
-            header: { content: [{ text: "B.S. Mathematics" }], level: 3 },
+            header: { content: [{ text: "B.S. Mathematics" }], tag: "h3" },
             content: {
               type: "text",
               value: [
@@ -697,7 +697,7 @@ export const sampleResume3: Resume = {
     "ar-block-summary": {
       id: "ar-block-summary",
       tags: ["summary"],
-      header: { content: [{ text: "Summary" }], level: 2 },
+      header: { content: [{ text: "Summary" }], tag: "h2" },
       content: {
         type: "text",
         value: [
@@ -711,7 +711,7 @@ export const sampleResume3: Resume = {
     "ar-block-experience": {
       id: "ar-block-experience",
       tags: ["experience"],
-      header: { content: [{ text: "Experience" }], level: 2 },
+      header: { content: [{ text: "Experience" }], tag: "h2" },
       content: {
         type: "blocks",
         children: [
@@ -722,7 +722,7 @@ export const sampleResume3: Resume = {
               children: [
                 {
                   id: "ar-job-1-title",
-                  header: { content: [{ text: "Staff Data Scientist" }], level: 3 },
+                  header: { content: [{ text: "Staff Data Scientist" }], tag: "h3" },
                   content: {
                     type: "text",
                     value: [
@@ -752,7 +752,7 @@ export const sampleResume3: Resume = {
               children: [
                 {
                   id: "ar-job-2-title",
-                  header: { content: [{ text: "Senior Data Scientist" }], level: 3 },
+                  header: { content: [{ text: "Senior Data Scientist" }], tag: "h3" },
                   content: {
                     type: "text",
                     value: [
@@ -781,14 +781,14 @@ export const sampleResume3: Resume = {
     "ar-block-projects": {
       id: "ar-block-projects",
       tags: ["projects"],
-      header: { content: [{ text: "Projects" }], level: 2 },
+      header: { content: [{ text: "Projects" }], tag: "h2" },
       content: {
         type: "blocks",
         children: [
           {
             id: "ar-project-1",
             tags: ["project"],
-            header: { content: [{ text: "causalkit" }], level: 3 },
+            header: { content: [{ text: "causalkit" }], tag: "h3" },
             content: {
               type: "text",
               value: [{ text: "Open-source Python library for causal inference in observational studies. 800+ GitHub stars." }],
@@ -872,7 +872,7 @@ export const sampleRichText: RichText = [
 // type: "text" — rich text with inline styling
 export const sampleTextBlock: Block = {
   id: "fixture-text",
-  header: { content: [{ text: "Summary" }], level: 2 },
+  header: { content: [{ text: "Summary" }], tag: "h2" },
   content: {
     type: "text",
     value: [
@@ -888,7 +888,7 @@ export const sampleTextBlock: Block = {
 // type: "bullets" — BulletItems with levels and per-list override
 export const sampleBulletsBlock: Block = {
   id: "fixture-bullets",
-  header: { content: [{ text: "Highlights" }], level: 2 },
+  header: { content: [{ text: "Highlights" }], tag: "h2" },
   content: {
     type: "bullets",
     // per-list override — different marker/indent from theme default
@@ -916,13 +916,13 @@ export const sampleBulletsBlock: Block = {
 export const sampleBlocksBlock: Block = {
   id: "fixture-blocks",
   tags: ["experience"],
-  header: { content: [{ text: "Experience" }], level: 2 },
+  header: { content: [{ text: "Experience" }], tag: "h2" },
   content: {
     type: "blocks",
     children: [
       {
         id: "fixture-blocks-title",
-        header: { content: [{ text: "Staff Engineer" }], level: 3 },
+        header: { content: [{ text: "Staff Engineer" }], tag: "h3" },
         content: {
           type: "text",
           value: [

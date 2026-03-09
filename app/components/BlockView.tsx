@@ -1,6 +1,7 @@
 import { JSX } from "react";
 import type { Block, Theme } from "../models";
 import ContentView from "./ContentView";
+import RichTextView from "./RichTextView";
 
 interface Props {
   block: Block;
@@ -10,8 +11,12 @@ interface Props {
 export default function BlockView({ block, theme }: Props) {
   let header: JSX.Element | null = null;
   if (block.header) {
-    const Tag = `h${block.header.level}` as keyof JSX.IntrinsicElements;
-    header = <Tag>{block.header.content.map((r) => r.text).join("")}</Tag>;
+    const { tag: Tag, content } = block.header;
+    header = (
+      <Tag style={theme[Tag]}>
+        <RichTextView richText={content} />
+      </Tag>
+    );
   }
   return (
     <div style={block.style}>

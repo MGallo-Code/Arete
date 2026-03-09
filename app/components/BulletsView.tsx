@@ -156,19 +156,24 @@ export default function BulletsView({ items, levels, blockId }: Props) {
         return;
       }
 
-      // Backspace at start of bullet → delete if empty, or merge with previous
-      if (e.key === "Backspace" && editingItems.length > 1) {
+      // Backspace at start of empty bullet → delete it and focus previous
+      if (e.key === "Backspace") {
         const sel = window.getSelection();
         const atStart = sel && sel.rangeCount > 0 && sel.getRangeAt(0).collapsed && sel.getRangeAt(0).startOffset === 0;
-        // Also check if the selection anchor is the element itself (fully empty div)
         const el = refsMap.current.get(editingItems[index].key);
         const isEmpty = (el?.textContent ?? "").trim() === "";
 
         if (atStart && isEmpty) {
           e.preventDefault();
-          const newEditingItems = editingItems.filter((_, i) => i !== index);
-          setEditingItems(newEditingItems);
-          setFocusIndex(Math.max(0, index - 1));
+          if (editingItems.length > 1) {
+            // Remove this bullet and focus the previous one
+            const newEditingItems = editingItems.filter((_, i) => i !== index);
+            setEditingItems(newEditingItems);
+            setFocusIndex(Math.max(0, index - 1));
+          } else {
+            // Last bullet — just save and exit editing mode
+            saveAndExit();
+          }
           return;
         }
       }

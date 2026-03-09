@@ -2,6 +2,7 @@
 
 import { useEditorRequired, findBlock, getBlockLabel } from "../../contexts/EditorContext";
 import BoxModelEditor from "./BoxModelEditor";
+import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
 
 export default function BlockStylePanel() {
@@ -76,12 +77,10 @@ export default function BlockStylePanel() {
       <div className={styles.propRow}>
         <label className={styles.propLabel}>Font size</label>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <input
-            className={styles.propInput}
-            style={{ width: "auto", flex: 1 }}
+          <SpacingInput
             value={(style.fontSize as string) ?? ""}
-            placeholder="inherit"
-            onChange={(e) => updateStyle({ fontSize: e.target.value })}
+            placeholder="0"
+            onChange={(v) => updateStyle({ fontSize: v })}
           />
           {style.fontSize && (
             <button className={styles.clearBtn} onClick={() => clearStyle("fontSize")} title="Clear">

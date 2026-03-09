@@ -1,5 +1,6 @@
 "use client";
 
+import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
 
 interface BoxModelEditorProps {
@@ -25,58 +26,34 @@ export default function BoxModelEditor({
       {/* Margin layer (outermost) */}
       <div className={styles.boxModelMargin}>
         <span className={styles.boxModelLabel}>margin</span>
-        <input
-          className={`${styles.boxModelInput} ${styles.boxModelTop}`}
-          value={marginTop}
-          placeholder="0"
-          onChange={(e) => onMarginChange("top", e.target.value)}
-        />
-        <input
-          className={`${styles.boxModelInput} ${styles.boxModelRight}`}
-          value={marginRight}
-          placeholder="0"
-          onChange={(e) => onMarginChange("right", e.target.value)}
-        />
-        <input
-          className={`${styles.boxModelInput} ${styles.boxModelBottom}`}
-          value={marginBottom}
-          placeholder="0"
-          onChange={(e) => onMarginChange("bottom", e.target.value)}
-        />
-        <input
-          className={`${styles.boxModelInput} ${styles.boxModelLeft}`}
-          value={marginLeft}
-          placeholder="0"
-          onChange={(e) => onMarginChange("left", e.target.value)}
-        />
+        <div className={styles.boxModelTop}>
+          <SpacingInput compact value={marginTop} onChange={(v) => onMarginChange("top", v)} />
+        </div>
+        <div className={styles.boxModelRight}>
+          <SpacingInput compact value={marginRight} onChange={(v) => onMarginChange("right", v)} />
+        </div>
+        <div className={styles.boxModelBottom}>
+          <SpacingInput compact value={marginBottom} onChange={(v) => onMarginChange("bottom", v)} />
+        </div>
+        <div className={styles.boxModelLeft}>
+          <SpacingInput compact value={marginLeft} onChange={(v) => onMarginChange("left", v)} />
+        </div>
 
         {/* Padding layer (middle) */}
         <div className={styles.boxModelPadding}>
           <span className={styles.boxModelLabel}>padding</span>
-          <input
-            className={`${styles.boxModelInput} ${styles.boxModelTop}`}
-            value={paddingTop}
-            placeholder="0"
-            onChange={(e) => onPaddingChange("top", e.target.value)}
-          />
-          <input
-            className={`${styles.boxModelInput} ${styles.boxModelRight}`}
-            value={paddingRight}
-            placeholder="0"
-            onChange={(e) => onPaddingChange("right", e.target.value)}
-          />
-          <input
-            className={`${styles.boxModelInput} ${styles.boxModelBottom}`}
-            value={paddingBottom}
-            placeholder="0"
-            onChange={(e) => onPaddingChange("bottom", e.target.value)}
-          />
-          <input
-            className={`${styles.boxModelInput} ${styles.boxModelLeft}`}
-            value={paddingLeft}
-            placeholder="0"
-            onChange={(e) => onPaddingChange("left", e.target.value)}
-          />
+          <div className={styles.boxModelTop}>
+            <SpacingInput compact value={paddingTop} onChange={(v) => onPaddingChange("top", v)} />
+          </div>
+          <div className={styles.boxModelRight}>
+            <SpacingInput compact value={paddingRight} onChange={(v) => onPaddingChange("right", v)} />
+          </div>
+          <div className={styles.boxModelBottom}>
+            <SpacingInput compact value={paddingBottom} onChange={(v) => onPaddingChange("bottom", v)} />
+          </div>
+          <div className={styles.boxModelLeft}>
+            <SpacingInput compact value={paddingLeft} onChange={(v) => onPaddingChange("left", v)} />
+          </div>
 
           {/* Content area (innermost) */}
           <div className={styles.boxModelContent}>

@@ -2,6 +2,7 @@
 
 import { useEditorRequired } from "../../contexts/EditorContext";
 import BoxModelEditor from "./BoxModelEditor";
+import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
 
 const FONT_PRESETS = [
@@ -77,12 +78,11 @@ export default function ThemePanel() {
       {TAGS.map((tag) => (
         <div key={tag} className={styles.headingRow}>
           <span className={styles.headingTag}>{tag}</span>
-          <input
-            className={styles.propInput}
-            style={{ width: 50 }}
-            value={theme[tag].fontSize ?? ""}
-            placeholder="size"
-            onChange={(e) => dispatch({ type: "UPDATE_HEADING_STYLE", tag, style: { fontSize: e.target.value } })}
+          <SpacingInput
+            compact
+            value={(theme[tag].fontSize as string) ?? ""}
+            placeholder="0"
+            onChange={(v) => dispatch({ type: "UPDATE_HEADING_STYLE", tag, style: { fontSize: v } })}
           />
           <input
             type="color"

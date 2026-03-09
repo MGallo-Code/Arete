@@ -788,3 +788,109 @@
   font-style: italic;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
+
+/* --- Spacing Input --- */
+
+.spacingCompact {
+  display: flex;
+  align-items: center;
+  max-width: 56px;
+  justify-self: center;
+}
+
+.spacingCompactNum {
+  width: 28px;
+  padding: 2px;
+  font-size: 10px;
+  font-family: var(--font-geist-mono), monospace;
+  text-align: center;
+  border: 1px solid transparent;
+  border-radius: 2px 0 0 2px;
+  background: transparent;
+  color: var(--color-fg);
+}
+
+.spacingCompactNum:hover,
+.spacingCompactNum:focus {
+  border-color: var(--color-border);
+  background: var(--color-bg);
+}
+
+.spacingCompactNum:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: var(--color-bg);
+}
+
+.spacingCompactNum::placeholder {
+  color: #ccc;
+}
+
+.spacingCompactUnit {
+  width: 28px;
+  padding: 1px 0;
+  font-size: 8px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  border: 1px solid transparent;
+  border-left: none;
+  border-radius: 0 2px 2px 0;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: center;
+}
+
+.spacingCompactUnit:hover,
+.spacingCompactUnit:focus {
+  border-color: var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
+.spacingCompactUnit:focus {
+  outline: none;
+}
+
+.spacingFull {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+}
+
+.spacingFullNum {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px 0 0 5px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.spacingFullNum:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+
+.spacingFullUnit {
+  padding: 5px 4px;
+  font-size: 11px;
+  border: 1px solid var(--color-border);
+  border-left: none;
+  border-radius: 0 5px 5px 0;
+  background: var(--color-bg-subtle);
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.spacingFullUnit:focus {
+  outline: none;
+  border-color: #2563eb;
+}

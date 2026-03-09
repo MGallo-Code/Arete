@@ -48,7 +48,7 @@ export default function ContentView({ content, blockId, ancestorPath }: Props) {
       );
 
     case "bullets":
-      return <BulletsView items={content.items} levels={content.levels ?? theme.bullets} />;
+      return <BulletsView items={content.items} levels={content.levels ?? theme.bullets} blockId={blockId} />;
 
     case "image":
       return <img src={content.src} alt={content.alt} style={content.style} />;

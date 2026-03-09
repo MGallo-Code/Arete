@@ -19,11 +19,20 @@ export default function ResumePreview({ resume }: Props) {
   const { page, grid, regionStyles, theme } = resume.template;
   const { width, height } = PAGE_SIZES[page.size];
 
+  // Emit palette as CSS custom properties so var(--palette-*) works
+  const paletteVars: Record<string, string> = {};
+  if (theme.palette) {
+    for (const [key, value] of Object.entries(theme.palette)) {
+      paletteVars[`--palette-${key}`] = value;
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <main
         style={{
           ...theme.root,
+          ...paletteVars,
           width,
           height,
           paddingTop: page.margins.top,
@@ -32,7 +41,7 @@ export default function ResumePreview({ resume }: Props) {
           paddingLeft: page.margins.left,
           boxSizing: "border-box",
           overflow: "hidden",
-        }}
+        } as React.CSSProperties}
       >
         <div
           style={{

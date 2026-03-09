@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useReducer, useEffect, useMemo, useRef, type ReactNode } from "react";
 import type { Resume, Block, Content, RichText, BulletItem, BulletLevel, Style, PageSettings, ColorPalette } from "../models";
+import { applyPaletteToTheme } from "../utils/paletteUtils";
 
 // --- State ---
 
@@ -59,7 +60,8 @@ export type EditorAction =
   | { type: "UPDATE_THEME_CANVAS"; style: Style }
   | { type: "UPDATE_THEME_LINK"; style: Style }
   | { type: "UPDATE_GRID"; grid: string }
-  | { type: "UPDATE_THEME_PALETTE"; palette: ColorPalette | undefined };
+  | { type: "UPDATE_THEME_PALETTE"; palette: ColorPalette | undefined }
+  | { type: "APPLY_PALETTE_PRESET"; palette: ColorPalette };
 
 // Actions that mutate the resume (push to undo stack)
 const MUTATING = new Set([
@@ -89,6 +91,7 @@ const MUTATING = new Set([
   "UPDATE_THEME_LINK",
   "UPDATE_GRID",
   "UPDATE_THEME_PALETTE",
+  "APPLY_PALETTE_PRESET",
 ]);
 
 // --- Helpers ---
@@ -580,6 +583,15 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       return {
         ...state,
         resume: { ...state.resume, template: { ...t, theme: { ...t.theme, palette: action.palette } } },
+      };
+    }
+
+    case "APPLY_PALETTE_PRESET": {
+      const t = state.resume.template;
+      const newTheme = applyPaletteToTheme(t.theme, action.palette);
+      return {
+        ...state,
+        resume: { ...state.resume, template: { ...t, theme: newTheme } },
       };
     }
 

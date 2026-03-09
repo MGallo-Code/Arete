@@ -4,6 +4,7 @@ import { useEditorRequired } from "../../contexts/EditorContext";
 import type { ColorPalette } from "../../models";
 import { FONT_PRESETS } from "../../data/constants";
 import { parseGridTemplate, updateColumnWidth, updateRowHeight, getColumnRegions, getRowRegions } from "../../utils/gridUtils";
+import { isPaletteVar, resolvePaletteVar } from "../../utils/paletteUtils";
 import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
@@ -36,13 +37,21 @@ const TAGS = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
 const TEXT_TRANSFORM_OPTIONS = ["none", "uppercase", "lowercase", "capitalize"] as const;
 
 /** Parse a borderBottom shorthand like "2px solid #2563eb" into parts */
-function parseBorder(value: string | undefined): { width: string; color: string } {
-  if (!value) return { width: "", color: "#000000" };
+function parseBorder(value: string | undefined, palette?: ColorPalette): { width: string; color: string; rawColor: string } {
+  if (!value) return { width: "", color: "#000000", rawColor: "" };
   const parts = value.trim().split(/\s+/);
   const width = parts[0] ?? "";
-  // Color is typically the last part
-  const color = parts.find((p) => p.startsWith("#") || p.startsWith("rgb")) ?? "#000000";
-  return { width, color };
+  // Color: find var(), #hex, rgb(), or named color (last part)
+  let rawColor = "";
+  const varMatch = value.match(/var\(--palette-[a-z]+\)/);
+  if (varMatch) {
+    rawColor = varMatch[0];
+  } else {
+    rawColor = parts.find((p) => p.startsWith("#") || p.startsWith("rgb")) ?? parts[parts.length - 1] ?? "#000000";
+  }
+  // Resolve var() for display in color picker
+  const color = palette && isPaletteVar(rawColor) ? resolvePaletteVar(rawColor, palette) : rawColor;
+  return { width, color: color || "#000000", rawColor };
 }
 
 export default function ThemePanel() {
@@ -111,7 +120,7 @@ export default function ThemePanel() {
           value=""
           onChange={(e) => {
             const preset = PALETTE_PRESETS.find((p) => p.name === e.target.value);
-            if (preset) dispatch({ type: "UPDATE_THEME_PALETTE", palette: preset.palette });
+            if (preset) dispatch({ type: "APPLY_PALETTE_PRESET", palette: preset.palette });
           }}
         >
           <option value="" disabled>
@@ -129,7 +138,7 @@ export default function ThemePanel() {
         <button
           key={p.name}
           className={styles.palettePresetRow}
-          onClick={() => dispatch({ type: "UPDATE_THEME_PALETTE", palette: p.palette })}
+          onClick={() => dispatch({ type: "APPLY_PALETTE_PRESET", palette: p.palette })}
           title={p.name}
         >
           <span className={styles.palettePresetLabel}>{p.name}</span>
@@ -216,7 +225,10 @@ export default function ThemePanel() {
           <input
             type="color"
             className={styles.colorInput}
-            value={theme.link.color ?? "#2563eb"}
+            value={(() => {
+            const c = (theme.link.color as string) ?? "#2563eb";
+            return theme.palette && isPaletteVar(c) ? resolvePaletteVar(c, theme.palette) : c;
+          })()}
             onChange={(e) => dispatch({ type: "UPDATE_THEME_LINK", style: { color: e.target.value } })}
           />
           {theme.link.color && (
@@ -235,7 +247,7 @@ export default function ThemePanel() {
       <div className={styles.themeSectionTitle}>Headings</div>
       {TAGS.map((tag) => {
         const headingStyle = theme[tag];
-        const border = parseBorder(headingStyle.borderBottom as string | undefined);
+        const border = parseBorder(headingStyle.borderBottom as string | undefined, theme.palette);
         const hasBorder = !!headingStyle.borderBottom;
 
         return (
@@ -252,7 +264,10 @@ export default function ThemePanel() {
               <input
                 type="color"
                 className={styles.colorInput}
-                value={headingStyle.color ?? theme.root.color ?? "#000000"}
+                value={(() => {
+                  const c = (headingStyle.color as string) ?? (theme.root.color as string) ?? "#000000";
+                  return theme.palette && isPaletteVar(c) ? resolvePaletteVar(c, theme.palette) : c;
+                })()}
                 onChange={(e) => dispatch({ type: "UPDATE_HEADING_STYLE", tag, style: { color: e.target.value } })}
               />
             </div>

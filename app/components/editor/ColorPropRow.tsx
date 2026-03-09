@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import type { ColorPalette } from "../../models";
+import { isPaletteVar, paletteKeyFromVar, resolvePaletteVar, PALETTE_VAR_MAP } from "../../utils/paletteUtils";
 import styles from "./editor.module.css";
 
 export default function ColorPropRow({
@@ -20,14 +21,22 @@ export default function ColorPropRow({
   palette?: ColorPalette;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Resolve var(--palette-*) to hex for display and <input type="color">
+  const linkedKey = value ? paletteKeyFromVar(value) : null;
+  const resolvedValue =
+    value && palette && isPaletteVar(value)
+      ? resolvePaletteVar(value, palette)
+      : value;
+
   const paletteColors = palette
-    ? [
-        { key: "primary", color: palette.primary },
-        { key: "secondary", color: palette.secondary },
-        { key: "accent", color: palette.accent },
-        { key: "muted", color: palette.muted },
-        { key: "background", color: palette.background },
-      ]
+    ? ([
+        { key: "primary" as const, color: palette.primary },
+        { key: "secondary" as const, color: palette.secondary },
+        { key: "accent" as const, color: palette.accent },
+        { key: "muted" as const, color: palette.muted },
+        { key: "background" as const, color: palette.background },
+      ])
     : [];
 
   return (
@@ -38,10 +47,10 @@ export default function ColorPropRow({
           {paletteColors.map(({ key, color }) => (
             <button
               key={key}
-              className={`${styles.paletteSwatch} ${value === color ? styles.paletteSwatchActive : ""}`}
+              className={`${styles.paletteSwatch} ${linkedKey === key ? styles.paletteSwatchActive : ""}`}
               style={{ backgroundColor: color }}
-              title={key}
-              onClick={() => onChange(color)}
+              title={`${key} — click to link`}
+              onClick={() => onChange(PALETTE_VAR_MAP[key])}
             />
           ))}
         </div>
@@ -52,10 +61,13 @@ export default function ColorPropRow({
             <input
               type="color"
               className={styles.colorInput}
-              value={value}
+              value={resolvedValue}
               aria-label={`Pick ${label.toLowerCase()} color`}
               onChange={(e) => onChange(e.target.value)}
             />
+            {linkedKey && (
+              <span className={styles.inheritLabel}>{linkedKey}</span>
+            )}
             <button className={styles.clearBtn} onClick={onClear} title="Clear" aria-label={`Clear ${label.toLowerCase()}`}>
               ×
             </button>

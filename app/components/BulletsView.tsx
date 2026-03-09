@@ -11,7 +11,6 @@ export default function BulletsView({ items, levels }: Props) {
     <ul style={{ listStyle: "none" }}>
       {items.map((item, index) => {
         const level = levels[item.level ?? 0] ?? {};
-        const { paddingLeft, ...textStyle } = level.style ?? {};
 
         const marker = level.image ? (
           <img src={level.image} alt="" style={{ display: "inline", height: "1em" }} />
@@ -20,7 +19,7 @@ export default function BulletsView({ items, levels }: Props) {
         ) : null;
 
         return (
-          <li key={index} style={{ paddingLeft, display: "flex", gap: "0.4em", ...textStyle }}>
+          <li key={index} style={{ display: "flex", ...level.style }}>
             {marker}
             <RichTextView richText={item.content} />
           </li>

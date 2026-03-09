@@ -1,3 +1,4 @@
+import { useTheme } from "../contexts/ThemeContext";
 import type { RichText } from "../models";
 
 interface Props {
@@ -5,9 +6,10 @@ interface Props {
 }
 
 export default function RichTextView({ richText }: Props) {
+  const theme = useTheme();
   return richText.map((run, index) => {
     return run.link ? (
-      <a key={index} href={run.link} style={run.style}>
+      <a key={index} href={run.link} style={{ ...theme.link, ...run.style }}>
         {run.text}
       </a>
     ) : (

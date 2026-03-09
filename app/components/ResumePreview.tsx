@@ -1,4 +1,5 @@
 "use client";
+import { ThemeProvider } from "../contexts/ThemeContext";
 import type { Resume } from "../models";
 import BlockView from "./BlockView";
 
@@ -16,35 +17,37 @@ export default function ResumePreview({ resume }: Props) {
   const { width, height } = PAGE_SIZES[page.size];
 
   return (
-    <main
-      style={{
-        ...theme.root,
-        width,
-        height,
-        paddingTop: page.margins.top,
-        paddingRight: page.margins.right,
-        paddingBottom: page.margins.bottom,
-        paddingLeft: page.margins.left,
-        boxSizing: "border-box",
-        overflow: "hidden",
-      }}
-    >
-      <div
+    <ThemeProvider theme={theme}>
+      <main
         style={{
-          ...theme.canvas,
-          display: "grid",
-          gridTemplate: grid,
-          height: "100%",
+          ...theme.root,
+          width,
+          height,
+          paddingTop: page.margins.top,
+          paddingRight: page.margins.right,
+          paddingBottom: page.margins.bottom,
+          paddingLeft: page.margins.left,
+          boxSizing: "border-box",
+          overflow: "hidden",
         }}
       >
-        {Object.entries(resume.regionBlockIds).map(([regionId, blockIds]) => (
-          <div key={regionId} style={{ gridArea: regionId, ...regionStyles[regionId] }}>
-            {blockIds.map((blockId) => (
-              <BlockView key={blockId} block={resume.blocks[blockId]} theme={theme} />
-            ))}
-          </div>
-        ))}
-      </div>
-    </main>
+        <div
+          style={{
+            ...theme.canvas,
+            display: "grid",
+            gridTemplate: grid,
+            height: "100%",
+          }}
+        >
+          {Object.entries(resume.regionBlockIds).map(([regionId, blockIds]) => (
+            <div key={regionId} style={{ gridArea: regionId, ...regionStyles[regionId] }}>
+              {blockIds.map((blockId) => (
+                <BlockView key={blockId} block={resume.blocks[blockId]} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </main>
+    </ThemeProvider>
   );
 }

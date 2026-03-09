@@ -1,14 +1,15 @@
 import { JSX } from "react";
-import type { Block, Theme } from "../models";
+import type { Block } from "../models";
+import { useTheme } from "../contexts/ThemeContext";
 import ContentView from "./ContentView";
 import RichTextView from "./RichTextView";
 
 interface Props {
   block: Block;
-  theme: Theme;
 }
 
-export default function BlockView({ block, theme }: Props) {
+export default function BlockView({ block }: Props) {
+  const theme = useTheme();
   let header: JSX.Element | null = null;
   if (block.header) {
     const { tag: Tag, content } = block.header;
@@ -21,7 +22,7 @@ export default function BlockView({ block, theme }: Props) {
   return (
     <div style={block.style}>
       {header}
-      <ContentView content={block.content} theme={theme} />
+      <ContentView content={block.content} />
     </div>
   );
 }

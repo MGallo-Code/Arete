@@ -5,9 +5,12 @@ import { useEditorRequired, findBlock, getBlockLabel } from "../../contexts/Edit
 import type { BulletLevel, Style } from "../../models";
 import { FONT_PRESETS } from "../../data/constants";
 import { parseShorthand } from "../../utils/cssUtils";
+import BorderControls from "./BorderControls";
 import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
+
+const TEXT_TRANSFORM_OPTIONS = ["none", "uppercase", "lowercase", "capitalize"] as const;
 
 function ColorPropRow({
   label,
@@ -134,7 +137,7 @@ export default function BlockStylePanel() {
         </div>
       </div>
 
-      {/* Box Model (Margin + Padding) */}
+      {/* 1. Spacing — Box Model (Margin + Padding) */}
       <BoxModelEditor
         marginTop={(style.marginTop as string) ?? ""}
         marginRight={(style.marginRight as string) ?? ""}
@@ -162,16 +165,47 @@ export default function BlockStylePanel() {
         }}
       />
 
-      {/* Background color */}
+      {/* 2. Colors */}
+      <div className={styles.themeSectionTitle}>Colors</div>
       <ColorPropRow
-        label="Background color"
+        label="Background"
         value={style.backgroundColor as string | undefined}
         fallback="#ffffff"
         onChange={(v) => updateStyle({ backgroundColor: v })}
         onClear={() => clearStyle("backgroundColor")}
       />
+      <ColorPropRow
+        label="Text color"
+        value={style.color as string | undefined}
+        fallback="#000000"
+        onChange={(v) => updateStyle({ color: v })}
+        onClear={() => clearStyle("color")}
+      />
 
-      {/* Font size override */}
+      {/* 3. Typography */}
+      <div className={styles.themeSectionTitle}>Typography</div>
+
+      {/* Font family */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Font family</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <select
+            className={styles.propSelect}
+            value={(style.fontFamily as string) ?? ""}
+            onChange={(e) => updateStyle({ fontFamily: e.target.value || undefined })}
+          >
+            <option value="">inherit</option>
+            {FONT_PRESETS.map((f) => (
+              <option key={f.value} value={f.value}>{f.label}</option>
+            ))}
+          </select>
+          {style.fontFamily && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("fontFamily")} title="Clear">×</button>
+          )}
+        </div>
+      </div>
+
+      {/* Font size */}
       <div className={styles.propRow}>
         <label className={styles.propLabel}>Font size</label>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -187,15 +221,6 @@ export default function BlockStylePanel() {
           )}
         </div>
       </div>
-
-      {/* Color override */}
-      <ColorPropRow
-        label="Color"
-        value={style.color as string | undefined}
-        fallback="#000000"
-        onChange={(v) => updateStyle({ color: v })}
-        onClear={() => clearStyle("color")}
-      />
 
       {/* Font weight */}
       <div className={styles.propRow}>
@@ -224,25 +249,65 @@ export default function BlockStylePanel() {
         </div>
       </div>
 
-      {/* Font family */}
+      {/* Line height */}
       <div className={styles.propRow}>
-        <label className={styles.propLabel}>Font family</label>
+        <label className={styles.propLabel}>Line height</label>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <select
-            className={styles.propSelect}
-            value={(style.fontFamily as string) ?? ""}
-            onChange={(e) => updateStyle({ fontFamily: e.target.value || undefined })}
-          >
-            <option value="">inherit</option>
-            {FONT_PRESETS.map((f) => (
-              <option key={f.value} value={f.value}>{f.label}</option>
-            ))}
-          </select>
-          {style.fontFamily && (
-            <button className={styles.clearBtn} onClick={() => clearStyle("fontFamily")} title="Clear">×</button>
+          <input
+            className={styles.propInput}
+            style={{ width: "auto", flex: 1 }}
+            value={(style.lineHeight as string) ?? ""}
+            placeholder="inherit"
+            onChange={(e) => updateStyle({ lineHeight: e.target.value })}
+          />
+          {style.lineHeight && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("lineHeight")} title="Clear">×</button>
           )}
         </div>
       </div>
+
+      {/* Letter spacing */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Letter spacing</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <input
+            type="text"
+            className={styles.propInput}
+            style={{ width: "auto", flex: 1 }}
+            value={(style.letterSpacing as string) ?? ""}
+            placeholder="inherit"
+            onChange={(e) => updateStyle({ letterSpacing: e.target.value || undefined })}
+          />
+          {style.letterSpacing && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("letterSpacing")} title="Clear">×</button>
+          )}
+        </div>
+      </div>
+
+      {/* Text transform */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Text transform</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <select
+            className={styles.propSelect}
+            value={(style.textTransform as string) ?? "none"}
+            onChange={(e) => {
+              const val = e.target.value;
+              updateStyle({ textTransform: val === "none" ? undefined : val });
+            }}
+          >
+            {TEXT_TRANSFORM_OPTIONS.map((opt) => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+          {style.textTransform && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("textTransform")} title="Clear">×</button>
+          )}
+        </div>
+      </div>
+
+      {/* 4. Text Layout */}
+      <div className={styles.themeSectionTitle}>Text Layout</div>
 
       {/* Text align */}
       <div className={styles.propRow}>
@@ -266,98 +331,10 @@ export default function BlockStylePanel() {
         </div>
       </div>
 
-      {/* Line height */}
-      <div className={styles.propRow}>
-        <label className={styles.propLabel}>Line height</label>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <input
-            className={styles.propInput}
-            style={{ width: "auto", flex: 1 }}
-            value={(style.lineHeight as string) ?? ""}
-            placeholder="inherit"
-            onChange={(e) => updateStyle({ lineHeight: e.target.value })}
-          />
-          {style.lineHeight && (
-            <button className={styles.clearBtn} onClick={() => clearStyle("lineHeight")} title="Clear">×</button>
-          )}
-        </div>
-      </div>
+      {/* 5 & 6. Borders + Border Radius */}
+      <BorderControls style={style} updateStyle={updateStyle} clearStyle={clearStyle} />
 
-      {/* Borders */}
-      <div className={styles.themeSectionTitle}>Borders</div>
-      <div className={styles.bordersGrid}>
-        {(["Top", "Right", "Bottom", "Left"] as const).map((side) => {
-          const key = `border${side}` as keyof typeof style;
-          const borderVal = (style[key] as string) ?? "";
-          const match = borderVal.match(/^(\d+(?:\.\d+)?)(px|pt)\s+solid\s+(#[0-9a-fA-F]{3,8})$/);
-          const borderWidth = match ? `${match[1]}${match[2]}` : "";
-          const borderColor = match ? match[3] : "#000000";
-          return [
-            <span key={`${side}-label`} className={styles.borderSideLabel}>{side}</span>,
-            <SpacingInput
-              key={`${side}-width`}
-              compact
-              value={borderWidth}
-              placeholder="0"
-              onChange={(v) => {
-                if (v) {
-                  updateStyle({ [key]: `${v} solid ${borderColor}` });
-                } else {
-                  clearStyle(key);
-                }
-              }}
-            />,
-            <input
-              key={`${side}-color`}
-              type="color"
-              className={styles.colorInput}
-              value={borderColor}
-              onChange={(e) => {
-                const w = borderWidth || "1px";
-                updateStyle({ [key]: `${w} solid ${e.target.value}` });
-              }}
-            />,
-            style[key] ? (
-              <button key={`${side}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear">
-                ×
-              </button>
-            ) : (
-              <span key={`${side}-none`} className={styles.inheritLabel}>none</span>
-            ),
-          ];
-        })}
-      </div>
-
-      {/* Border radius */}
-      <div className={styles.themeSectionTitle} style={{ marginTop: 8 }}>Border Radius</div>
-      <div className={styles.bordersGrid}>
-        {(["TopLeft", "TopRight", "BottomRight", "BottomLeft"] as const).map((corner) => {
-          const key = `border${corner}Radius` as keyof typeof style;
-          const val = (style[key] as string) ?? "";
-          return [
-            <span key={`${corner}-label`} className={styles.borderSideLabel}>
-              {corner.replace(/([A-Z])/g, " $1").trim()}
-            </span>,
-            <SpacingInput
-              key={`${corner}-input`}
-              compact
-              value={val}
-              placeholder="0"
-              onChange={(v) => updateStyle({ [key]: v })}
-            />,
-            <span key={`${corner}-spacer`} />,
-            val ? (
-              <button key={`${corner}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear">
-                ×
-              </button>
-            ) : (
-              <span key={`${corner}-none`} />
-            ),
-          ];
-        })}
-      </div>
-
-      {/* Bullet styles — only for bullet blocks */}
+      {/* 7. Content-specific — Bullet styles */}
       {block.content.type === "bullets" && (() => {
         const hasOverride = !!block.content.levels;
         // Effective levels: per-block override, or theme fallback

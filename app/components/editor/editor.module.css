@@ -1057,5 +1057,21 @@
   font-weight: 500;
   color: #888;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  width: 38px;
+  width: 56px;
+}
+
+.advancedToggle {
+  display: inline-block;
+  padding: 0;
+  margin: 2px 0 6px;
+  border: none;
+  background: transparent;
+  font-size: 10px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  color: #999;
+  cursor: pointer;
+}
+
+.advancedToggle:hover {
+  color: #2563eb;
 }

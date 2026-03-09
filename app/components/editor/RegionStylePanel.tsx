@@ -4,9 +4,12 @@ import { useRef, useMemo } from "react";
 import { useEditorRequired } from "../../contexts/EditorContext";
 import { FONT_PRESETS } from "../../data/constants";
 import { parseShorthand } from "../../utils/cssUtils";
+import BorderControls from "./BorderControls";
 import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
+
+const TEXT_TRANSFORM_OPTIONS = ["none", "uppercase", "lowercase", "capitalize"] as const;
 
 function ColorPropRow({
   label,
@@ -110,25 +113,7 @@ export default function RegionStylePanel() {
         </div>
       </div>
 
-      {/* Background color */}
-      <ColorPropRow
-        label="Background"
-        value={regionStyle.backgroundColor as string | undefined}
-        fallback="#ffffff"
-        onChange={(v) => updateStyle({ backgroundColor: v })}
-        onClear={() => clearStyle("backgroundColor")}
-      />
-
-      {/* Text color */}
-      <ColorPropRow
-        label="Text color"
-        value={regionStyle.color as string | undefined}
-        fallback="#000000"
-        onChange={(v) => updateStyle({ color: v })}
-        onClear={() => clearStyle("color")}
-      />
-
-      {/* Box Model (Margin + Padding) */}
+      {/* 1. Spacing — Box Model (Margin + Padding) */}
       <BoxModelEditor
         marginTop={(regionStyle.marginTop as string) ?? ""}
         marginRight={(regionStyle.marginRight as string) ?? ""}
@@ -156,38 +141,25 @@ export default function RegionStylePanel() {
         }}
       />
 
-      {/* Font size */}
-      <div className={styles.propRow}>
-        <label className={styles.propLabel}>Font size</label>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <SpacingInput
-            value={(regionStyle.fontSize as string) ?? ""}
-            placeholder="0"
-            onChange={(v) => updateStyle({ fontSize: v })}
-          />
-          {regionStyle.fontSize && (
-            <button className={styles.clearBtn} onClick={() => clearStyle("fontSize")} title="Clear">
-              ×
-            </button>
-          )}
-        </div>
-      </div>
+      {/* 2. Colors */}
+      <div className={styles.themeSectionTitle}>Colors</div>
+      <ColorPropRow
+        label="Background"
+        value={regionStyle.backgroundColor as string | undefined}
+        fallback="#ffffff"
+        onChange={(v) => updateStyle({ backgroundColor: v })}
+        onClear={() => clearStyle("backgroundColor")}
+      />
+      <ColorPropRow
+        label="Text color"
+        value={regionStyle.color as string | undefined}
+        fallback="#000000"
+        onChange={(v) => updateStyle({ color: v })}
+        onClear={() => clearStyle("color")}
+      />
 
-      {/* Flex/alignment */}
-      <div className={styles.propRow}>
-        <label className={styles.propLabel}>Align items</label>
-        <select
-          className={styles.propSelect}
-          value={(regionStyle.alignItems as string) ?? ""}
-          onChange={(e) => updateStyle({ alignItems: e.target.value || undefined })}
-        >
-          <option value="">Default</option>
-          <option value="flex-start">Top</option>
-          <option value="center">Center</option>
-          <option value="flex-end">Bottom</option>
-          <option value="stretch">Stretch</option>
-        </select>
-      </div>
+      {/* 3. Typography */}
+      <div className={styles.themeSectionTitle}>Typography</div>
 
       {/* Font family */}
       <div className={styles.propRow}>
@@ -209,6 +181,148 @@ export default function RegionStylePanel() {
         </div>
       </div>
 
+      {/* Font size */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Font size</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <SpacingInput
+            value={(regionStyle.fontSize as string) ?? ""}
+            placeholder="0"
+            onChange={(v) => updateStyle({ fontSize: v })}
+          />
+          {regionStyle.fontSize && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("fontSize")} title="Clear">
+              ×
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Font weight */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Font weight</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div className={styles.toggleGroup}>
+            <button
+              className={`${styles.toggleBtn} ${!regionStyle.fontWeight || regionStyle.fontWeight === "normal" ? styles.toggleActive : ""}`}
+              onClick={() => updateStyle({ fontWeight: "normal" })}
+            >
+              Normal
+            </button>
+            <button
+              className={`${styles.toggleBtn} ${regionStyle.fontWeight === "bold" ? styles.toggleActive : ""}`}
+              onClick={() => updateStyle({ fontWeight: "bold" })}
+            >
+              Bold
+            </button>
+          </div>
+          {regionStyle.fontWeight && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("fontWeight")} title="Clear">
+              ×
+            </button>
+          )}
+          {!regionStyle.fontWeight && <span className={styles.inheritLabel}>inherit</span>}
+        </div>
+      </div>
+
+      {/* Line height */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Line height</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <input
+            className={styles.propInput}
+            style={{ width: "auto", flex: 1 }}
+            value={(regionStyle.lineHeight as string) ?? ""}
+            placeholder="inherit"
+            onChange={(e) => updateStyle({ lineHeight: e.target.value })}
+          />
+          {regionStyle.lineHeight && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("lineHeight")} title="Clear">×</button>
+          )}
+        </div>
+      </div>
+
+      {/* Letter spacing */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Letter spacing</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <input
+            type="text"
+            className={styles.propInput}
+            style={{ width: "auto", flex: 1 }}
+            value={(regionStyle.letterSpacing as string) ?? ""}
+            placeholder="inherit"
+            onChange={(e) => updateStyle({ letterSpacing: e.target.value || undefined })}
+          />
+          {regionStyle.letterSpacing && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("letterSpacing")} title="Clear">×</button>
+          )}
+        </div>
+      </div>
+
+      {/* Text transform */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Text transform</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <select
+            className={styles.propSelect}
+            value={(regionStyle.textTransform as string) ?? "none"}
+            onChange={(e) => {
+              const val = e.target.value;
+              updateStyle({ textTransform: val === "none" ? undefined : val });
+            }}
+          >
+            {TEXT_TRANSFORM_OPTIONS.map((opt) => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+          {regionStyle.textTransform && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("textTransform")} title="Clear">×</button>
+          )}
+        </div>
+      </div>
+
+      {/* 4. Text Layout */}
+      <div className={styles.themeSectionTitle}>Text Layout</div>
+
+      {/* Text align */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Text align</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div className={styles.toggleGroup}>
+            {(["left", "center", "right", "justify"] as const).map((align) => (
+              <button
+                key={align}
+                className={`${styles.toggleBtn} ${regionStyle.textAlign === align ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ textAlign: align })}
+                title={align}
+              >
+                {align[0].toUpperCase()}
+              </button>
+            ))}
+          </div>
+          {regionStyle.textAlign && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("textAlign")} title="Clear">×</button>
+          )}
+        </div>
+      </div>
+
+      {/* Align items */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Align items</label>
+        <select
+          className={styles.propSelect}
+          value={(regionStyle.alignItems as string) ?? ""}
+          onChange={(e) => updateStyle({ alignItems: e.target.value || undefined })}
+        >
+          <option value="">Default</option>
+          <option value="flex-start">Top</option>
+          <option value="center">Center</option>
+          <option value="flex-end">Bottom</option>
+          <option value="stretch">Stretch</option>
+        </select>
+      </div>
+
       {/* Gap */}
       <div className={styles.propRow}>
         <label className={styles.propLabel}>Gap</label>
@@ -224,79 +338,8 @@ export default function RegionStylePanel() {
         </div>
       </div>
 
-      {/* Borders */}
-      <div className={styles.themeSectionTitle}>Borders</div>
-      <div className={styles.bordersGrid}>
-        {(["Top", "Right", "Bottom", "Left"] as const).map((side) => {
-          const key = `border${side}` as keyof typeof regionStyle;
-          const borderVal = (regionStyle[key] as string) ?? "";
-          const match = borderVal.match(/^(\d+(?:\.\d+)?)(px|pt)\s+solid\s+(#[0-9a-fA-F]{3,8})$/);
-          const borderWidth = match ? `${match[1]}${match[2]}` : "";
-          const borderColor = match ? match[3] : "#000000";
-          return [
-            <span key={`${side}-label`} className={styles.borderSideLabel}>{side}</span>,
-            <SpacingInput
-              key={`${side}-width`}
-              compact
-              value={borderWidth}
-              placeholder="0"
-              onChange={(v) => {
-                if (v) {
-                  updateStyle({ [key]: `${v} solid ${borderColor}` });
-                } else {
-                  clearStyle(key);
-                }
-              }}
-            />,
-            <input
-              key={`${side}-color`}
-              type="color"
-              className={styles.colorInput}
-              value={borderColor}
-              onChange={(e) => {
-                const w = borderWidth || "1px";
-                updateStyle({ [key]: `${w} solid ${e.target.value}` });
-              }}
-            />,
-            regionStyle[key] ? (
-              <button key={`${side}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear">
-                ×
-              </button>
-            ) : (
-              <span key={`${side}-none`} className={styles.inheritLabel}>none</span>
-            ),
-          ];
-        })}
-      </div>
-
-      {/* Border radius */}
-      <div className={styles.themeSectionTitle} style={{ marginTop: 8 }}>Border Radius</div>
-      <div className={styles.bordersGrid}>
-        {(["TopLeft", "TopRight", "BottomRight", "BottomLeft"] as const).map((corner) => {
-          const key = `border${corner}Radius` as keyof typeof regionStyle;
-          const val = (regionStyle[key] as string) ?? "";
-          return [
-            <span key={`${corner}-label`} className={styles.borderSideLabel}>
-              {corner.replace(/([A-Z])/g, " $1").trim()}
-            </span>,
-            <SpacingInput
-              key={`${corner}-input`}
-              compact
-              value={val}
-              placeholder="0"
-              onChange={(v) => updateStyle({ [key]: v })}
-            />,
-            <span key={`${corner}-spacer`} />,
-            val ? (
-              <button key={`${corner}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear">
-                ×
-              </button>
-            ) : (
-              <span key={`${corner}-none`} />
-            ),
-          ];
-        })}
-      </div>
+      {/* 5 & 6. Borders + Border Radius */}
+      <BorderControls style={regionStyle} updateStyle={updateStyle} clearStyle={clearStyle} />
     </div>
   );
 }

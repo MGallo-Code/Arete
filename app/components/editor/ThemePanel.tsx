@@ -32,8 +32,55 @@ export default function ThemePanel() {
       <div className={styles.panelHeader}>
         <div className={styles.panelTitle}>Theme</div>
       </div>
-      {/* Font */}
-      <div className={styles.themeSectionTitle}>Typography</div>
+
+      {/* Colors */}
+      <div className={styles.themeSectionTitle}>Colors</div>
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Text color</label>
+        <input
+          type="color"
+          className={styles.colorInput}
+          value={theme.root.color ?? "#000000"}
+          onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { color: e.target.value } })}
+        />
+      </div>
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Page background</label>
+        <input
+          type="color"
+          className={styles.colorInput}
+          value={(theme.root.background as string) ?? "#ffffff"}
+          onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { background: e.target.value } })}
+        />
+      </div>
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Canvas background</label>
+        <div className={styles.headingRow}>
+          <input
+            type="color"
+            className={styles.colorInput}
+            value={(theme.canvas.backgroundColor as string) ?? (theme.canvas.background as string) ?? "#ffffff"}
+            onChange={(e) => dispatch({ type: "UPDATE_THEME_CANVAS", style: { backgroundColor: e.target.value } })}
+          />
+          {(theme.canvas.backgroundColor || theme.canvas.background) && (
+            <button
+              className={styles.clearBtn}
+              title="Remove background color"
+              onClick={() =>
+                dispatch({
+                  type: "UPDATE_THEME_CANVAS",
+                  style: { backgroundColor: undefined, background: undefined },
+                })
+              }
+            >
+              &times;
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Typography */}
+      <div className={styles.themeSectionTitle}>Base Typography</div>
       <div className={styles.propRow}>
         <label className={styles.propLabel}>Font family</label>
         <select
@@ -61,52 +108,6 @@ export default function ThemePanel() {
             </option>
           ))}
         </select>
-      </div>
-      <div className={styles.propRow}>
-        <label className={styles.propLabel}>Text color</label>
-        <input
-          type="color"
-          className={styles.colorInput}
-          value={theme.root.color ?? "#000000"}
-          onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { color: e.target.value } })}
-        />
-      </div>
-      <div className={styles.propRow}>
-        <label className={styles.propLabel}>Background</label>
-        <input
-          type="color"
-          className={styles.colorInput}
-          value={(theme.root.background as string) ?? "#ffffff"}
-          onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { background: e.target.value } })}
-        />
-      </div>
-
-      {/* Canvas */}
-      <div className={styles.themeSectionTitle}>Canvas</div>
-      <div className={styles.propRow}>
-        <label className={styles.propLabel}>Background color</label>
-        <div className={styles.headingRow}>
-          <input
-            type="color"
-            className={styles.colorInput}
-            value={(theme.canvas.backgroundColor as string) ?? (theme.canvas.background as string) ?? "#ffffff"}
-            onChange={(e) => dispatch({ type: "UPDATE_THEME_CANVAS", style: { backgroundColor: e.target.value } })}
-          />
-          {(theme.canvas.backgroundColor || theme.canvas.background) && (
-            <button
-              className={styles.clearBtn}
-              title="Remove background color"
-              onClick={() =>
-                dispatch({
-                  type: "UPDATE_THEME_CANVAS",
-                  style: { backgroundColor: undefined, background: undefined },
-                })
-              }
-            >
-              &times;
-            </button>
-          )}
-        </div>
       </div>
 
       {/* Links */}

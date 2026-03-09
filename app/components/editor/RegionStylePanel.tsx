@@ -1,75 +1,23 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useMemo } from "react";
 import { useEditorRequired } from "../../contexts/EditorContext";
 import { FONT_PRESETS } from "../../data/constants";
 import { parseShorthand } from "../../utils/cssUtils";
 import BorderControls from "./BorderControls";
 import BoxModelEditor from "./BoxModelEditor";
+import ColorPropRow from "./ColorPropRow";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
 
 const TEXT_TRANSFORM_OPTIONS = ["none", "uppercase", "lowercase", "capitalize"] as const;
-
-function ColorPropRow({
-  label,
-  value,
-  fallback,
-  onChange,
-  onClear,
-}: {
-  label: string;
-  value: string | undefined;
-  fallback: string;
-  onChange: (color: string) => void;
-  onClear: () => void;
-}) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  return (
-    <div className={styles.propRow}>
-      <label className={styles.propLabel}>{label}</label>
-      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-        {value ? (
-          <>
-            <input
-              type="color"
-              className={styles.colorInput}
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-            />
-            <button className={styles.clearBtn} onClick={onClear} title="Clear">
-              ×
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              className={styles.colorSwatchBtn}
-              onClick={() => inputRef.current?.click()}
-              title={`Set ${label.toLowerCase()}`}
-            >
-              +
-            </button>
-            <input
-              ref={inputRef}
-              type="color"
-              className={styles.colorSwatchHiddenInput}
-              value={fallback}
-              onChange={(e) => onChange(e.target.value)}
-            />
-            <span className={styles.inheritLabel}>inherit</span>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export default function RegionStylePanel() {
   const { resume, selectedRegionId, dispatch } = useEditorRequired();
 
   if (!selectedRegionId) return null;
 
+  const theme = resume.template.theme;
   const regionStyle = resume.template.regionStyles[selectedRegionId] ?? {};
 
   // Parse shorthand margin/padding to show as defaults when longhand isn't set
@@ -149,6 +97,7 @@ export default function RegionStylePanel() {
         fallback="#ffffff"
         onChange={(v) => updateStyle({ backgroundColor: v })}
         onClear={() => clearStyle("backgroundColor")}
+        palette={theme.palette}
       />
       <ColorPropRow
         label="Text color"
@@ -156,6 +105,7 @@ export default function RegionStylePanel() {
         fallback="#000000"
         onChange={(v) => updateStyle({ color: v })}
         onClear={() => clearStyle("color")}
+        palette={theme.palette}
       />
 
       {/* 3. Typography */}

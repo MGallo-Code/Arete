@@ -75,6 +75,13 @@ export const sampleResume: Resume = {
       link: {
         color: "#2563eb",
       },
+      palette: {
+        primary: "#2563eb",
+        secondary: "#1e40af",
+        accent: "#3b82f6",
+        muted: "#94a3b8",
+        background: "#f8fafc",
+      },
     },
   },
 
@@ -102,7 +109,7 @@ export const sampleResume: Resume = {
               value: [
                 {
                   text: "Senior Software Engineer",
-                  style: { fontSize: "12pt", color: "#2563eb" },
+                  style: { fontSize: "12pt" },
                 },
               ],
             },
@@ -390,6 +397,13 @@ export const sampleResume2: Resume = {
         { char: "·", style: { fontSize: "9pt", lineHeight: "1.6", paddingLeft: "12px", gap: "0.35em" } },
       ],
       link: { color: "#2563eb" },
+      palette: {
+        primary: "#111827",
+        secondary: "#6b7280",
+        accent: "#2563eb",
+        muted: "#9ca3af",
+        background: "#ffffff",
+      },
     },
   },
 
@@ -591,6 +605,13 @@ export const sampleResume3: Resume = {
         { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "10px", gap: "0.35em", color: "#93c5fd" } },
       ],
       link: { color: "#93c5fd" },
+      palette: {
+        primary: "#1e3a5f",
+        secondary: "#2d5a8e",
+        accent: "#7eb8f7",
+        muted: "#93c5fd",
+        background: "#ffffff",
+      },
     },
   },
 

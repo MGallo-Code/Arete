@@ -1,70 +1,17 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useMemo } from "react";
 import { useEditorRequired, findBlock, getBlockLabel } from "../../contexts/EditorContext";
 import type { BulletLevel, Style } from "../../models";
 import { FONT_PRESETS } from "../../data/constants";
 import { parseShorthand } from "../../utils/cssUtils";
 import BorderControls from "./BorderControls";
 import BoxModelEditor from "./BoxModelEditor";
+import ColorPropRow from "./ColorPropRow";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
 
 const TEXT_TRANSFORM_OPTIONS = ["none", "uppercase", "lowercase", "capitalize"] as const;
-
-function ColorPropRow({
-  label,
-  value,
-  fallback,
-  onChange,
-  onClear,
-}: {
-  label: string;
-  value: string | undefined;
-  fallback: string;
-  onChange: (color: string) => void;
-  onClear: () => void;
-}) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  return (
-    <div className={styles.propRow}>
-      <label className={styles.propLabel}>{label}</label>
-      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-        {value ? (
-          <>
-            <input
-              type="color"
-              className={styles.colorInput}
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-            />
-            <button className={styles.clearBtn} onClick={onClear} title="Clear">
-              ×
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              className={styles.colorSwatchBtn}
-              onClick={() => inputRef.current?.click()}
-              title={`Set ${label.toLowerCase()}`}
-            >
-              +
-            </button>
-            <input
-              ref={inputRef}
-              type="color"
-              className={styles.colorSwatchHiddenInput}
-              value={fallback}
-              onChange={(e) => onChange(e.target.value)}
-            />
-            <span className={styles.inheritLabel}>inherit</span>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export default function BlockStylePanel() {
   const { resume, selectedBlockId, dispatch } = useEditorRequired();
@@ -137,6 +84,52 @@ export default function BlockStylePanel() {
         </div>
       </div>
 
+      {/* 0. Header controls */}
+      <div className={styles.themeSectionTitle}>Header</div>
+      {block.header ? (
+        <div className={styles.propRow}>
+          <label className={styles.propLabel}>Tag</label>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <select
+              className={styles.propSelect}
+              value={block.header.tag}
+              onChange={(e) =>
+                dispatch({
+                  type: "UPDATE_BLOCK_HEADER_TAG",
+                  blockId: selectedBlockId,
+                  tag: e.target.value as "h1" | "h2" | "h3" | "h4" | "h5" | "h6",
+                })
+              }
+            >
+              {(["h1", "h2", "h3", "h4", "h5", "h6"] as const).map((t) => (
+                <option key={t} value={t}>
+                  {t.toUpperCase()}
+                </option>
+              ))}
+            </select>
+            <button
+              className={`${styles.propBtn} ${styles.propBtnDanger}`}
+              onClick={() =>
+                dispatch({ type: "REMOVE_HEADER", blockId: selectedBlockId })
+              }
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className={styles.propRow}>
+          <button
+            className={styles.propBtn}
+            onClick={() =>
+              dispatch({ type: "ADD_HEADER", blockId: selectedBlockId })
+            }
+          >
+            + Add Header
+          </button>
+        </div>
+      )}
+
       {/* 1. Spacing — Box Model (Margin + Padding) */}
       <BoxModelEditor
         marginTop={(style.marginTop as string) ?? ""}
@@ -173,6 +166,7 @@ export default function BlockStylePanel() {
         fallback="#ffffff"
         onChange={(v) => updateStyle({ backgroundColor: v })}
         onClear={() => clearStyle("backgroundColor")}
+        palette={theme.palette}
       />
       <ColorPropRow
         label="Text color"
@@ -180,6 +174,7 @@ export default function BlockStylePanel() {
         fallback="#000000"
         onChange={(v) => updateStyle({ color: v })}
         onClear={() => clearStyle("color")}
+        palette={theme.palette}
       />
 
       {/* 3. Typography */}

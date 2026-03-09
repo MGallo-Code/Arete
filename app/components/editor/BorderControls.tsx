@@ -10,25 +10,59 @@ import styles from "./editor.module.css";
 const BORDER_SIDES = ["Top", "Right", "Bottom", "Left"] as const;
 const BORDER_CORNERS = ["TopLeft", "TopRight", "BottomRight", "BottomLeft"] as const;
 
-const BORDER_REGEX = /^(\d+(?:\.\d+)?)(px|pt)\s+solid\s+(#[0-9a-fA-F]{3,8})$/;
+const BORDER_STYLES = ["solid", "dashed", "dotted", "double", "none"] as const;
+type BorderStyle = (typeof BORDER_STYLES)[number];
 
-function parseBorder(val: string): { width: string; color: string } | null {
+// Permissive regex: {width}{unit} {style} {color}
+// Color can be #hex, rgb(...), rgba(...), hsl(...), hsla(...), or a named color
+const BORDER_REGEX =
+  /^(\d+(?:\.\d+)?)(px|pt)\s+(solid|dashed|dotted|double|none)\s+(.+)$/;
+
+interface ParsedBorder {
+  width: string;
+  borderStyle: BorderStyle;
+  color: string;
+}
+
+function parseBorder(val: string): ParsedBorder | null {
   const match = val.match(BORDER_REGEX);
   if (!match) return null;
-  return { width: `${match[1]}${match[2]}`, color: match[3] };
+  return {
+    width: `${match[1]}${match[2]}`,
+    borderStyle: match[3] as BorderStyle,
+    color: match[4].trim(),
+  };
+}
+
+/** Convert any color string to a hex value for the color input (best effort) */
+function colorToHex(color: string): string {
+  // Already hex
+  if (/^#[0-9a-fA-F]{3,8}$/.test(color)) return color;
+  // For non-hex colors, return a fallback — the color input only accepts hex
+  // but we preserve the original string in the data
+  return "#000000";
+}
+
+interface UnifiedBorder {
+  width: string;
+  borderStyle: BorderStyle;
+  color: string;
+  mixed: boolean;
 }
 
 /** Read all four border sides and determine if they share a single value */
-function getUnifiedBorder(style: Style): { width: string; color: string; mixed: boolean } {
+function getUnifiedBorder(style: Style): UnifiedBorder {
   const values = BORDER_SIDES.map((s) => (style[`border${s}` as keyof Style] as string) ?? "");
   const nonEmpty = values.filter(Boolean);
-  if (nonEmpty.length === 0) return { width: "", color: "#000000", mixed: false };
-  const parsed = nonEmpty.map(parseBorder).filter(Boolean) as { width: string; color: string }[];
-  if (parsed.length !== nonEmpty.length) return { width: "", color: "#000000", mixed: true };
-  const allSame = parsed.every((p) => p.width === parsed[0].width && p.color === parsed[0].color);
-  if (!allSame) return { width: "", color: "#000000", mixed: true };
+  if (nonEmpty.length === 0) return { width: "", borderStyle: "solid", color: "#000000", mixed: false };
+  const parsed = nonEmpty.map(parseBorder).filter(Boolean) as ParsedBorder[];
+  if (parsed.length !== nonEmpty.length) return { width: "", borderStyle: "solid", color: "#000000", mixed: true };
+  const allSame = parsed.every(
+    (p) => p.width === parsed[0].width && p.borderStyle === parsed[0].borderStyle && p.color === parsed[0].color,
+  );
+  if (!allSame) return { width: "", borderStyle: "solid", color: "#000000", mixed: true };
   // All match but maybe not all four sides are set — only "unified" if all 4 are set or none are
-  if (nonEmpty.length !== 0 && nonEmpty.length !== 4) return { width: "", color: "#000000", mixed: true };
+  if (nonEmpty.length !== 0 && nonEmpty.length !== 4) return { width: "", borderStyle: "solid", color: "#000000", mixed: true };
   return { ...parsed[0], mixed: false };
 }
 
@@ -58,17 +92,12 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
   // --- Unified border ---
   const unified = getUnifiedBorder(style);
 
-  const setAllBorders = (width: string, color: string) => {
+  const setAllBorders = (width: string, bStyle: BorderStyle, color: string) => {
     if (!width) {
-      const patch: Record<string, undefined> = {};
-      for (const side of BORDER_SIDES) patch[`border${side}`] = undefined;
-      // Clear by setting undefined — the caller's clearStyle handles delete
-      // Actually, we need to clear all four. Use updateStyle with empty strings won't work.
-      // Let's clear them one by one.
       for (const side of BORDER_SIDES) clearStyle(`border${side}`);
       return;
     }
-    const val = `${width} solid ${color}`;
+    const val = `${width} ${bStyle} ${color}`;
     const patch: Record<string, string> = {};
     for (const side of BORDER_SIDES) patch[`border${side}`] = val;
     updateStyle(patch);
@@ -103,16 +132,33 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
             placeholder={unified.mixed ? "mixed" : "0"}
             onChange={(v) => {
               const color = unified.mixed ? "#000000" : unified.color;
-              setAllBorders(v, color);
+              const bs = unified.mixed ? "solid" : unified.borderStyle;
+              setAllBorders(v, bs, color);
             }}
           />
+          <select
+            className={styles.borderStyleSelect}
+            value={unified.mixed ? "" : unified.borderStyle}
+            onChange={(e) => {
+              const bs = e.target.value as BorderStyle;
+              const w = unified.width || "1px";
+              const color = unified.mixed ? "#000000" : unified.color;
+              setAllBorders(w, bs, color);
+            }}
+          >
+            {unified.mixed && <option value="">mixed</option>}
+            {BORDER_STYLES.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
           <input
             type="color"
             className={styles.colorInput}
-            value={unified.mixed ? "#000000" : unified.color}
+            value={unified.mixed ? "#000000" : colorToHex(unified.color)}
             onChange={(e) => {
               const w = unified.width || "1px";
-              setAllBorders(w, e.target.value);
+              const bs = unified.mixed ? "solid" : unified.borderStyle;
+              setAllBorders(w, bs, e.target.value);
             }}
           />
           {hasBorder ? (
@@ -141,13 +187,14 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
 
       {/* Per-side grid */}
       {showPerSide && (
-        <div className={styles.bordersGrid}>
+        <div className={styles.bordersGridPerSide}>
           {BORDER_SIDES.map((side) => {
             const key = `border${side}` as keyof typeof style;
             const borderVal = (style[key] as string) ?? "";
             const parsed = parseBorder(borderVal);
             const borderWidth = parsed ? parsed.width : "";
             const borderColor = parsed ? parsed.color : "#000000";
+            const borderBs = parsed ? parsed.borderStyle : "solid";
             return [
               <span key={`${side}-label`} className={styles.borderSideLabel}>{side}</span>,
               <SpacingInput
@@ -157,20 +204,34 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
                 placeholder="0"
                 onChange={(v) => {
                   if (v) {
-                    updateStyle({ [key]: `${v} solid ${borderColor}` });
+                    updateStyle({ [key]: `${v} ${borderBs} ${borderColor}` });
                   } else {
                     clearStyle(key);
                   }
                 }}
               />,
+              <select
+                key={`${side}-style`}
+                className={styles.borderStyleSelectCompact}
+                value={borderBs}
+                onChange={(e) => {
+                  const bs = e.target.value as BorderStyle;
+                  const w = borderWidth || "1px";
+                  updateStyle({ [key]: `${w} ${bs} ${borderColor}` });
+                }}
+              >
+                {BORDER_STYLES.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>,
               <input
                 key={`${side}-color`}
                 type="color"
                 className={styles.colorInput}
-                value={borderColor}
+                value={colorToHex(borderColor)}
                 onChange={(e) => {
                   const w = borderWidth || "1px";
-                  updateStyle({ [key]: `${w} solid ${e.target.value}` });
+                  updateStyle({ [key]: `${w} ${borderBs} ${e.target.value}` });
                 }}
               />,
               style[key] ? (

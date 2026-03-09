@@ -1052,6 +1052,49 @@
   align-items: center;
 }
 
+.bordersGridPerSide {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  gap: 4px 6px;
+  align-items: center;
+}
+
+.borderStyleSelect {
+  padding: 4px 2px;
+  font-size: 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  cursor: pointer;
+  min-width: 60px;
+}
+
+.borderStyleSelect:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+
+.borderStyleSelectCompact {
+  padding: 2px 1px;
+  font-size: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  cursor: pointer;
+  min-width: 50px;
+}
+
+.borderStyleSelectCompact:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+
 .borderSideLabel {
   font-size: 10px;
   font-weight: 500;
@@ -1074,4 +1117,66 @@
 
 .advancedToggle:hover {
   color: #2563eb;
+}
+
+/* --- Palette Swatches --- */
+
+.paletteSwatches {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.paletteSwatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s;
+}
+
+.paletteSwatch:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+}
+
+.paletteSwatchActive {
+  box-shadow: 0 0 0 2px #2563eb;
+}
+
+.palettePresetRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px 8px;
+  margin-bottom: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  background: var(--color-bg);
+  cursor: pointer;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  transition:
+    background 0.1s,
+    border-color 0.1s;
+}
+
+.palettePresetRow:hover {
+  background: var(--color-bg-subtle);
+  border-color: #2563eb66;
+}
+
+.palettePresetLabel {
+  font-size: 11px;
+  color: var(--color-fg);
+  white-space: nowrap;
+}
+
+.palettePresetRow .paletteSwatches {
+  margin-bottom: 0;
 }

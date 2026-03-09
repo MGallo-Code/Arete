@@ -1,6 +1,7 @@
 "use client";
 
 import { useEditorRequired } from "../../contexts/EditorContext";
+import type { ColorPalette } from "../../models";
 import { FONT_PRESETS } from "../../data/constants";
 import { parseGridTemplate, updateColumnWidth, updateRowHeight, getColumnRegions, getRowRegions } from "../../utils/gridUtils";
 import BoxModelEditor from "./BoxModelEditor";
@@ -8,6 +9,27 @@ import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
 
 const SIZE_PRESETS = ["8pt", "9pt", "10pt", "11pt", "12pt"];
+
+const PALETTE_PRESETS: { name: string; palette: ColorPalette }[] = [
+  {
+    name: "Professional Blue",
+    palette: { primary: "#2563eb", secondary: "#1e40af", accent: "#3b82f6", muted: "#94a3b8", background: "#f8fafc" },
+  },
+  {
+    name: "Warm Earth",
+    palette: { primary: "#92400e", secondary: "#78350f", accent: "#d97706", muted: "#a8a29e", background: "#faf5f0" },
+  },
+  {
+    name: "Modern Dark",
+    palette: { primary: "#1a1a2e", secondary: "#16213e", accent: "#0f3460", muted: "#6b7280", background: "#f9fafb" },
+  },
+  {
+    name: "Elegant Green",
+    palette: { primary: "#065f46", secondary: "#064e3b", accent: "#059669", muted: "#9ca3af", background: "#f0fdf4" },
+  },
+];
+
+const PALETTE_KEYS: (keyof ColorPalette)[] = ["primary", "secondary", "accent", "muted", "background"];
 
 const TAGS = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
 
@@ -78,6 +100,82 @@ export default function ThemePanel() {
           )}
         </div>
       </div>
+
+      {/* Color Palette */}
+      <div className={styles.themeSectionTitle}>Color Palette</div>
+      {/* Preset picker */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Preset</label>
+        <select
+          className={styles.propSelect}
+          value=""
+          onChange={(e) => {
+            const preset = PALETTE_PRESETS.find((p) => p.name === e.target.value);
+            if (preset) dispatch({ type: "UPDATE_THEME_PALETTE", palette: preset.palette });
+          }}
+        >
+          <option value="" disabled>
+            Choose a preset...
+          </option>
+          {PALETTE_PRESETS.map((p) => (
+            <option key={p.name} value={p.name}>
+              {p.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      {/* Preset preview swatches */}
+      {PALETTE_PRESETS.map((p) => (
+        <button
+          key={p.name}
+          className={styles.palettePresetRow}
+          onClick={() => dispatch({ type: "UPDATE_THEME_PALETTE", palette: p.palette })}
+          title={p.name}
+        >
+          <span className={styles.palettePresetLabel}>{p.name}</span>
+          <div className={styles.paletteSwatches}>
+            {PALETTE_KEYS.map((k) => (
+              <span
+                key={k}
+                className={styles.paletteSwatch}
+                style={{ backgroundColor: p.palette[k] }}
+              />
+            ))}
+          </div>
+        </button>
+      ))}
+      {/* Editable palette colors */}
+      {theme.palette && (
+        <>
+          {PALETTE_KEYS.map((key) => (
+            <div key={key} className={styles.propRow}>
+              <label className={styles.propLabel}>{key}</label>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <input
+                  type="color"
+                  className={styles.colorInput}
+                  value={theme.palette![key]}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "UPDATE_THEME_PALETTE",
+                      palette: { ...theme.palette!, [key]: e.target.value },
+                    })
+                  }
+                />
+                <span className={styles.inheritLabel}>{theme.palette![key]}</span>
+              </div>
+            </div>
+          ))}
+          <div className={styles.propBtnRow}>
+            <button
+              className={styles.propBtn}
+              onClick={() => dispatch({ type: "UPDATE_THEME_PALETTE", palette: undefined })}
+            >
+              Remove palette
+            </button>
+          </div>
+        </>
+      )}
 
       {/* Typography */}
       <div className={styles.themeSectionTitle}>Base Typography</div>

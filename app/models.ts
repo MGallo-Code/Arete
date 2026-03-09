@@ -52,6 +52,14 @@ export interface PageSettings {
   margins: { top: string; right: string; bottom: string; left: string };
 }
 
+export interface ColorPalette {
+  primary: string;
+  secondary: string;
+  accent: string;
+  muted: string;
+  background: string;
+}
+
 export interface Theme {
   root: Style;   // full page — background, watermark; cascades font/color to all children
   canvas: Style; // content area inside margins — grid container background
@@ -63,6 +71,7 @@ export interface Theme {
   h6: Style;
   bullets: BulletLevel[]; // template-wide defaults per indent level
   link: Style;
+  palette?: ColorPalette; // theme color palette for quick color picking
 }
 
 export interface Template {

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useReducer, useEffect, useMemo, useRef, type ReactNode } from "react";
-import type { Resume, Block, Content, RichText, BulletItem, BulletLevel, Style, PageSettings } from "../models";
+import type { Resume, Block, Content, RichText, BulletItem, BulletLevel, Style, PageSettings, ColorPalette } from "../models";
 
 // --- State ---
 
@@ -58,7 +58,8 @@ export type EditorAction =
   | { type: "UPDATE_BULLET_LEVELS"; blockId: string; levels: BulletLevel[] }
   | { type: "UPDATE_THEME_CANVAS"; style: Style }
   | { type: "UPDATE_THEME_LINK"; style: Style }
-  | { type: "UPDATE_GRID"; grid: string };
+  | { type: "UPDATE_GRID"; grid: string }
+  | { type: "UPDATE_THEME_PALETTE"; palette: ColorPalette | undefined };
 
 // Actions that mutate the resume (push to undo stack)
 const MUTATING = new Set([
@@ -87,6 +88,7 @@ const MUTATING = new Set([
   "UPDATE_THEME_CANVAS",
   "UPDATE_THEME_LINK",
   "UPDATE_GRID",
+  "UPDATE_THEME_PALETTE",
 ]);
 
 // --- Helpers ---
@@ -570,6 +572,14 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       return {
         ...state,
         resume: { ...state.resume, template: { ...t, grid: action.grid } },
+      };
+    }
+
+    case "UPDATE_THEME_PALETTE": {
+      const t = state.resume.template;
+      return {
+        ...state,
+        resume: { ...state.resume, template: { ...t, theme: { ...t.theme, palette: action.palette } } },
       };
     }
 

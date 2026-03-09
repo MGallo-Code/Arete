@@ -1,6 +1,7 @@
 "use client";
 
 import { useEditorRequired } from "../../contexts/EditorContext";
+import BoxModelEditor from "./BoxModelEditor";
 import styles from "./editor.module.css";
 
 const FONT_PRESETS = [
@@ -66,7 +67,7 @@ export default function ThemePanel() {
         <input
           type="color"
           className={styles.colorInput}
-          value={theme.root.background as string ?? "#ffffff"}
+          value={(theme.root.background as string) ?? "#ffffff"}
           onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { background: e.target.value } })}
         />
       </div>
@@ -113,21 +114,20 @@ export default function ThemePanel() {
       </div>
       <div className={styles.propRow}>
         <label className={styles.propLabel}>Margins</label>
-        <div className={styles.marginGrid}>
-          {(["top", "right", "bottom", "left"] as const).map((side) => (
-            <div key={side} className={styles.marginField}>
-              <span className={styles.marginLabel}>{side[0].toUpperCase()}</span>
-              <input
-                className={styles.propInput}
-                style={{ width: 52 }}
-                value={page.margins[side]}
-                onChange={(e) =>
-                  dispatch({ type: "UPDATE_PAGE_MARGINS", margins: { ...page.margins, [side]: e.target.value } })
-                }
-              />
-            </div>
-          ))}
-        </div>
+        <BoxModelEditor
+          marginTop={page.margins.top}
+          marginRight={page.margins.right}
+          marginBottom={page.margins.bottom}
+          marginLeft={page.margins.left}
+          paddingTop=""
+          paddingRight=""
+          paddingBottom=""
+          paddingLeft=""
+          onMarginChange={(side, value) => {
+            dispatch({ type: "UPDATE_PAGE_MARGINS", margins: { ...page.margins, [side]: value } });
+          }}
+          onPaddingChange={() => {}}
+        />
       </div>
 
       {/* Undo/Redo indicator */}

@@ -10,13 +10,18 @@ import styles from "./editor/editor.module.css";
 interface Props {
   block: Block;
   parentBlockId?: string;
+  ancestorPath?: string[];
 }
 
-export default function BlockView({ block, parentBlockId }: Props) {
+export default function BlockView({ block, parentBlockId, ancestorPath }: Props) {
   const theme = useTheme();
   const editor = useEditor();
 
-  const isSelected = editor?.selectedBlockId === block.id;
+  const blockPath = [...(ancestorPath ?? []), block.id];
+
+  const isInPath = editor?.selectedPath.includes(block.id) ?? false;
+  const isSelected = editor?.selectedBlockId === block.id; // last in path
+  const isExpanded = isInPath && !isSelected; // in path but not last
   const isEditing = editor?.editingBlockId === block.id;
   const editingField = editor?.editingField;
 
@@ -60,16 +65,20 @@ export default function BlockView({ block, parentBlockId }: Props) {
   }
 
   // --- Editor interaction props ---
-  // Only allow direct selection if top-level or parent is selected
-  const canSelect = !parentBlockId || editor?.selectedBlockId === parentBlockId;
+  // A block is selectable if it's top-level OR its parent is in the selection path
+  const canSelect = !parentBlockId || (editor?.selectedPath.includes(parentBlockId) ?? false);
 
   const editorProps = editor && canSelect
     ? {
-        className: `${styles.selectableBlock} ${isSelected ? styles.selectedBlock : ""}`,
+        className: [
+          styles.selectableBlock,
+          isSelected ? styles.selectedBlock : "",
+          isExpanded ? styles.expandedBlock : "",
+        ].filter(Boolean).join(" "),
         onClick: (e: React.MouseEvent) => {
           e.stopPropagation();
           if (!isSelected) {
-            editor.dispatch({ type: "SELECT_BLOCK", blockId: block.id });
+            editor.dispatch({ type: "SELECT_BLOCK", path: blockPath });
           }
         },
       }
@@ -78,7 +87,7 @@ export default function BlockView({ block, parentBlockId }: Props) {
   return (
     <div style={block.style} {...editorProps}>
       {header}
-      <ContentView content={block.content} blockId={block.id} />
+      <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} />
     </div>
   );
 }

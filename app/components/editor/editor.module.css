@@ -628,3 +628,163 @@
 .selectedBlock {
   outline-color: #2563eb !important;
 }
+
+.expandedBlock {
+  outline-color: #2563eb33 !important;
+}
+
+/* --- Box Model Diagram --- */
+
+.boxModel {
+  margin: 4px 0 8px;
+}
+
+.boxModelMargin {
+  position: relative;
+  display: grid;
+  grid-template:
+    ".    top    ." 24px
+    "left middle right" 1fr
+    ".    bottom ." 24px
+    / 40px 1fr 40px;
+  gap: 0;
+  padding: 4px;
+  background: rgba(249, 115, 22, 0.08);
+  border: 1.5px solid rgba(249, 115, 22, 0.3);
+  border-radius: 4px;
+  min-height: 120px;
+}
+
+.boxModelPadding {
+  position: relative;
+  grid-area: middle;
+  display: grid;
+  grid-template:
+    ".    top    ." 24px
+    "left middle right" 1fr
+    ".    bottom ." 24px
+    / 40px 1fr 40px;
+  gap: 0;
+  padding: 4px;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1.5px solid rgba(34, 197, 94, 0.3);
+  border-radius: 3px;
+}
+
+.boxModelContent {
+  grid-area: middle;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1.5px solid rgba(59, 130, 246, 0.3);
+  border-radius: 2px;
+  font-size: 10px;
+  color: #3b82f6;
+  font-weight: 500;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  min-height: 24px;
+}
+
+.boxModelLabel {
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.boxModelMargin > .boxModelLabel {
+  color: #f97316;
+}
+
+.boxModelPadding > .boxModelLabel {
+  color: #22c55e;
+}
+
+.boxModelInput {
+  width: 100%;
+  max-width: 40px;
+  padding: 2px;
+  font-size: 10px;
+  font-family: var(--font-geist-mono), monospace;
+  text-align: center;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--color-fg);
+}
+
+.boxModelInput:hover {
+  border-color: var(--color-border);
+  background: var(--color-bg);
+}
+
+.boxModelInput:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: var(--color-bg);
+  box-shadow: 0 0 0 1px #2563eb33;
+}
+
+.boxModelInput::placeholder {
+  color: #ccc;
+}
+
+.boxModelTop {
+  grid-area: top;
+  justify-self: center;
+  align-self: center;
+}
+
+.boxModelRight {
+  grid-area: right;
+  justify-self: center;
+  align-self: center;
+}
+
+.boxModelBottom {
+  grid-area: bottom;
+  justify-self: center;
+  align-self: center;
+}
+
+.boxModelLeft {
+  grid-area: left;
+  justify-self: center;
+  align-self: center;
+}
+
+/* --- Clear / Inherit indicators --- */
+
+.clearBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+}
+
+.clearBtn:hover {
+  background: #fecaca;
+  color: #dc2626;
+}
+
+.inheritLabel {
+  font-size: 10px;
+  color: #999;
+  font-style: italic;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}

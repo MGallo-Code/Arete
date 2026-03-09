@@ -9,9 +9,10 @@ import EditableRichText from "./editor/EditableRichText";
 interface Props {
   content: Content;
   blockId: string;
+  ancestorPath?: string[];
 }
 
-export default function ContentView({ content, blockId }: Props) {
+export default function ContentView({ content, blockId, ancestorPath }: Props) {
   const theme = useTheme();
   const editor = useEditor();
 
@@ -54,7 +55,7 @@ export default function ContentView({ content, blockId }: Props) {
 
     case "blocks":
       return content.children.map((child, index) => (
-        <BlockView key={index} block={child} parentBlockId={blockId} />
+        <BlockView key={index} block={child} parentBlockId={blockId} ancestorPath={ancestorPath} />
       ));
   }
 }

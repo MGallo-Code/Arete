@@ -7,18 +7,20 @@ import type { Resume, Block, Content, RichText, BulletItem, Style, PageSettings 
 
 interface EditorState {
   resume: Resume;
-  selectedBlockId: string | null;
+  selectedPath: string[];
   selectedRegionId: string | null;
   editingBlockId: string | null;
   editingField: "header" | "content" | null;
   past: Resume[];
   future: Resume[];
+  lastActionTime: number;
+  lastActionType: string | null;
 }
 
 // --- Actions ---
 
 export type EditorAction =
-  | { type: "SELECT_BLOCK"; blockId: string | null }
+  | { type: "SELECT_BLOCK"; path: string[] }
   | { type: "SET_RESUME"; resume: Resume }
   | { type: "START_EDITING"; blockId: string; field: "header" | "content" }
   | { type: "STOP_EDITING" }
@@ -30,11 +32,13 @@ export type EditorAction =
   | { type: "ADD_HEADER"; blockId: string }
   | { type: "REMOVE_HEADER"; blockId: string }
   | { type: "UPDATE_BLOCK_STYLE"; blockId: string; style: Style }
+  | { type: "SET_BLOCK_STYLE"; blockId: string; style: Style | undefined }
   | { type: "UPDATE_TEXT_CONTENT"; blockId: string; text: string }
   | { type: "UPDATE_RICH_TEXT"; blockId: string; field: "header" | "content"; richText: RichText }
   | { type: "UPDATE_BULLET_ITEMS"; blockId: string; items: BulletItem[] }
   | { type: "SELECT_REGION"; regionId: string | null }
   | { type: "UPDATE_REGION_STYLE"; regionId: string; style: Style }
+  | { type: "SET_REGION_STYLE"; regionId: string; style: Style }
   // Region mutations
   | { type: "MOVE_BLOCK_IN_REGION"; regionId: string; fromIndex: number; toIndex: number }
   | { type: "MOVE_BLOCK_TO_REGION"; blockId: string; fromRegion: string; toRegion: string; toIndex: number }
@@ -73,6 +77,8 @@ const MUTATING = new Set([
   "UPDATE_PAGE_SIZE",
   "UPDATE_PAGE_MARGINS",
   "UPDATE_REGION_STYLE",
+  "SET_BLOCK_STYLE",
+  "SET_REGION_STYLE",
 ]);
 
 // --- Helpers ---
@@ -212,19 +218,19 @@ function findBlockNested(block: Block, blockId: string): Block | null {
 function coreReducer(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
     case "SELECT_BLOCK":
-      return { ...state, selectedBlockId: action.blockId, selectedRegionId: null, editingBlockId: null, editingField: null };
+      return { ...state, selectedPath: action.path, selectedRegionId: null, editingBlockId: null, editingField: null };
 
     case "SET_RESUME":
-      return { ...state, resume: action.resume, selectedBlockId: null, selectedRegionId: null, editingBlockId: null, editingField: null, past: [], future: [] };
+      return { ...state, resume: action.resume, selectedPath: [], selectedRegionId: null, editingBlockId: null, editingField: null, past: [], future: [], lastActionTime: 0, lastActionType: null };
 
     case "START_EDITING":
-      return { ...state, selectedBlockId: action.blockId, editingBlockId: action.blockId, editingField: action.field };
+      return { ...state, selectedPath: state.selectedPath.length > 0 ? state.selectedPath : [action.blockId], selectedRegionId: null, editingBlockId: action.blockId, editingField: action.field };
 
     case "STOP_EDITING":
       return { ...state, editingBlockId: null, editingField: null };
 
     case "SELECT_REGION":
-      return { ...state, selectedRegionId: action.regionId, selectedBlockId: null, editingBlockId: null, editingField: null };
+      return { ...state, selectedRegionId: action.regionId, selectedPath: [], editingBlockId: null, editingField: null };
 
     case "UPDATE_REGION_STYLE": {
       const t = state.resume.template;
@@ -287,6 +293,32 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
           style: { ...b.style, ...action.style },
         })),
       };
+
+    case "SET_BLOCK_STYLE":
+      return {
+        ...state,
+        resume: updateBlock(state.resume, action.blockId, (b) => ({
+          ...b,
+          style: action.style,
+        })),
+      };
+
+    case "SET_REGION_STYLE": {
+      const t = state.resume.template;
+      return {
+        ...state,
+        resume: {
+          ...state.resume,
+          template: {
+            ...t,
+            regionStyles: {
+              ...t.regionStyles,
+              [action.regionId]: action.style,
+            },
+          },
+        },
+      };
+    }
 
     case "UPDATE_TEXT_CONTENT":
       return {
@@ -358,7 +390,7 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       ids.splice(index, 0, newBlock.id);
       return {
         ...state,
-        selectedBlockId: newBlock.id,
+        selectedPath: [newBlock.id],
         resume: {
           ...state.resume,
           regionBlockIds: { ...state.resume.regionBlockIds, [regionId]: ids },
@@ -373,7 +405,7 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       const { [blockId]: _, ...rest } = state.resume.blocks;
       return {
         ...state,
-        selectedBlockId: state.selectedBlockId === blockId ? null : state.selectedBlockId,
+        selectedPath: state.selectedPath.includes(blockId) ? [] : state.selectedPath,
         editingBlockId: state.editingBlockId === blockId ? null : state.editingBlockId,
         resume: { ...state.resume, regionBlockIds: { ...state.resume.regionBlockIds, [regionId]: ids }, blocks: rest },
       };
@@ -382,7 +414,7 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
     case "REMOVE_BLOCK_ANYWHERE": {
       const { blockId } = action;
       const clearSelection = {
-        selectedBlockId: state.selectedBlockId === blockId ? null : state.selectedBlockId,
+        selectedPath: state.selectedPath.includes(blockId) ? [] : state.selectedPath,
         editingBlockId: state.editingBlockId === blockId ? null : state.editingBlockId,
         editingField: state.editingBlockId === blockId ? null : state.editingField,
       };
@@ -426,7 +458,7 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       ids.splice(ids.indexOf(blockId) + 1, 0, clone.id);
       return {
         ...state,
-        selectedBlockId: clone.id,
+        selectedPath: [clone.id],
         resume: {
           ...state.resume,
           regionBlockIds: { ...state.resume.regionBlockIds, [regionId]: ids },
@@ -477,6 +509,9 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
 
 const MAX_HISTORY = 50;
 
+// Coalesce rapid mutations of the same type into one undo entry
+const COALESCE_MS = 500;
+
 function editorReducer(state: EditorState, action: EditorAction): EditorState {
   // Undo/redo bypass the core reducer
   if (action.type === "UNDO") {
@@ -487,6 +522,8 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
       resume: prev,
       past: state.past.slice(0, -1),
       future: [state.resume, ...state.future].slice(0, MAX_HISTORY),
+      lastActionTime: 0,
+      lastActionType: null,
     };
   }
   if (action.type === "REDO") {
@@ -497,6 +534,8 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
       resume: next,
       past: [...state.past, state.resume].slice(-MAX_HISTORY),
       future: state.future.slice(1),
+      lastActionTime: 0,
+      lastActionType: null,
     };
   }
 
@@ -504,14 +543,39 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
 
   // Push undo history for mutating actions
   if (MUTATING.has(action.type) && newState.resume !== state.resume) {
+    const now = Date.now();
+    const shouldCoalesce =
+      state.lastActionType === action.type &&
+      now - state.lastActionTime < COALESCE_MS;
+
+    if (shouldCoalesce) {
+      // Don't push new undo entry — keep existing past, just update resume
+      return {
+        ...newState,
+        past: state.past,
+        future: [],
+        lastActionTime: now,
+        lastActionType: action.type,
+      };
+    }
+
+    // New undo entry
     return {
       ...newState,
       past: [...state.past, state.resume].slice(-MAX_HISTORY),
       future: [],
+      lastActionTime: now,
+      lastActionType: action.type,
     };
   }
 
-  return { ...newState, past: state.past, future: state.future };
+  return {
+    ...newState,
+    past: state.past,
+    future: state.future,
+    lastActionTime: state.lastActionTime,
+    lastActionType: state.lastActionType,
+  };
 }
 
 // --- Context ---
@@ -519,6 +583,7 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
 interface EditorContextValue {
   resume: Resume;
   selectedBlockId: string | null;
+  selectedPath: string[];
   selectedRegionId: string | null;
   editingBlockId: string | null;
   editingField: "header" | "content" | null;
@@ -532,13 +597,17 @@ const EditorContext = createContext<EditorContextValue | null>(null);
 export function EditorProvider({ resume: initial, children }: { resume: Resume; children: ReactNode }) {
   const [state, dispatch] = useReducer(editorReducer, {
     resume: initial,
-    selectedBlockId: null,
+    selectedPath: [],
     selectedRegionId: null,
     editingBlockId: null,
     editingField: null,
     past: [],
     future: [],
+    lastActionTime: 0,
+    lastActionType: null,
   });
+
+  const selectedBlockId = state.selectedPath.length > 0 ? state.selectedPath[state.selectedPath.length - 1] : null;
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -553,21 +622,31 @@ export function EditorProvider({ resume: initial, children }: { resume: Resume; 
         return;
       }
 
-      // Delete selected block
-      if ((e.key === "Delete" || e.key === "Backspace") && state.selectedBlockId) {
+      // Delete selected block (but not when focus is in a form input)
+      if ((e.key === "Delete" || e.key === "Backspace") && selectedBlockId) {
+        const active = document.activeElement;
+        if (
+          active instanceof HTMLInputElement ||
+          active instanceof HTMLTextAreaElement ||
+          active instanceof HTMLSelectElement ||
+          (active as HTMLElement)?.isContentEditable
+        ) {
+          return;
+        }
         e.preventDefault();
-        dispatch({ type: "REMOVE_BLOCK_ANYWHERE", blockId: state.selectedBlockId });
+        dispatch({ type: "REMOVE_BLOCK_ANYWHERE", blockId: selectedBlockId });
       }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [state.editingBlockId, state.selectedBlockId, state.resume]);
+  }, [state.editingBlockId, selectedBlockId, state.resume]);
 
   return (
     <EditorContext.Provider
       value={{
         resume: state.resume,
-        selectedBlockId: state.selectedBlockId,
+        selectedBlockId,
+        selectedPath: state.selectedPath,
         selectedRegionId: state.selectedRegionId,
         editingBlockId: state.editingBlockId,
         editingField: state.editingField,

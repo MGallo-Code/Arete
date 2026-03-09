@@ -24,7 +24,7 @@ function EditorInner() {
   const [libraryOpen, setLibraryOpen] = useState(false);
 
   const closeSidebar = () => {
-    dispatch({ type: "SELECT_BLOCK", blockId: null });
+    dispatch({ type: "SELECT_BLOCK", path: [] });
     setSidebarOpen(false);
   };
 
@@ -33,7 +33,7 @@ function EditorInner() {
       {/* Preview */}
       <div
         className={styles.previewArea}
-        onClick={() => dispatch({ type: "SELECT_BLOCK", blockId: null })}
+        onClick={() => dispatch({ type: "SELECT_BLOCK", path: [] })}
       >
         <div className={styles.previewWrapper} onClick={(e) => e.stopPropagation()}>
           <ResumePreview resume={resume} />

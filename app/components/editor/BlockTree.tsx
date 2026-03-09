@@ -25,7 +25,7 @@ function ChildBlockNodes({ blocks }: { blocks: Block[] }) {
             className={`${styles.treeNode} ${selectedBlockId === block.id ? styles.treeNodeSelected : ""}`}
             onClick={(e) => {
               e.stopPropagation();
-              dispatch({ type: "SELECT_BLOCK", blockId: block.id });
+              dispatch({ type: "SELECT_BLOCK", path: [block.id] });
             }}
           >
             <span className={styles.nodeIcon}>{contentIcon(block)}</span>
@@ -62,7 +62,7 @@ function TopLevelBlockNode({
         className={`${styles.treeNode} ${selectedBlockId === block.id ? styles.treeNodeSelected : ""}`}
         onClick={(e) => {
           e.stopPropagation();
-          dispatch({ type: "SELECT_BLOCK", blockId: block.id });
+          dispatch({ type: "SELECT_BLOCK", path: [block.id] });
         }}
       >
         <span className={styles.nodeIcon}>{contentIcon(block)}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEditorRequired, findBlock, getBlockLabel } from "../../contexts/EditorContext";
+import { useTheme } from "../../contexts/ThemeContext";
 import type { BulletLevel } from "../../models";
 import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
@@ -17,6 +18,7 @@ const FONT_PRESETS = [
 
 export default function BlockStylePanel() {
   const { resume, selectedBlockId, dispatch } = useEditorRequired();
+  const theme = useTheme();
 
   if (!selectedBlockId) return null;
 
@@ -228,13 +230,15 @@ export default function BlockStylePanel() {
 
       {/* Bullet styles — only for bullet blocks */}
       {block.content.type === "bullets" && (() => {
-        const bulletLevels: BulletLevel[] = block.content.levels ?? [];
-        // Show at least the levels that are actually used, plus the theme defaults
+        const hasOverride = !!block.content.levels;
+        // Effective levels: per-block override, or theme fallback
+        const effectiveLevels: BulletLevel[] = block.content.levels ?? theme.bullets ?? [];
         const maxUsedLevel = Math.max(0, ...block.content.items.map(i => i.level ?? 0));
-        const displayLevels = Math.max(bulletLevels.length, maxUsedLevel + 1, 1);
+        const displayLevels = Math.max(effectiveLevels.length, maxUsedLevel + 1, 1);
 
         const updateLevel = (levelIndex: number, patch: Partial<BulletLevel>) => {
-          const newLevels = [...bulletLevels];
+          // When first editing, copy theme levels as the starting point
+          const newLevels = [...effectiveLevels];
           // Extend array if needed
           while (newLevels.length <= levelIndex) {
             newLevels.push({});
@@ -256,9 +260,12 @@ export default function BlockStylePanel() {
 
         return (
           <>
-            <div className={styles.themeSectionTitle}>Bullet Styles</div>
+            <div className={styles.themeSectionTitle}>
+              Bullet Styles
+              {!hasOverride && <span className={styles.inheritLabel} style={{ marginLeft: 6, textTransform: "none" }}>from theme</span>}
+            </div>
             {Array.from({ length: displayLevels }, (_, i) => {
-              const lvl = bulletLevels[i] ?? {};
+              const lvl = effectiveLevels[i] ?? {};
               return (
                 <div key={i} className={styles.propRow}>
                   <label className={styles.propLabel}>Level {i + 1}</label>
@@ -296,7 +303,7 @@ export default function BlockStylePanel() {
             <button
               className={styles.propBtn}
               onClick={() => {
-                const newLevels = [...bulletLevels, { char: "\u2022" }];
+                const newLevels = [...effectiveLevels, { char: "\u2022" }];
                 dispatch({ type: "UPDATE_BULLET_LEVELS", blockId: selectedBlockId, levels: newLevels });
               }}
             >

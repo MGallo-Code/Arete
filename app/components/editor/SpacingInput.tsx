@@ -31,6 +31,7 @@ interface SpacingInputProps {
   onChange: (cssValue: string) => void;
   placeholder?: string;
   compact?: boolean; // For BoxModelEditor — hides unit selector, shows it on focus
+  label?: string; // Accessible label for the number input
 }
 
 export default function SpacingInput({
@@ -38,6 +39,7 @@ export default function SpacingInput({
   onChange,
   placeholder = "0",
   compact = false,
+  label,
 }: SpacingInputProps) {
   const parsedPlaceholder = parseValue(placeholder);
   const [num, setNum] = useState(() => parseValue(value).num);
@@ -80,6 +82,7 @@ export default function SpacingInput({
           placeholder={parsedPlaceholder.num || "0"}
           onChange={(e) => handleNumChange(e.target.value)}
           onKeyDown={blurOnEnter}
+          {...(label ? { "aria-label": label } : {})}
         />
         <select
           className={styles.spacingCompactUnit}
@@ -106,6 +109,7 @@ export default function SpacingInput({
         value={num}
         placeholder={parsedPlaceholder.num || "0"}
         onChange={(e) => handleNumChange(e.target.value)}
+        {...(label ? { "aria-label": label } : {})}
       />
       <select
         className={styles.spacingFullUnit}

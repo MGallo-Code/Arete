@@ -38,6 +38,7 @@ export default function FloatingToolbar({
         type="button"
         className={styles.toolbarBtn}
         title="Move up"
+        aria-label="Move block up"
         disabled={blockIndex === 0}
         onClick={() =>
           dispatch({
@@ -54,6 +55,7 @@ export default function FloatingToolbar({
         type="button"
         className={styles.toolbarBtn}
         title="Move down"
+        aria-label="Move block down"
         disabled={blockIndex === totalBlocks - 1}
         onClick={() =>
           dispatch({
@@ -70,6 +72,7 @@ export default function FloatingToolbar({
         type="button"
         className={styles.toolbarBtn}
         title="Duplicate"
+        aria-label="Duplicate block"
         onClick={() => dispatch({ type: "DUPLICATE_BLOCK", regionId, blockId })}
       >
         &#10697;
@@ -78,6 +81,7 @@ export default function FloatingToolbar({
         type="button"
         className={styles.toolbarBtn}
         title="Insert block below"
+        aria-label="Insert block"
         onClick={handleInsert}
       >
         +
@@ -86,6 +90,7 @@ export default function FloatingToolbar({
         type="button"
         className={`${styles.toolbarBtn} ${styles.toolbarBtnDanger}`}
         title="Delete block"
+        aria-label="Delete block"
         onClick={() => dispatch({ type: "REMOVE_BLOCK", regionId, blockId })}
       >
         &#215;

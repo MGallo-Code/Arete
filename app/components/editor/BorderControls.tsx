@@ -139,6 +139,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
           <select
             className={styles.borderStyleSelect}
             value={unified.mixed ? "" : unified.borderStyle}
+            aria-label="Border style"
             onChange={(e) => {
               const bs = e.target.value as BorderStyle;
               const w = unified.width || "1px";
@@ -155,6 +156,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
             type="color"
             className={styles.colorInput}
             value={unified.mixed ? "#000000" : colorToHex(unified.color)}
+            aria-label="Border color"
             onChange={(e) => {
               const w = unified.width || "1px";
               const bs = unified.mixed ? "solid" : unified.borderStyle;
@@ -168,6 +170,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
                 for (const side of BORDER_SIDES) clearStyle(`border${side}`);
               }}
               title="Clear all borders"
+              aria-label="Clear all borders"
             >
               ×
             </button>
@@ -214,6 +217,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
                 key={`${side}-style`}
                 className={styles.borderStyleSelectCompact}
                 value={borderBs}
+                aria-label={`${side} border style`}
                 onChange={(e) => {
                   const bs = e.target.value as BorderStyle;
                   const w = borderWidth || "1px";
@@ -229,13 +233,14 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
                 type="color"
                 className={styles.colorInput}
                 value={colorToHex(borderColor)}
+                aria-label={`${side} border color`}
                 onChange={(e) => {
                   const w = borderWidth || "1px";
                   updateStyle({ [key]: `${w} ${borderBs} ${e.target.value}` });
                 }}
               />,
               style[key] ? (
-                <button key={`${side}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear">
+                <button key={`${side}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear" aria-label={`Clear ${side.toLowerCase()} border`}>
                   ×
                 </button>
               ) : (
@@ -264,6 +269,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
                 for (const corner of BORDER_CORNERS) clearStyle(`border${corner}Radius`);
               }}
               title="Clear all radii"
+              aria-label="Clear all border radii"
             >
               ×
             </button>
@@ -300,7 +306,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
               />,
               <span key={`${corner}-spacer`} />,
               val ? (
-                <button key={`${corner}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear">
+                <button key={`${corner}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear" aria-label={`Clear ${corner.replace(/([A-Z])/g, " $1").trim().toLowerCase()} radius`}>
                   ×
                 </button>
               ) : (

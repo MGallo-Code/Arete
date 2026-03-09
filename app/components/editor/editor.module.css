@@ -431,6 +431,11 @@
   background: var(--color-bg-subtle);
 }
 
+.propBtn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
 .propBtn:disabled {
   opacity: 0.4;
   cursor: default;
@@ -658,6 +663,11 @@
   border-right: 1px solid var(--color-border);
 }
 
+.toggleBtn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
 .toggleActive {
   background: #2563eb;
   color: #ffffff;
@@ -766,6 +776,11 @@
 .toolbarBtn:hover:not(:disabled) {
   background: #f1f5f9;
   color: #1e293b;
+}
+
+.toolbarBtn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
 }
 
 .toolbarBtn:disabled {
@@ -898,6 +913,11 @@
   color: #dc2626;
 }
 
+.clearBtn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
 .inheritLabel {
   font-size: 10px;
   color: #999;
@@ -926,6 +946,11 @@
   border-color: #2563eb;
   color: #2563eb;
   background: #2563eb08;
+}
+
+.colorSwatchBtn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
 }
 
 .colorSwatchHiddenInput {
@@ -1179,4 +1204,111 @@
 
 .palettePresetRow .paletteSwatches {
   margin-bottom: 0;
+}
+
+/* --- Link Modal --- */
+
+.linkModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 200;
+}
+
+.linkModalCard {
+  width: 320px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.14),
+    0 1px 4px rgba(0, 0, 0, 0.08);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.linkModalLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.linkModalInput {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  box-sizing: border-box;
+}
+
+.linkModalInput:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+
+.linkModalActions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.linkModalApplyBtn {
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.linkModalApplyBtn:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.linkModalApplyBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.linkModalRemoveBtn {
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid #fca5a5;
+  border-radius: 5px;
+  background: var(--color-bg);
+  color: #dc2626;
+  cursor: pointer;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.linkModalRemoveBtn:hover {
+  background: #fef2f2;
+}
+
+.linkModalCancelBtn {
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  cursor: pointer;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  margin-left: auto;
+}
+
+.linkModalCancelBtn:hover {
+  background: var(--color-bg-subtle);
 }

@@ -53,9 +53,10 @@ export default function ColorPropRow({
               type="color"
               className={styles.colorInput}
               value={value}
+              aria-label={`Pick ${label.toLowerCase()} color`}
               onChange={(e) => onChange(e.target.value)}
             />
-            <button className={styles.clearBtn} onClick={onClear} title="Clear">
+            <button className={styles.clearBtn} onClick={onClear} title="Clear" aria-label={`Clear ${label.toLowerCase()}`}>
               ×
             </button>
           </>
@@ -65,6 +66,7 @@ export default function ColorPropRow({
               className={styles.colorSwatchBtn}
               onClick={() => inputRef.current?.click()}
               title={`Set ${label.toLowerCase()}`}
+              aria-label={`Set ${label.toLowerCase()}`}
             >
               +
             </button>
@@ -73,6 +75,7 @@ export default function ColorPropRow({
               type="color"
               className={styles.colorSwatchHiddenInput}
               value={fallback}
+              aria-label={`Pick ${label.toLowerCase()} color`}
               onChange={(e) => onChange(e.target.value)}
             />
             <span className={styles.inheritLabel}>inherit</span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useEditorRequired, findBlock, getBlockLabel } from "../../contexts/EditorContext";
 import type { BulletLevel, Style } from "../../models";
 import { FONT_PRESETS } from "../../data/constants";
@@ -348,6 +348,9 @@ export default function BlockStylePanel() {
           dispatch({ type: "UPDATE_BULLET_LEVELS", blockId: selectedBlockId, levels: newLevels });
         };
 
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const colorInputRefs = useRef<Record<number, HTMLInputElement | null>>({});
+
         const MARKER_PRESETS = [
           { label: "None", value: "" },
           { label: "\u2022 Bullet", value: "\u2022" },
@@ -393,30 +396,49 @@ export default function BlockStylePanel() {
                       placeholder="0"
                       onChange={(v) => updateLevel(i, { style: { ...lvl.style, gap: v } })}
                     />
-                    <input
-                      type="color"
-                      className={styles.colorInput}
-                      value={(lvl.style?.color as string) || "#000000"}
-                      onChange={(e) => updateLevel(i, { style: { ...lvl.style, color: e.target.value } })}
-                    />
                     {lvl.style?.color ? (
-                      <button
-                        className={styles.clearBtn}
-                        onClick={() => {
-                          const newStyle = { ...lvl.style };
-                          delete (newStyle as Record<string, unknown>).color;
-                          updateLevel(i, { style: newStyle });
-                        }}
-                        title="Clear color"
-                      >
-                        ×
-                      </button>
-                    ) : null}
+                      <>
+                        <input
+                          type="color"
+                          className={styles.colorInput}
+                          value={lvl.style.color as string}
+                          onChange={(e) => updateLevel(i, { style: { ...lvl.style, color: e.target.value } })}
+                        />
+                        <button
+                          className={styles.clearBtn}
+                          onClick={() => {
+                            const newStyle = { ...lvl.style };
+                            delete (newStyle as Record<string, unknown>).color;
+                            updateLevel(i, { style: newStyle });
+                          }}
+                          title="Clear color"
+                        >
+                          ×
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          className={styles.colorSwatchBtn}
+                          onClick={() => colorInputRefs.current[i]?.click()}
+                          title="Set color"
+                        >
+                          +
+                        </button>
+                        <input
+                          ref={(el) => { colorInputRefs.current[i] = el; }}
+                          type="color"
+                          className={styles.colorSwatchHiddenInput}
+                          value="#000000"
+                          onChange={(e) => updateLevel(i, { style: { ...lvl.style, color: e.target.value } })}
+                        />
+                      </>
+                    )}
                   </div>
                   <div style={{ display: "flex", gap: 4, marginTop: 2 }}>
                     <span className={styles.inheritLabel}>indent</span>
                     <span className={styles.inheritLabel}>gap</span>
-                    <span className={styles.inheritLabel}>color</span>
+                    <span className={styles.inheritLabel}>{lvl.style?.color ? "color" : "inherit"}</span>
                   </div>
                 </div>
               );

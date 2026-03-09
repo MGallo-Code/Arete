@@ -822,6 +822,897 @@ export const sampleResume3: Resume = {
   },
 };
 
+// --- Sample Resume 4: Bold Sidebar — wide left sidebar, bold geometric look ---
+
+export const sampleResume4: Resume = {
+  id: "sample-004",
+  title: "Pat Taylor — Marketing Manager (Bold Sidebar)",
+  createdAt: "2026-03-01T00:00:00Z",
+  updatedAt: "2026-03-09T00:00:00Z",
+
+  template: {
+    id: "bold-sidebar",
+    name: "Bold Sidebar",
+    grid: '"sidebar main" 1fr / 35% 65%',
+    regionStyles: {
+      sidebar: {
+        background: "var(--palette-primary)",
+        padding: "32px 24px",
+        color: "#ffffff",
+      },
+      main: {
+        padding: "32px 28px",
+      },
+    },
+    page: {
+      size: "letter",
+      margins: { top: "0", right: "0", bottom: "0", left: "0" },
+    },
+    fonts: ["Raleway"],
+    theme: {
+      root: {
+        fontFamily: "Raleway, Helvetica, sans-serif",
+        fontSize: "10pt",
+        lineHeight: "1.5",
+        color: "#2d2d2d",
+        background: "#ffffff",
+      },
+      canvas: {},
+      h1: { fontSize: "22pt", fontWeight: "bold", color: "#ffffff", lineHeight: "1.2" },
+      h2: {
+        fontSize: "9pt",
+        fontWeight: "bold",
+        textTransform: "uppercase",
+        letterSpacing: "0.1em",
+        color: "var(--palette-accent)",
+        marginBottom: "6px",
+        marginTop: "16px",
+      },
+      h3: { fontSize: "10pt", fontWeight: "bold" },
+      h4: { fontSize: "10pt", color: "var(--palette-muted)" },
+      h5: { fontSize: "9pt" },
+      h6: { fontSize: "9pt" },
+      bullets: [
+        { char: "•", style: { fontSize: "10pt", lineHeight: "1.5", gap: "0.35em" } },
+        { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px", gap: "0.35em" } },
+      ],
+      link: { color: "var(--palette-accent)" },
+      palette: {
+        primary: "#7c3aed",
+        secondary: "#5b21b6",
+        accent: "#a78bfa",
+        muted: "#9ca3af",
+        background: "#faf5ff",
+      },
+    },
+  },
+
+  regionBlockIds: {
+    sidebar: ["pt-block-name", "pt-block-contact", "pt-block-skills"],
+    main: ["pt-block-summary", "pt-block-experience", "pt-block-education"],
+  },
+
+  blocks: {
+    "pt-block-name": {
+      id: "pt-block-name",
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "pt-name-title",
+            header: { content: [{ text: "Pat Taylor" }], tag: "h1" },
+            content: { type: "text", value: [] },
+          },
+          {
+            id: "pt-name-subtitle",
+            style: { color: "var(--palette-accent)", fontSize: "11pt" },
+            content: { type: "text", value: [{ text: "Marketing Manager" }] },
+          },
+        ],
+      },
+    },
+
+    "pt-block-contact": {
+      id: "pt-block-contact",
+      tags: ["contact"],
+      header: { content: [{ text: "Contact" }], tag: "h2" },
+      content: {
+        type: "bullets",
+        items: [
+          { content: [{ text: "hello@example.com" }] },
+          { content: [{ text: "linkedin.com/in/example", link: "https://example.com/linkedin" }] },
+          { content: [{ text: "Chicago, IL" }] },
+        ],
+      },
+    },
+
+    "pt-block-skills": {
+      id: "pt-block-skills",
+      tags: ["skills"],
+      header: { content: [{ text: "Skills" }], tag: "h2" },
+      content: {
+        type: "bullets",
+        items: [
+          { content: [{ text: "Brand Strategy & Positioning" }] },
+          { content: [{ text: "Content Marketing & SEO" }] },
+          { content: [{ text: "Google Analytics, HubSpot, Marketo" }] },
+          { content: [{ text: "A/B Testing & Conversion Optimization" }] },
+          { content: [{ text: "Team Leadership (8 direct reports)" }] },
+        ],
+      },
+    },
+
+    "pt-block-summary": {
+      id: "pt-block-summary",
+      tags: ["summary"],
+      header: { content: [{ text: "Summary" }], tag: "h2" },
+      content: {
+        type: "text",
+        value: [
+          {
+            text: "Marketing leader with 10 years driving growth for B2B SaaS companies. Expertise in demand generation, brand positioning, and building high-performing teams. Consistently delivered 30%+ YoY pipeline growth.",
+          },
+        ],
+      },
+    },
+
+    "pt-block-experience": {
+      id: "pt-block-experience",
+      tags: ["experience"],
+      header: { content: [{ text: "Experience" }], tag: "h2" },
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "pt-job-1",
+            content: {
+              type: "blocks",
+              children: [
+                {
+                  id: "pt-job-1-title",
+                  header: { content: [{ text: "Director of Marketing" }], tag: "h3" },
+                  content: {
+                    type: "text",
+                    value: [
+                      { text: "CloudSync", style: { fontStyle: "italic" } },
+                      { text: "  ·  2021 – Present" },
+                    ],
+                  },
+                },
+                {
+                  id: "pt-job-1-bullets",
+                  content: {
+                    type: "bullets",
+                    items: [
+                      { content: [{ text: "Grew marketing-sourced pipeline from $8M to $22M annually." }] },
+                      { content: [{ text: "Launched account-based marketing program targeting Fortune 500 accounts." }] },
+                      { content: [{ text: "Built and managed team of 8 across content, demand gen, and design." }] },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            id: "pt-job-2",
+            content: {
+              type: "blocks",
+              children: [
+                {
+                  id: "pt-job-2-title",
+                  header: { content: [{ text: "Senior Marketing Manager" }], tag: "h3" },
+                  content: {
+                    type: "text",
+                    value: [
+                      { text: "Dataflow", style: { fontStyle: "italic" } },
+                      { text: "  ·  2017 – 2021" },
+                    ],
+                  },
+                },
+                {
+                  id: "pt-job-2-bullets",
+                  content: {
+                    type: "bullets",
+                    items: [
+                      { content: [{ text: "Increased organic traffic 150% through content strategy overhaul." }] },
+                      { content: [{ text: "Managed $1.2M annual ad spend across Google, LinkedIn, and programmatic." }] },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+
+    "pt-block-education": {
+      id: "pt-block-education",
+      tags: ["education"],
+      header: { content: [{ text: "Education" }], tag: "h2" },
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "pt-edu-degree",
+            header: { content: [{ text: "B.A. Marketing" }], tag: "h3" },
+            content: {
+              type: "text",
+              value: [
+                { text: "Northwestern University", style: { fontStyle: "italic" } },
+                { text: "  ·  2014" },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  },
+};
+
+// --- Sample Resume 5: Clean Single Column — centered header, no sidebar ---
+
+export const sampleResume5: Resume = {
+  id: "sample-005",
+  title: "Chris Lee — Backend Engineer (Clean Single)",
+  createdAt: "2026-03-01T00:00:00Z",
+  updatedAt: "2026-03-09T00:00:00Z",
+
+  template: {
+    id: "clean-single",
+    name: "Clean Single Column",
+    grid: '"header" auto "main" 1fr / 1fr',
+    regionStyles: {
+      header: {
+        padding: "28px 40px",
+        borderBottom: "3px solid var(--palette-primary)",
+      },
+      main: {
+        padding: "24px 40px",
+      },
+    },
+    page: {
+      size: "letter",
+      margins: { top: "0", right: "0", bottom: "0", left: "0" },
+    },
+    fonts: ["Source Sans Pro"],
+    theme: {
+      root: {
+        fontFamily: "'Source Sans Pro', Helvetica, sans-serif",
+        fontSize: "10pt",
+        lineHeight: "1.5",
+        color: "#1f2937",
+        background: "#ffffff",
+      },
+      canvas: {},
+      h1: { fontSize: "26pt", fontWeight: "bold", color: "#1f2937", letterSpacing: "-0.02em" },
+      h2: {
+        fontSize: "10pt",
+        fontWeight: "bold",
+        textTransform: "uppercase",
+        letterSpacing: "0.08em",
+        color: "var(--palette-primary)",
+        marginBottom: "6px",
+        marginTop: "18px",
+        borderBottom: "1px solid var(--palette-muted)",
+        paddingBottom: "4px",
+      },
+      h3: { fontSize: "10pt", fontWeight: "bold" },
+      h4: { fontSize: "10pt", color: "var(--palette-muted)" },
+      h5: { fontSize: "9pt" },
+      h6: { fontSize: "9pt" },
+      bullets: [
+        { char: "•", style: { fontSize: "10pt", lineHeight: "1.6", gap: "0.4em" } },
+        { char: "–", style: { fontSize: "9pt", lineHeight: "1.6", paddingLeft: "14px", gap: "0.4em" } },
+      ],
+      link: { color: "var(--palette-accent)" },
+      palette: {
+        primary: "#0d9488",
+        secondary: "#0f766e",
+        accent: "#14b8a6",
+        muted: "#9ca3af",
+        background: "#f0fdfa",
+      },
+    },
+  },
+
+  regionBlockIds: {
+    header: ["cl-block-name"],
+    main: ["cl-block-summary", "cl-block-experience", "cl-block-skills", "cl-block-education"],
+  },
+
+  blocks: {
+    "cl-block-name": {
+      id: "cl-block-name",
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "cl-name-title",
+            header: { content: [{ text: "Chris Lee" }], tag: "h1" },
+            content: { type: "text", value: [] },
+          },
+          {
+            id: "cl-name-contact",
+            style: { color: "var(--palette-muted)" },
+            content: {
+              type: "text",
+              value: [
+                { text: "hello@example.dev  ·  " },
+                { text: "github.com/example", link: "https://example.com/github" },
+                { text: "  ·  Austin, TX" },
+              ],
+            },
+          },
+        ],
+      },
+    },
+
+    "cl-block-summary": {
+      id: "cl-block-summary",
+      tags: ["summary"],
+      header: { content: [{ text: "Summary" }], tag: "h2" },
+      content: {
+        type: "text",
+        value: [
+          {
+            text: "Backend engineer with 7 years building distributed systems and APIs at scale. Deep experience with Go, PostgreSQL, and cloud infrastructure. Passionate about reliability engineering and developer tooling.",
+          },
+        ],
+      },
+    },
+
+    "cl-block-experience": {
+      id: "cl-block-experience",
+      tags: ["experience"],
+      header: { content: [{ text: "Experience" }], tag: "h2" },
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "cl-job-1",
+            content: {
+              type: "blocks",
+              children: [
+                {
+                  id: "cl-job-1-title",
+                  header: { content: [{ text: "Senior Backend Engineer" }], tag: "h3" },
+                  content: {
+                    type: "text",
+                    value: [
+                      { text: "Vaultkey", style: { fontStyle: "italic" } },
+                      { text: "  ·  2021 – Present" },
+                    ],
+                  },
+                },
+                {
+                  id: "cl-job-1-bullets",
+                  content: {
+                    type: "bullets",
+                    items: [
+                      { content: [{ text: "Designed event-driven architecture handling 50K events/second across 12 microservices." }] },
+                      { content: [{ text: "Reduced P99 API latency from 800ms to 120ms through query optimization and caching." }] },
+                      { content: [{ text: "Led migration from monolith to microservices with zero customer-facing downtime." }] },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            id: "cl-job-2",
+            content: {
+              type: "blocks",
+              children: [
+                {
+                  id: "cl-job-2-title",
+                  header: { content: [{ text: "Software Engineer" }], tag: "h3" },
+                  content: {
+                    type: "text",
+                    value: [
+                      { text: "Gridware", style: { fontStyle: "italic" } },
+                      { text: "  ·  2018 – 2021" },
+                    ],
+                  },
+                },
+                {
+                  id: "cl-job-2-bullets",
+                  content: {
+                    type: "bullets",
+                    items: [
+                      { content: [{ text: "Built real-time data pipeline processing 2TB daily for IoT sensor data." }] },
+                      { content: [{ text: "Implemented distributed tracing across 30+ services using OpenTelemetry." }] },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+
+    "cl-block-skills": {
+      id: "cl-block-skills",
+      tags: ["skills"],
+      header: { content: [{ text: "Skills" }], tag: "h2" },
+      content: {
+        type: "text",
+        value: [{ text: "Go, Python, PostgreSQL, Redis, Kafka, gRPC, Kubernetes, Terraform, AWS, Datadog" }],
+      },
+    },
+
+    "cl-block-education": {
+      id: "cl-block-education",
+      tags: ["education"],
+      header: { content: [{ text: "Education" }], tag: "h2" },
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "cl-edu-degree",
+            header: { content: [{ text: "B.S. Computer Science" }], tag: "h3" },
+            content: {
+              type: "text",
+              value: [
+                { text: "UT Austin", style: { fontStyle: "italic" } },
+                { text: "  ·  2018" },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  },
+};
+
+// --- Sample Resume 6: Warm Accent — earthy tones, top header band ---
+
+export const sampleResume6: Resume = {
+  id: "sample-006",
+  title: "Morgan Davis — UX Researcher (Warm Accent)",
+  createdAt: "2026-03-01T00:00:00Z",
+  updatedAt: "2026-03-09T00:00:00Z",
+
+  template: {
+    id: "warm-accent",
+    name: "Warm Accent",
+    grid: '"header header" auto "sidebar main" 1fr / 32% 68%',
+    regionStyles: {
+      header: {
+        background: "var(--palette-primary)",
+        padding: "28px 32px",
+        color: "#ffffff",
+      },
+      sidebar: {
+        padding: "20px 20px",
+        background: "var(--palette-background)",
+      },
+      main: {
+        padding: "20px 28px",
+      },
+    },
+    page: {
+      size: "letter",
+      margins: { top: "0", right: "0", bottom: "0", left: "0" },
+    },
+    fonts: ["Lora"],
+    theme: {
+      root: {
+        fontFamily: "Lora, Georgia, serif",
+        fontSize: "10pt",
+        lineHeight: "1.55",
+        color: "#3b2f2f",
+        background: "#ffffff",
+      },
+      canvas: {},
+      h1: { fontSize: "22pt", fontWeight: "bold", color: "#ffffff" },
+      h2: {
+        fontSize: "9pt",
+        fontWeight: "bold",
+        textTransform: "uppercase",
+        letterSpacing: "0.1em",
+        color: "var(--palette-primary)",
+        marginBottom: "6px",
+        marginTop: "16px",
+        borderBottom: "1px solid var(--palette-accent)",
+        paddingBottom: "3px",
+      },
+      h3: { fontSize: "10pt", fontWeight: "bold" },
+      h4: { fontSize: "10pt", color: "var(--palette-muted)" },
+      h5: { fontSize: "9pt" },
+      h6: { fontSize: "9pt" },
+      bullets: [
+        { char: "•", style: { fontSize: "10pt", lineHeight: "1.55", gap: "0.35em" } },
+        { char: "–", style: { fontSize: "9pt", lineHeight: "1.55", paddingLeft: "12px", gap: "0.35em" } },
+      ],
+      link: { color: "var(--palette-accent)" },
+      palette: {
+        primary: "#92400e",
+        secondary: "#78350f",
+        accent: "#d97706",
+        muted: "#a8a29e",
+        background: "#faf5f0",
+      },
+    },
+  },
+
+  regionBlockIds: {
+    header: ["md-block-name"],
+    sidebar: ["md-block-contact", "md-block-skills", "md-block-education"],
+    main: ["md-block-summary", "md-block-experience"],
+  },
+
+  blocks: {
+    "md-block-name": {
+      id: "md-block-name",
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "md-name-title",
+            header: { content: [{ text: "Morgan Davis" }], tag: "h1" },
+            content: { type: "text", value: [] },
+          },
+          {
+            id: "md-name-subtitle",
+            style: { color: "var(--palette-accent)", fontSize: "11pt" },
+            content: { type: "text", value: [{ text: "UX Researcher" }] },
+          },
+        ],
+      },
+    },
+
+    "md-block-contact": {
+      id: "md-block-contact",
+      tags: ["contact"],
+      header: { content: [{ text: "Contact" }], tag: "h2" },
+      content: {
+        type: "bullets",
+        items: [
+          { content: [{ text: "hello@example.com" }] },
+          { content: [{ text: "portfolio.example.com", link: "https://example.com/portfolio" }] },
+          { content: [{ text: "Portland, OR" }] },
+        ],
+      },
+    },
+
+    "md-block-skills": {
+      id: "md-block-skills",
+      tags: ["skills"],
+      header: { content: [{ text: "Methods" }], tag: "h2" },
+      content: {
+        type: "bullets",
+        items: [
+          { content: [{ text: "Usability Testing" }] },
+          { content: [{ text: "Contextual Inquiry" }] },
+          { content: [{ text: "Survey Design & Analysis" }] },
+          { content: [{ text: "Journey Mapping" }] },
+          { content: [{ text: "A/B Testing" }] },
+          { content: [{ text: "Card Sorting & Tree Testing" }] },
+        ],
+      },
+    },
+
+    "md-block-education": {
+      id: "md-block-education",
+      tags: ["education"],
+      header: { content: [{ text: "Education" }], tag: "h2" },
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "md-edu-degree",
+            header: { content: [{ text: "M.A. Human-Computer Interaction" }], tag: "h3" },
+            content: {
+              type: "text",
+              value: [
+                { text: "Carnegie Mellon", style: { fontStyle: "italic" } },
+                { text: "  ·  2018" },
+              ],
+            },
+          },
+        ],
+      },
+    },
+
+    "md-block-summary": {
+      id: "md-block-summary",
+      tags: ["summary"],
+      header: { content: [{ text: "Summary" }], tag: "h2" },
+      content: {
+        type: "text",
+        value: [
+          {
+            text: "UX researcher with 7 years uncovering user needs across enterprise and consumer products. Skilled at translating qualitative and quantitative insights into actionable design recommendations that drive measurable outcomes.",
+          },
+        ],
+      },
+    },
+
+    "md-block-experience": {
+      id: "md-block-experience",
+      tags: ["experience"],
+      header: { content: [{ text: "Experience" }], tag: "h2" },
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "md-job-1",
+            content: {
+              type: "blocks",
+              children: [
+                {
+                  id: "md-job-1-title",
+                  header: { content: [{ text: "Lead UX Researcher" }], tag: "h3" },
+                  content: {
+                    type: "text",
+                    value: [
+                      { text: "Fieldnote", style: { fontStyle: "italic" } },
+                      { text: "  ·  2021 – Present" },
+                    ],
+                  },
+                },
+                {
+                  id: "md-job-1-bullets",
+                  content: {
+                    type: "bullets",
+                    items: [
+                      { content: [{ text: "Established research practice from scratch, building team of 4 researchers." }] },
+                      { content: [{ text: "Conducted 100+ user interviews informing product roadmap for 3 product lines." }] },
+                      { content: [{ text: "Reduced onboarding drop-off 25% through iterative usability testing." }] },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            id: "md-job-2",
+            content: {
+              type: "blocks",
+              children: [
+                {
+                  id: "md-job-2-title",
+                  header: { content: [{ text: "UX Researcher" }], tag: "h3" },
+                  content: {
+                    type: "text",
+                    value: [
+                      { text: "Pixelcraft", style: { fontStyle: "italic" } },
+                      { text: "  ·  2018 – 2021" },
+                    ],
+                  },
+                },
+                {
+                  id: "md-job-2-bullets",
+                  content: {
+                    type: "bullets",
+                    items: [
+                      { content: [{ text: "Designed and ran moderated usability studies for mobile and web." }] },
+                      { content: [{ text: "Created research repository used by 40+ designers and PMs." }] },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  },
+};
+
+// --- Sample Resume 7: Compact — dense, no-frills, max content ---
+
+export const sampleResume7: Resume = {
+  id: "sample-007",
+  title: "Alex Kim — DevOps Engineer (Compact)",
+  createdAt: "2026-03-01T00:00:00Z",
+  updatedAt: "2026-03-09T00:00:00Z",
+
+  template: {
+    id: "compact",
+    name: "Compact",
+    grid: '"main" 1fr / 1fr',
+    regionStyles: {
+      main: {
+        padding: "24px 36px",
+      },
+    },
+    page: {
+      size: "letter",
+      margins: { top: "0", right: "0", bottom: "0", left: "0" },
+    },
+    fonts: ["IBM Plex Sans"],
+    theme: {
+      root: {
+        fontFamily: "'IBM Plex Sans', monospace",
+        fontSize: "9pt",
+        lineHeight: "1.45",
+        color: "#1a1a1a",
+        background: "#ffffff",
+      },
+      canvas: {},
+      h1: { fontSize: "18pt", fontWeight: "bold", color: "#1a1a1a" },
+      h2: {
+        fontSize: "8pt",
+        fontWeight: "bold",
+        textTransform: "uppercase",
+        letterSpacing: "0.12em",
+        color: "var(--palette-primary)",
+        marginBottom: "4px",
+        marginTop: "12px",
+        borderBottom: "1px solid var(--palette-primary)",
+        paddingBottom: "2px",
+      },
+      h3: { fontSize: "9pt", fontWeight: "bold" },
+      h4: { fontSize: "9pt", color: "var(--palette-muted)" },
+      h5: { fontSize: "8pt" },
+      h6: { fontSize: "8pt" },
+      bullets: [
+        { char: "▸", style: { fontSize: "9pt", lineHeight: "1.45", gap: "0.3em" } },
+        { char: "·", style: { fontSize: "8pt", lineHeight: "1.45", paddingLeft: "10px", gap: "0.3em" } },
+      ],
+      link: { color: "var(--palette-accent)" },
+      palette: {
+        primary: "#dc2626",
+        secondary: "#991b1b",
+        accent: "#ef4444",
+        muted: "#6b7280",
+        background: "#fef2f2",
+      },
+    },
+  },
+
+  regionBlockIds: {
+    main: ["ak-block-header", "ak-block-experience", "ak-block-skills", "ak-block-certs", "ak-block-education"],
+  },
+
+  blocks: {
+    "ak-block-header": {
+      id: "ak-block-header",
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "ak-name-title",
+            header: { content: [{ text: "Alex Kim" }], tag: "h1" },
+            content: { type: "text", value: [] },
+          },
+          {
+            id: "ak-name-contact",
+            style: { color: "var(--palette-muted)", fontSize: "9pt" },
+            content: {
+              type: "text",
+              value: [
+                { text: "hello@example.dev  ·  " },
+                { text: "github.com/example", link: "https://example.com/github" },
+                { text: "  ·  Denver, CO" },
+              ],
+            },
+          },
+        ],
+      },
+    },
+
+    "ak-block-experience": {
+      id: "ak-block-experience",
+      tags: ["experience"],
+      header: { content: [{ text: "Experience" }], tag: "h2" },
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "ak-job-1",
+            content: {
+              type: "blocks",
+              children: [
+                {
+                  id: "ak-job-1-title",
+                  header: { content: [{ text: "Senior DevOps Engineer" }], tag: "h3" },
+                  content: {
+                    type: "text",
+                    value: [
+                      { text: "Infrastack", style: { fontStyle: "italic" } },
+                      { text: "  ·  2022 – Present" },
+                    ],
+                  },
+                },
+                {
+                  id: "ak-job-1-bullets",
+                  content: {
+                    type: "bullets",
+                    items: [
+                      { content: [{ text: "Managed Kubernetes clusters serving 500M+ requests/day across 3 regions." }] },
+                      { content: [{ text: "Reduced CI/CD pipeline time from 45min to 8min through parallelization and caching." }] },
+                      { content: [{ text: "Implemented GitOps workflow with ArgoCD, eliminating manual deployments." }] },
+                      { content: [{ text: "Designed disaster recovery runbooks; achieved 99.99% uptime SLA." }] },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+          {
+            id: "ak-job-2",
+            content: {
+              type: "blocks",
+              children: [
+                {
+                  id: "ak-job-2-title",
+                  header: { content: [{ text: "DevOps Engineer" }], tag: "h3" },
+                  content: {
+                    type: "text",
+                    value: [
+                      { text: "Orbitra", style: { fontStyle: "italic" } },
+                      { text: "  ·  2019 – 2022" },
+                    ],
+                  },
+                },
+                {
+                  id: "ak-job-2-bullets",
+                  content: {
+                    type: "bullets",
+                    items: [
+                      { content: [{ text: "Built infrastructure-as-code with Terraform managing 200+ AWS resources." }] },
+                      { content: [{ text: "Automated security scanning in CI pipeline, catching 90% of vulnerabilities pre-merge." }] },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+
+    "ak-block-skills": {
+      id: "ak-block-skills",
+      tags: ["skills"],
+      header: { content: [{ text: "Skills" }], tag: "h2" },
+      content: {
+        type: "text",
+        value: [{ text: "Kubernetes, Terraform, AWS, GCP, Docker, ArgoCD, Prometheus, Grafana, Bash, Python, Go, GitHub Actions, Jenkins" }],
+      },
+    },
+
+    "ak-block-certs": {
+      id: "ak-block-certs",
+      tags: ["certifications"],
+      header: { content: [{ text: "Certifications" }], tag: "h2" },
+      content: {
+        type: "bullets",
+        items: [
+          { content: [{ text: "AWS Solutions Architect – Professional" }] },
+          { content: [{ text: "Certified Kubernetes Administrator (CKA)" }] },
+        ],
+      },
+    },
+
+    "ak-block-education": {
+      id: "ak-block-education",
+      tags: ["education"],
+      header: { content: [{ text: "Education" }], tag: "h2" },
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "ak-edu-degree",
+            header: { content: [{ text: "B.S. Information Systems" }], tag: "h3" },
+            content: {
+              type: "text",
+              value: [
+                { text: "CU Boulder", style: { fontStyle: "italic" } },
+                { text: "  ·  2019" },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  },
+};
+
 // --- Test Resume: exercises ALL features for visual/CSS verification ---
 // Use this to verify: h1-h6, rich text (links/bold/italic), bullets (level 0/1),
 // custom bullet levels, image content, nested blocks, block styles, region styles

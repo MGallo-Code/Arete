@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { EditorProvider, useEditorRequired } from "../../contexts/EditorContext";
-import { sampleResume, sampleResume2, sampleResume3, testResume } from "../../fixtures";
+import { sampleResume, sampleResume2, sampleResume3, sampleResume4, sampleResume5, sampleResume6, sampleResume7, testResume } from "../../fixtures";
 import type { Resume } from "../../models";
 import ResumePreview from "../ResumePreview";
 import BlockLibrary from "./BlockLibrary";
@@ -15,6 +15,10 @@ const RESUMES: Record<string, Resume> = {
   "sample-001": sampleResume,
   "sample-002": sampleResume2,
   "sample-003": sampleResume3,
+  "sample-004": sampleResume4,
+  "sample-005": sampleResume5,
+  "sample-006": sampleResume6,
+  "sample-007": sampleResume7,
   "test-all-features": testResume,
 };
 

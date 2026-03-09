@@ -53,9 +53,8 @@ export interface PageSettings {
 }
 
 export interface Theme {
-  root: Style; // page container
-  main: Style; // base styles cascaded across all regions
-  body: Style; // default text
+  root: Style;   // full page — background, watermark; cascades font/color to all children
+  canvas: Style; // content area inside margins — grid container background
   h1: Style;
   h2: Style;
   h3: Style;

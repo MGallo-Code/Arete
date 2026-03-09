@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import type { RichText, Style } from "../../models";
 import { richTextToHtml, domToRichText } from "../../utils/richTextUtils";
+import LinkModal from "./LinkModal";
 
 interface Props {
   richText: RichText;
@@ -11,6 +12,30 @@ interface Props {
   as?: string;
   style?: Style;
   saveOnEnter?: boolean;
+}
+
+/** Get the existing link URL from the current selection, if any */
+function getSelectedLinkUrl(): string {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return "";
+  let node: Node | null = sel.anchorNode;
+  while (node) {
+    if (node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).tagName === "A") {
+      return (node as HTMLAnchorElement).href || "";
+    }
+    node = node.parentNode;
+  }
+  return "";
+}
+
+/** Get a position rect near the current selection for anchoring the modal */
+function getSelectionRect(): { top: number; left: number } | undefined {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return undefined;
+  const range = sel.getRangeAt(0);
+  const rect = range.getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) return undefined;
+  return { top: rect.bottom, left: rect.left };
 }
 
 export default function EditableRichText({
@@ -23,6 +48,13 @@ export default function EditableRichText({
 }: Props) {
   const ref = useRef<HTMLElement>(null);
   const cancelledRef = useRef(false);
+
+  // Link modal state
+  const [linkModal, setLinkModal] = useState<{
+    initialUrl: string;
+    anchorRect?: { top: number; left: number };
+    savedRange: Range;
+  } | null>(null);
 
   // Set initial HTML and focus
   useEffect(() => {
@@ -51,8 +83,6 @@ export default function EditableRichText({
       if (e.key === "Escape") {
         e.preventDefault();
         cancelledRef.current = true;
-        // Blur explicitly AFTER setting the ref so handleBlur sees it
-        // and skips saving. onCancel() is called after blur completes.
         ref.current?.blur();
         onCancel();
         return;
@@ -72,30 +102,91 @@ export default function EditableRichText({
       }
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        const url = prompt("Link URL:");
-        if (url) document.execCommand("createLink", false, url);
+        // Save the current selection range and open modal
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0) return;
+        const savedRange = sel.getRangeAt(0).cloneRange();
+        const existingUrl = getSelectedLinkUrl();
+        const anchorRect = getSelectionRect();
+        setLinkModal({ initialUrl: existingUrl, anchorRect, savedRange });
       }
     },
     [onCancel, save, saveOnEnter],
   );
 
-  const handleBlur = useCallback(() => {
-    if (!cancelledRef.current) {
-      save();
+  const handleBlur = useCallback(
+    (e: React.FocusEvent) => {
+      // If the link modal is open, don't treat blur as save/cancel —
+      // focus is moving to the modal input
+      if (linkModal) return;
+      // Check if focus is moving to a child of the link modal overlay
+      const related = e.relatedTarget as HTMLElement | null;
+      if (related?.closest("[data-link-modal]")) return;
+
+      if (!cancelledRef.current) {
+        save();
+      }
+      cancelledRef.current = false;
+    },
+    [save, linkModal],
+  );
+
+  const restoreSelection = useCallback((range: Range) => {
+    const sel = window.getSelection();
+    sel?.removeAllRanges();
+    sel?.addRange(range);
+  }, []);
+
+  const handleLinkApply = useCallback(
+    (url: string) => {
+      if (!linkModal) return;
+      // Restore selection, then apply link
+      restoreSelection(linkModal.savedRange);
+      document.execCommand("createLink", false, url);
+      setLinkModal(null);
+      ref.current?.focus();
+    },
+    [linkModal, restoreSelection],
+  );
+
+  const handleLinkRemove = useCallback(() => {
+    if (!linkModal) return;
+    restoreSelection(linkModal.savedRange);
+    document.execCommand("unlink");
+    setLinkModal(null);
+    ref.current?.focus();
+  }, [linkModal, restoreSelection]);
+
+  const handleLinkCancel = useCallback(() => {
+    setLinkModal(null);
+    // Restore focus back to contentEditable
+    if (linkModal) {
+      restoreSelection(linkModal.savedRange);
     }
-    cancelledRef.current = false;
-  }, [save]);
+    ref.current?.focus();
+  }, [linkModal, restoreSelection]);
 
   // Render empty element — innerHTML is set in useEffect
   const Wrapper = Tag as React.ElementType;
   return (
-    <Wrapper
-      ref={ref}
-      contentEditable
-      suppressContentEditableWarning
-      style={{ ...style, outline: "none", cursor: "text" }}
-      onKeyDown={handleKeyDown}
-      onBlur={handleBlur}
-    />
+    <>
+      <Wrapper
+        ref={ref}
+        contentEditable
+        suppressContentEditableWarning
+        style={{ ...style, outline: "none", cursor: "text" }}
+        onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
+      />
+      {linkModal && (
+        <LinkModal
+          initialUrl={linkModal.initialUrl}
+          anchorRect={linkModal.anchorRect}
+          onApply={handleLinkApply}
+          onRemove={handleLinkRemove}
+          onCancel={handleLinkCancel}
+        />
+      )}
+    </>
   );
 }

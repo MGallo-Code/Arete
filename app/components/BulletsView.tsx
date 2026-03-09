@@ -5,6 +5,7 @@ import type { BulletItem, BulletLevel, RichText } from "../models";
 import { useEditor } from "../contexts/EditorContext";
 import { richTextToHtml, domToRichText } from "../utils/richTextUtils";
 import RichTextView from "./RichTextView";
+import LinkModal from "./editor/LinkModal";
 
 interface Props {
   items: BulletItem[];
@@ -78,6 +79,13 @@ export default function BulletsView({ items, levels, blockId }: Props) {
   const [editingItems, setEditingItems] = useState<EditingItem[] | null>(null);
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const refsMap = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  // Link modal state
+  const [linkModal, setLinkModal] = useState<{
+    initialUrl: string;
+    anchorRect?: { top: number; left: number };
+    savedRange: Range;
+  } | null>(null);
 
   const editing = editingItems !== null;
 
@@ -285,15 +293,72 @@ export default function BulletsView({ items, levels, blockId }: Props) {
         e.preventDefault();
         document.execCommand("italic");
       }
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0) return;
+        const savedRange = sel.getRangeAt(0).cloneRange();
+        // Check if selection is inside an anchor
+        let existingUrl = "";
+        let node: Node | null = sel.anchorNode;
+        while (node) {
+          if (node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).tagName === "A") {
+            existingUrl = (node as HTMLAnchorElement).href || "";
+            break;
+          }
+          node = node.parentNode;
+        }
+        const rect = savedRange.getBoundingClientRect();
+        const anchorRect =
+          rect.width > 0 || rect.height > 0
+            ? { top: rect.bottom, left: rect.left }
+            : undefined;
+        setLinkModal({ initialUrl: existingUrl, anchorRect, savedRange });
+      }
     },
     [editingItems, levels.length, readRef, saveAndExit],
   );
 
+  // Link modal callbacks
+  const handleLinkApply = useCallback(
+    (url: string) => {
+      if (!linkModal) return;
+      const sel = window.getSelection();
+      sel?.removeAllRanges();
+      sel?.addRange(linkModal.savedRange);
+      document.execCommand("createLink", false, url);
+      setLinkModal(null);
+    },
+    [linkModal],
+  );
+
+  const handleLinkRemove = useCallback(() => {
+    if (!linkModal) return;
+    const sel = window.getSelection();
+    sel?.removeAllRanges();
+    sel?.addRange(linkModal.savedRange);
+    document.execCommand("unlink");
+    setLinkModal(null);
+  }, [linkModal]);
+
+  const handleLinkCancel = useCallback(() => {
+    if (linkModal) {
+      const sel = window.getSelection();
+      sel?.removeAllRanges();
+      sel?.addRange(linkModal.savedRange);
+    }
+    setLinkModal(null);
+  }, [linkModal]);
+
   // Handle blur — check if focus is still within the list
   const handleBlur = useCallback(
     () => {
+      // If link modal is open, don't save/exit — focus moved to the modal
+      if (linkModal) return;
       setTimeout(() => {
         const active = document.activeElement;
+        // Check if focus moved to the link modal overlay
+        if (active?.closest("[data-link-modal]")) return;
         for (const el of refsMap.current.values()) {
           if (el === active) return;
         }
@@ -301,7 +366,7 @@ export default function BulletsView({ items, levels, blockId }: Props) {
         saveAndExit();
       }, 0);
     },
-    [saveAndExit],
+    [saveAndExit, linkModal],
   );
 
   const startEditing = useCallback(
@@ -316,6 +381,7 @@ export default function BulletsView({ items, levels, blockId }: Props) {
   const renderItems = editing ? editingItems! : items.map((item, i) => ({ key: `v-${i}`, item }));
 
   return (
+    <>
     <ul style={{ listStyle: "none" }}>
       {renderItems.map(({ key, item }, index) => {
         const level = levels[item.level ?? 0] ?? {};
@@ -362,5 +428,15 @@ export default function BulletsView({ items, levels, blockId }: Props) {
         );
       })}
     </ul>
+    {linkModal && (
+      <LinkModal
+        initialUrl={linkModal.initialUrl}
+        anchorRect={linkModal.anchorRect}
+        onApply={handleLinkApply}
+        onRemove={handleLinkRemove}
+        onCancel={handleLinkCancel}
+      />
+    )}
+    </>
   );
 }

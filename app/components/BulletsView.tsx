@@ -6,6 +6,7 @@ import { useEditor } from "../contexts/EditorContext";
 import { richTextToHtml, domToRichText } from "../utils/richTextUtils";
 import RichTextView from "./RichTextView";
 import LinkModal from "./editor/LinkModal";
+import InlineToolbar from "./editor/InlineToolbar";
 
 interface Props {
   items: BulletItem[];
@@ -79,6 +80,7 @@ export default function BulletsView({ items, levels, blockId }: Props) {
   const [editingItems, setEditingItems] = useState<EditingItem[] | null>(null);
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const refsMap = useRef<Map<string, HTMLDivElement>>(new Map());
+  const listRef = useRef<HTMLUListElement>(null);
 
   // Link modal state
   const [linkModal, setLinkModal] = useState<{
@@ -134,6 +136,25 @@ export default function BulletsView({ items, levels, blockId }: Props) {
     } else {
       refsMap.current.delete(key);
     }
+  }, []);
+
+  const openLinkModal = useCallback(() => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const savedRange = sel.getRangeAt(0).cloneRange();
+    let existingUrl = "";
+    let node: Node | null = sel.anchorNode;
+    while (node) {
+      if (node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).tagName === "A") {
+        existingUrl = (node as HTMLAnchorElement).href || "";
+        break;
+      }
+      node = node.parentNode;
+    }
+    const rect = savedRange.getBoundingClientRect();
+    const anchorRect =
+      rect.width > 0 || rect.height > 0 ? { top: rect.bottom, left: rect.left } : undefined;
+    setLinkModal({ initialUrl: existingUrl, anchorRect, savedRange });
   }, []);
 
   const handleKeyDown = useCallback(
@@ -295,28 +316,10 @@ export default function BulletsView({ items, levels, blockId }: Props) {
       }
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        const sel = window.getSelection();
-        if (!sel || sel.rangeCount === 0) return;
-        const savedRange = sel.getRangeAt(0).cloneRange();
-        // Check if selection is inside an anchor
-        let existingUrl = "";
-        let node: Node | null = sel.anchorNode;
-        while (node) {
-          if (node.nodeType === Node.ELEMENT_NODE && (node as HTMLElement).tagName === "A") {
-            existingUrl = (node as HTMLAnchorElement).href || "";
-            break;
-          }
-          node = node.parentNode;
-        }
-        const rect = savedRange.getBoundingClientRect();
-        const anchorRect =
-          rect.width > 0 || rect.height > 0
-            ? { top: rect.bottom, left: rect.left }
-            : undefined;
-        setLinkModal({ initialUrl: existingUrl, anchorRect, savedRange });
+        openLinkModal();
       }
     },
-    [editingItems, levels.length, readRef, saveAndExit],
+    [editingItems, levels.length, readRef, saveAndExit, openLinkModal],
   );
 
   // Link modal callbacks
@@ -382,7 +385,7 @@ export default function BulletsView({ items, levels, blockId }: Props) {
 
   return (
     <>
-    <ul style={{ listStyle: "none" }}>
+    <ul ref={listRef} style={{ listStyle: "none" }}>
       {renderItems.map(({ key, item }, index) => {
         const level = levels[item.level ?? 0] ?? {};
 
@@ -428,6 +431,7 @@ export default function BulletsView({ items, levels, blockId }: Props) {
         );
       })}
     </ul>
+    {editing && <InlineToolbar containerRef={listRef} onLinkClick={openLinkModal} />}
     {linkModal && (
       <LinkModal
         initialUrl={linkModal.initialUrl}

@@ -4,6 +4,7 @@ import { useRef, useEffect, useCallback, useState } from "react";
 import type { RichText, Style } from "../../models";
 import { richTextToHtml, domToRichText } from "../../utils/richTextUtils";
 import LinkModal from "./LinkModal";
+import InlineToolbar from "./InlineToolbar";
 
 interface Props {
   richText: RichText;
@@ -78,6 +79,15 @@ export default function EditableRichText({
     }
   }, [onSave]);
 
+  const openLinkModal = useCallback(() => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const savedRange = sel.getRangeAt(0).cloneRange();
+    const existingUrl = getSelectedLinkUrl();
+    const anchorRect = getSelectionRect();
+    setLinkModal({ initialUrl: existingUrl, anchorRect, savedRange });
+  }, []);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -102,16 +112,10 @@ export default function EditableRichText({
       }
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        // Save the current selection range and open modal
-        const sel = window.getSelection();
-        if (!sel || sel.rangeCount === 0) return;
-        const savedRange = sel.getRangeAt(0).cloneRange();
-        const existingUrl = getSelectedLinkUrl();
-        const anchorRect = getSelectionRect();
-        setLinkModal({ initialUrl: existingUrl, anchorRect, savedRange });
+        openLinkModal();
       }
     },
-    [onCancel, save, saveOnEnter],
+    [onCancel, save, saveOnEnter, openLinkModal],
   );
 
   const handleBlur = useCallback(
@@ -178,6 +182,7 @@ export default function EditableRichText({
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
       />
+      <InlineToolbar containerRef={ref} onLinkClick={openLinkModal} />
       {linkModal && (
         <LinkModal
           initialUrl={linkModal.initialUrl}

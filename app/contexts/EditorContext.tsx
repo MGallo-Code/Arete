@@ -215,6 +215,35 @@ function findBlockNested(block: Block, blockId: string): Block | null {
   return null;
 }
 
+// --- Text extraction for copy ---
+
+function richTextToPlain(rt: RichText): string {
+  return rt.map((r) => r.text).join("");
+}
+
+function extractContentText(content: Content): string {
+  switch (content.type) {
+    case "text":
+      return richTextToPlain(content.value);
+    case "bullets":
+      return content.items.map((item) => richTextToPlain(item.content)).join("\n");
+    case "blocks":
+      return content.children.map(extractBlockText).join("\n");
+    case "image":
+      return content.alt ?? "";
+  }
+}
+
+function extractBlockText(block: Block): string {
+  const parts: string[] = [];
+  if (block.header) {
+    parts.push(richTextToPlain(block.header.content));
+  }
+  const contentText = extractContentText(block.content);
+  if (contentText) parts.push(contentText);
+  return parts.join("\n");
+}
+
 // --- Reducer ---
 
 function coreReducer(state: EditorState, action: EditorAction): EditorState {
@@ -631,6 +660,27 @@ export function EditorProvider({ resume: initial, children }: { resume: Resume; 
       if ((e.metaKey || e.ctrlKey) && e.key === "z") {
         e.preventDefault();
         dispatch({ type: e.shiftKey ? "REDO" : "UNDO" });
+        return;
+      }
+
+      // Copy all text in selected block
+      if ((e.metaKey || e.ctrlKey) && e.key === "c" && selectedBlockId) {
+        const active = document.activeElement;
+        // Only intercept if nothing specific is focused (no text selection in inputs)
+        if (
+          !(active instanceof HTMLInputElement) &&
+          !(active instanceof HTMLTextAreaElement) &&
+          !(active as HTMLElement)?.isContentEditable
+        ) {
+          const block = findBlock(state.resume.blocks, selectedBlockId);
+          if (block) {
+            const text = extractBlockText(block);
+            if (text) {
+              e.preventDefault();
+              navigator.clipboard.writeText(text);
+            }
+          }
+        }
         return;
       }
 

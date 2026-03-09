@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EditorProvider, useEditorRequired } from "../../contexts/EditorContext";
 import { sampleResume, sampleResume2, sampleResume3, testResume } from "../../fixtures";
 import type { Resume } from "../../models";
@@ -18,10 +18,24 @@ const RESUMES: Record<string, Resume> = {
   "test-all-features": testResume,
 };
 
+type SidebarTab = "selection" | "theme";
+
 function EditorInner() {
-  const { resume, dispatch } = useEditorRequired();
+  const { resume, selectedBlockId, selectedRegionId, dispatch } = useEditorRequired();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<SidebarTab>("theme");
+
+  const hasSelection = !!selectedBlockId || !!selectedRegionId;
+
+  // Auto-switch tab when selection changes
+  useEffect(() => {
+    if (hasSelection) {
+      setActiveTab("selection");
+    } else {
+      setActiveTab("theme");
+    }
+  }, [hasSelection]);
 
   const closeSidebar = () => {
     dispatch({ type: "SELECT_BLOCK", path: [] });
@@ -80,11 +94,34 @@ function EditorInner() {
             </button>
           </div>
 
+          {/* Tabs */}
+          {hasSelection && (
+            <div className={styles.sidebarTabs}>
+              <button
+                className={`${styles.sidebarTab} ${activeTab === "selection" ? styles.sidebarTabActive : ""}`}
+                onClick={() => setActiveTab("selection")}
+              >
+                {selectedBlockId ? "Block" : "Region"}
+              </button>
+              <button
+                className={`${styles.sidebarTab} ${activeTab === "theme" ? styles.sidebarTabActive : ""}`}
+                onClick={() => setActiveTab("theme")}
+              >
+                Theme
+              </button>
+            </div>
+          )}
+
           {/* Panel content */}
           <div className={styles.sidebarBody}>
-            <BlockStylePanel />
-            <RegionStylePanel />
-            <ThemePanel />
+            {hasSelection && activeTab === "selection" ? (
+              <>
+                <BlockStylePanel />
+                <RegionStylePanel />
+              </>
+            ) : (
+              <ThemePanel />
+            )}
           </div>
         </div>
       )}

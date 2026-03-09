@@ -248,11 +248,15 @@ export default function BulletsView({ items, levels, blockId }: Props) {
         return;
       }
 
-      // Backspace on empty → delete this bullet (keep at least 1)
-      if (e.key === "Backspace") {
+      // Backspace at start of bullet → delete if empty, or merge with previous
+      if (e.key === "Backspace" && editingItems.length > 1) {
+        const sel = window.getSelection();
+        const atStart = sel && sel.rangeCount > 0 && sel.getRangeAt(0).collapsed && sel.getRangeAt(0).startOffset === 0;
+        // Also check if the selection anchor is the element itself (fully empty div)
         const el = refsMap.current.get(editingItems[index].key);
-        const text = el?.textContent ?? "";
-        if (text === "" && editingItems.length > 1) {
+        const isEmpty = (el?.textContent ?? "").trim() === "";
+
+        if (atStart && isEmpty) {
           e.preventDefault();
           const newEditingItems = editingItems.filter((_, i) => i !== index);
           setEditingItems(newEditingItems);

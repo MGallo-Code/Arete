@@ -23,7 +23,10 @@ export default function ThemePanel() {
   const { theme, page } = resume.template;
 
   return (
-    <div className={styles.themePanel}>
+    <div className={styles.panelSection}>
+      <div className={styles.panelHeader}>
+        <div className={styles.panelTitle}>Theme</div>
+      </div>
       {/* Font */}
       <div className={styles.themeSectionTitle}>Typography</div>
       <div className={styles.propRow}>

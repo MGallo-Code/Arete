@@ -5,6 +5,15 @@ import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
 
+const FONT_PRESETS = [
+  { label: "Georgia (serif)", value: "Georgia, serif" },
+  { label: "Times New Roman", value: "'Times New Roman', serif" },
+  { label: "Inter (sans-serif)", value: "Inter, Helvetica, sans-serif" },
+  { label: "Helvetica", value: "Helvetica, Arial, sans-serif" },
+  { label: "DM Sans", value: "'DM Sans', Helvetica, sans-serif" },
+  { label: "System UI", value: "system-ui, sans-serif" },
+];
+
 export default function BlockStylePanel() {
   const { resume, selectedBlockId, dispatch } = useEditorRequired();
 
@@ -30,8 +39,13 @@ export default function BlockStylePanel() {
   };
 
   return (
-    <div className={styles.themePanel}>
-      <div className={styles.themeSectionTitle}>{getBlockLabel(block)}</div>
+    <div className={styles.selectionPanel}>
+      <div className={styles.panelHeader}>
+        <div>
+          <div className={styles.selectionPanelTitle}>Block</div>
+          <div className={styles.panelSubtitle}>{getBlockLabel(block)}</div>
+        </div>
+      </div>
 
       {/* Box Model (Margin + Padding) */}
       <BoxModelEditor
@@ -134,6 +148,80 @@ export default function BlockStylePanel() {
             </button>
           )}
           {!style.fontWeight && <span className={styles.inheritLabel}>inherit</span>}
+        </div>
+      </div>
+
+      {/* Font family */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Font family</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <select
+            className={styles.propSelect}
+            value={(style.fontFamily as string) ?? ""}
+            onChange={(e) => updateStyle({ fontFamily: e.target.value || undefined })}
+          >
+            <option value="">inherit</option>
+            {FONT_PRESETS.map((f) => (
+              <option key={f.value} value={f.value}>{f.label}</option>
+            ))}
+          </select>
+          {style.fontFamily && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("fontFamily")} title="Clear">×</button>
+          )}
+        </div>
+      </div>
+
+      {/* Text align */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Text align</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div className={styles.toggleGroup}>
+            {(["left", "center", "right", "justify"] as const).map((align) => (
+              <button
+                key={align}
+                className={`${styles.toggleBtn} ${style.textAlign === align ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ textAlign: align })}
+                title={align}
+              >
+                {align[0].toUpperCase()}
+              </button>
+            ))}
+          </div>
+          {style.textAlign && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("textAlign")} title="Clear">×</button>
+          )}
+        </div>
+      </div>
+
+      {/* Line height */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Line height</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <input
+            className={styles.propInput}
+            style={{ width: "auto", flex: 1 }}
+            value={(style.lineHeight as string) ?? ""}
+            placeholder="inherit"
+            onChange={(e) => updateStyle({ lineHeight: e.target.value })}
+          />
+          {style.lineHeight && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("lineHeight")} title="Clear">×</button>
+          )}
+        </div>
+      </div>
+
+      {/* Gap */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Gap</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <SpacingInput
+            value={(style.gap as string) ?? ""}
+            placeholder="0"
+            onChange={(v) => updateStyle({ gap: v })}
+          />
+          {style.gap && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("gap")} title="Clear">×</button>
+          )}
         </div>
       </div>
     </div>

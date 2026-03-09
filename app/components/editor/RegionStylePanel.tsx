@@ -5,6 +5,15 @@ import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
 
+const FONT_PRESETS = [
+  { label: "Georgia (serif)", value: "Georgia, serif" },
+  { label: "Times New Roman", value: "'Times New Roman', serif" },
+  { label: "Inter (sans-serif)", value: "Inter, Helvetica, sans-serif" },
+  { label: "Helvetica", value: "Helvetica, Arial, sans-serif" },
+  { label: "DM Sans", value: "'DM Sans', Helvetica, sans-serif" },
+  { label: "System UI", value: "system-ui, sans-serif" },
+];
+
 export default function RegionStylePanel() {
   const { resume, selectedRegionId, dispatch } = useEditorRequired();
 
@@ -23,8 +32,13 @@ export default function RegionStylePanel() {
   };
 
   return (
-    <div className={styles.themePanel}>
-      <div className={styles.themeSectionTitle}>Region: {selectedRegionId}</div>
+    <div className={styles.selectionPanel}>
+      <div className={styles.panelHeader}>
+        <div>
+          <div className={styles.selectionPanelTitle}>Region</div>
+          <div className={styles.panelSubtitle}>{selectedRegionId}</div>
+        </div>
+      </div>
 
       {/* Background color */}
       <div className={styles.propRow}>
@@ -117,6 +131,41 @@ export default function RegionStylePanel() {
           <option value="flex-end">end</option>
           <option value="stretch">stretch</option>
         </select>
+      </div>
+
+      {/* Font family */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Font family</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <select
+            className={styles.propSelect}
+            value={(regionStyle.fontFamily as string) ?? ""}
+            onChange={(e) => updateStyle({ fontFamily: e.target.value || undefined })}
+          >
+            <option value="">inherit</option>
+            {FONT_PRESETS.map((f) => (
+              <option key={f.value} value={f.value}>{f.label}</option>
+            ))}
+          </select>
+          {regionStyle.fontFamily && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("fontFamily")} title="Clear">×</button>
+          )}
+        </div>
+      </div>
+
+      {/* Gap */}
+      <div className={styles.propRow}>
+        <label className={styles.propLabel}>Gap</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <SpacingInput
+            value={(regionStyle.gap as string) ?? ""}
+            placeholder="0"
+            onChange={(v) => updateStyle({ gap: v })}
+          />
+          {regionStyle.gap && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("gap")} title="Clear">×</button>
+          )}
+        </div>
       </div>
     </div>
   );

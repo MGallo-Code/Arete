@@ -38,6 +38,7 @@ export default function SpacingInput({
   compact = false,
 }: SpacingInputProps) {
   const parsed = parseValue(value);
+  const parsedPlaceholder = parseValue(placeholder);
   const [num, setNum] = useState(parsed.num);
   const [unit, setUnit] = useState<Unit>(parsed.unit);
 
@@ -69,7 +70,7 @@ export default function SpacingInput({
           inputMode="decimal"
           className={styles.spacingCompactNum}
           value={num}
-          placeholder={placeholder}
+          placeholder={parsedPlaceholder.num || "0"}
           onChange={(e) => handleNumChange(e.target.value)}
         />
         <select
@@ -95,7 +96,7 @@ export default function SpacingInput({
         inputMode="decimal"
         className={styles.spacingFullNum}
         value={num}
-        placeholder={placeholder}
+        placeholder={parsedPlaceholder.num || "0"}
         onChange={(e) => handleNumChange(e.target.value)}
       />
       <select

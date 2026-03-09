@@ -1,7 +1,7 @@
 "use client";
 
 import type { Block } from "../../models";
-import { useEditorRequired, getBlockLabel, findBlockRegion } from "../../contexts/EditorContext";
+import { useEditorRequired, getBlockLabel } from "../../contexts/EditorContext";
 import styles from "./editor.module.css";
 
 /** Icon for content type */

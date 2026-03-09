@@ -447,10 +447,6 @@
 
 /* --- Block Library --- */
 
-.libraryPanel {
-  padding: 0;
-}
-
 .libraryCategory {
   padding: 8px 20px;
 }
@@ -547,12 +543,6 @@
   margin-bottom: 2px;
 }
 
-/* --- Theme Panel --- */
-
-.themePanel {
-  padding: 8px 16px;
-}
-
 .themeSectionTitle {
   font-size: 10px;
   font-weight: 600;
@@ -617,26 +607,6 @@
 .toggleActive {
   background: #2563eb;
   color: #ffffff;
-}
-
-.marginGrid {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.marginField {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.marginLabel {
-  font-size: 10px;
-  font-weight: 600;
-  color: #888;
-  width: 12px;
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 /* --- Open sidebar button --- */
@@ -778,35 +748,6 @@
   color: #22c55e;
 }
 
-.boxModelInput {
-  width: 100%;
-  max-width: 40px;
-  padding: 2px;
-  font-size: 10px;
-  font-family: var(--font-geist-mono), monospace;
-  text-align: center;
-  border: 1px solid transparent;
-  border-radius: 2px;
-  background: transparent;
-  color: var(--color-fg);
-}
-
-.boxModelInput:hover {
-  border-color: var(--color-border);
-  background: var(--color-bg);
-}
-
-.boxModelInput:focus {
-  outline: none;
-  border-color: #2563eb;
-  background: var(--color-bg);
-  box-shadow: 0 0 0 1px #2563eb33;
-}
-
-.boxModelInput::placeholder {
-  color: #ccc;
-}
-
 .boxModelTop {
   grid-area: top;
   justify-self: center;
@@ -892,6 +833,7 @@
   outline: none;
   border-color: #2563eb;
   background: var(--color-bg);
+  box-shadow: 0 0 0 2px #2563eb22;
 }
 
 .spacingCompactNum::placeholder {

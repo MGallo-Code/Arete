@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useReducer, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useReducer, useEffect, useMemo, useRef, type ReactNode } from "react";
 import type { Resume, Block, Content, RichText, BulletItem, BulletLevel, Style, PageSettings } from "../models";
 
 // --- State ---
@@ -311,7 +311,7 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       return {
         ...state,
         resume: updateBlock(state.resume, action.blockId, (b) => {
-          const { header: _, ...rest } = b;
+          const { header: _header, ...rest } = b;
           return rest as Block;
         }),
       };
@@ -443,7 +443,7 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
     case "REMOVE_BLOCK": {
       const { regionId, blockId } = action;
       const ids = (state.resume.regionBlockIds[regionId] ?? []).filter((id) => id !== blockId);
-      const { [blockId]: _, ...rest } = state.resume.blocks;
+      const { [blockId]: _removed, ...rest } = state.resume.blocks;
       return {
         ...state,
         selectedPath: state.selectedPath.includes(blockId) ? [] : state.selectedPath,
@@ -463,7 +463,7 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       const regionId = findBlockRegion(state.resume, blockId);
       if (regionId) {
         const ids = (state.resume.regionBlockIds[regionId] ?? []).filter((id) => id !== blockId);
-        const { [blockId]: _, ...rest } = state.resume.blocks;
+        const { [blockId]: _removed, ...rest } = state.resume.blocks;
         return {
           ...state,
           ...clearSelection,
@@ -650,6 +650,10 @@ export function EditorProvider({ resume: initial, children }: { resume: Resume; 
 
   const selectedBlockId = state.selectedPath.length > 0 ? state.selectedPath[state.selectedPath.length - 1] : null;
 
+  // Ref for accessing current resume in keyboard handler without re-registering on every mutation
+  const resumeRef = useRef(state.resume);
+  useEffect(() => { resumeRef.current = state.resume; }, [state.resume]);
+
   // Global keyboard shortcuts
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -672,7 +676,7 @@ export function EditorProvider({ resume: initial, children }: { resume: Resume; 
           !(active instanceof HTMLTextAreaElement) &&
           !(active as HTMLElement)?.isContentEditable
         ) {
-          const block = findBlock(state.resume.blocks, selectedBlockId);
+          const block = findBlock(resumeRef.current.blocks, selectedBlockId);
           if (block) {
             const text = extractBlockText(block);
             if (text) {
@@ -701,22 +705,28 @@ export function EditorProvider({ resume: initial, children }: { resume: Resume; 
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [state.editingBlockId, selectedBlockId, state.resume]);
+  }, [state.editingBlockId, selectedBlockId]);
+
+  const canUndo = state.past.length > 0;
+  const canRedo = state.future.length > 0;
+
+  const contextValue = useMemo<EditorContextValue>(
+    () => ({
+      resume: state.resume,
+      selectedBlockId,
+      selectedPath: state.selectedPath,
+      selectedRegionId: state.selectedRegionId,
+      editingBlockId: state.editingBlockId,
+      editingField: state.editingField,
+      canUndo,
+      canRedo,
+      dispatch,
+    }),
+    [state.resume, selectedBlockId, state.selectedPath, state.selectedRegionId, state.editingBlockId, state.editingField, canUndo, canRedo, dispatch],
+  );
 
   return (
-    <EditorContext.Provider
-      value={{
-        resume: state.resume,
-        selectedBlockId,
-        selectedPath: state.selectedPath,
-        selectedRegionId: state.selectedRegionId,
-        editingBlockId: state.editingBlockId,
-        editingField: state.editingField,
-        canUndo: state.past.length > 0,
-        canRedo: state.future.length > 0,
-        dispatch,
-      }}
-    >
+    <EditorContext.Provider value={contextValue}>
       {children}
     </EditorContext.Provider>
   );

@@ -1,25 +1,17 @@
 "use client";
 
 import { useEditorRequired } from "../../contexts/EditorContext";
+import { FONT_PRESETS } from "../../data/constants";
 import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
-
-const FONT_PRESETS = [
-  { label: "Georgia (serif)", value: "Georgia, serif" },
-  { label: "Times New Roman", value: "'Times New Roman', serif" },
-  { label: "Inter (sans-serif)", value: "Inter, Helvetica, sans-serif" },
-  { label: "Helvetica", value: "Helvetica, Arial, sans-serif" },
-  { label: "DM Sans", value: "'DM Sans', Helvetica, sans-serif" },
-  { label: "System UI", value: "system-ui, sans-serif" },
-];
 
 const SIZE_PRESETS = ["8pt", "9pt", "10pt", "11pt", "12pt"];
 
 const TAGS = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
 
 export default function ThemePanel() {
-  const { resume, dispatch } = useEditorRequired();
+  const { resume, dispatch, canUndo, canRedo } = useEditorRequired();
   const { theme, page } = resume.template;
 
   return (
@@ -138,14 +130,14 @@ export default function ThemePanel() {
       <div className={styles.propBtnRow}>
         <button
           className={styles.propBtn}
-          disabled={!useEditorRequired().canUndo}
+          disabled={!canUndo}
           onClick={() => dispatch({ type: "UNDO" })}
         >
           Undo
         </button>
         <button
           className={styles.propBtn}
-          disabled={!useEditorRequired().canRedo}
+          disabled={!canRedo}
           onClick={() => dispatch({ type: "REDO" })}
         >
           Redo

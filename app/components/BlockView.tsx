@@ -9,11 +9,10 @@ import styles from "./editor/editor.module.css";
 
 interface Props {
   block: Block;
-  parentBlockId?: string;
   ancestorPath?: string[];
 }
 
-export default function BlockView({ block, parentBlockId, ancestorPath }: Props) {
+export default function BlockView({ block, ancestorPath }: Props) {
   const theme = useTheme();
   const editor = useEditor();
 
@@ -66,7 +65,8 @@ export default function BlockView({ block, parentBlockId, ancestorPath }: Props)
 
   // --- Editor interaction props ---
   // A block is selectable if it's top-level OR its parent is in the selection path
-  const canSelect = !parentBlockId || (editor?.selectedPath.includes(parentBlockId) ?? false);
+  const parentId = ancestorPath && ancestorPath.length > 0 ? ancestorPath[ancestorPath.length - 1] : null;
+  const canSelect = !parentId || (editor?.selectedPath.includes(parentId) ?? false);
 
   const editorProps = editor && canSelect
     ? {

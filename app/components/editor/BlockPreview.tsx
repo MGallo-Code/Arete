@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import type { Block, Theme } from "../../models";
 import { ThemeProvider } from "../../contexts/ThemeContext";
 import { useEditorRequired } from "../../contexts/EditorContext";
-import ContentView from "../ContentView";
 import RichTextView from "../RichTextView";
 
 /**

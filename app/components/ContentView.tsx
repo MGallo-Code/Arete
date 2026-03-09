@@ -55,7 +55,7 @@ export default function ContentView({ content, blockId, ancestorPath }: Props) {
 
     case "blocks":
       return content.children.map((child, index) => (
-        <BlockView key={index} block={child} parentBlockId={blockId} ancestorPath={ancestorPath} />
+        <BlockView key={index} block={child} ancestorPath={ancestorPath} />
       ));
   }
 }

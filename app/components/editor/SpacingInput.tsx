@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styles from "./editor.module.css";
 
 const UNITS = ["px", "pt", "in", "em", "rem", "%"] as const;
@@ -37,17 +37,18 @@ export default function SpacingInput({
   placeholder = "0",
   compact = false,
 }: SpacingInputProps) {
-  const parsed = parseValue(value);
   const parsedPlaceholder = parseValue(placeholder);
-  const [num, setNum] = useState(parsed.num);
-  const [unit, setUnit] = useState<Unit>(parsed.unit);
+  const [num, setNum] = useState(() => parseValue(value).num);
+  const [unit, setUnit] = useState<Unit>(() => parseValue(value).unit);
+  const [prevValue, setPrevValue] = useState(value);
 
   // Sync from props when value changes externally (e.g. undo)
-  useEffect(() => {
+  if (value !== prevValue) {
+    setPrevValue(value);
     const p = parseValue(value);
     setNum(p.num);
     setUnit(p.unit);
-  }, [value]);
+  }
 
   const handleNumChange = (newNum: string) => {
     setNum(newNum);

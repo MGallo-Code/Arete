@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { EditorProvider, useEditorRequired } from "../../contexts/EditorContext";
 import { sampleResume, sampleResume2, sampleResume3, testResume } from "../../fixtures";
 import type { Resume } from "../../models";
@@ -24,18 +24,20 @@ function EditorInner() {
   const { resume, selectedBlockId, selectedRegionId, dispatch } = useEditorRequired();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [libraryOpen, setLibraryOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<SidebarTab>("theme");
+  const [manualTab, setManualTab] = useState<SidebarTab | null>(null);
+  const [prevHasSelection, setPrevHasSelection] = useState(false);
 
   const hasSelection = !!selectedBlockId || !!selectedRegionId;
 
-  // Auto-switch tab when selection changes
-  useEffect(() => {
-    if (hasSelection) {
-      setActiveTab("selection");
-    } else {
-      setActiveTab("theme");
-    }
-  }, [hasSelection]);
+  // Reset manual override when selection state changes
+  if (hasSelection !== prevHasSelection) {
+    setPrevHasSelection(hasSelection);
+    setManualTab(null);
+  }
+
+  // Derive active tab: manual override, or auto based on selection
+  const activeTab = manualTab ?? (hasSelection ? "selection" : "theme");
+  const setActiveTab = (tab: SidebarTab) => setManualTab(tab);
 
   const closeSidebar = () => {
     dispatch({ type: "SELECT_BLOCK", path: [] });

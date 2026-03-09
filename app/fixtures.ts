@@ -5,7 +5,7 @@ import type { Block, Resume, RichText, Theme } from "./models";
 
 export const sampleResume: Resume = {
   id: "sample-001",
-  title: "Jordan Ellis — Software Engineer",
+  title: "John Doe — Software Engineer (Classic Two-Column)",
   createdAt: "2026-03-01T00:00:00Z",
   updatedAt: "2026-03-07T00:00:00Z",
 
@@ -65,7 +65,7 @@ export const sampleResume: Resume = {
       h4: {
         fontSize: "10pt",
         fontStyle: "italic",
-        color: "#555555",
+        color: "var(--palette-muted)",
       },
       h5: { fontSize: "9pt" },
       h6: { fontSize: "9pt" },
@@ -102,7 +102,7 @@ export const sampleResume: Resume = {
         children: [
           {
             id: "block-name-title",
-            header: { content: [{ text: "Jordan Ellis" }], tag: "h1" },
+            header: { content: [{ text: "John Doe" }], tag: "h1" },
             content: { type: "text", value: [] },
           },
           {
@@ -340,7 +340,7 @@ export const sampleResume: Resume = {
 
 export const sampleResume2: Resume = {
   id: "sample-002",
-  title: "Maya Chen — Product Designer",
+  title: "Jane Smith — Product Designer (Modern Minimal)",
   createdAt: "2026-03-01T00:00:00Z",
   updatedAt: "2026-03-07T00:00:00Z",
 
@@ -350,7 +350,7 @@ export const sampleResume2: Resume = {
     grid: '"header" auto "main" 1fr / 1fr',
     regionStyles: {
       header: {
-        background: "#111827",
+        background: "var(--palette-primary)",
         padding: "32px 40px",
         color: "#ffffff",
       },
@@ -419,7 +419,7 @@ export const sampleResume2: Resume = {
         children: [
           {
             id: "mc-name-title",
-            header: { content: [{ text: "Maya Chen" }], tag: "h1" },
+            header: { content: [{ text: "Jane Smith" }], tag: "h1" },
             content: { type: "text", value: [] },
           },
           {
@@ -547,7 +547,7 @@ export const sampleResume2: Resume = {
 
 export const sampleResume3: Resume = {
   id: "sample-003",
-  title: "Alex Rivera — Data Scientist",
+  title: "Sam Johnson — Data Scientist (Navy Split)",
   createdAt: "2026-03-01T00:00:00Z",
   updatedAt: "2026-03-07T00:00:00Z",
 
@@ -602,7 +602,7 @@ export const sampleResume3: Resume = {
       h6: { fontSize: "9pt" },
       bullets: [
         { char: "▸", style: { fontSize: "10pt", lineHeight: "1.5", gap: "0.35em", color: "#ffffff" } },
-        { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "10px", gap: "0.35em", color: "#93c5fd" } },
+        { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "10px", gap: "0.35em", color: "var(--palette-muted)" } },
       ],
       link: { color: "var(--palette-muted)" },
       palette: {
@@ -628,7 +628,7 @@ export const sampleResume3: Resume = {
         children: [
           {
             id: "ar-name-title",
-            header: { content: [{ text: "Alex Rivera" }], tag: "h1" },
+            header: { content: [{ text: "Sam Johnson" }], tag: "h1" },
             content: { type: "text", value: [] },
           },
           {
@@ -926,12 +926,12 @@ export const testResume: Resume = {
           { content: [{ text: "test@arete.example" }] },
           {
             content: [
-              { text: "linkedin.com/test", link: "https://linkedin.com", style: { fontWeight: "bold" } },
+              { text: "linkedin.com/in/example", link: "https://example.com/linkedin", style: { fontWeight: "bold" } },
             ],
           },
           {
             content: [
-              { text: "github.com/test", link: "https://github.com" },
+              { text: "github.com/example", link: "https://example.com/github" },
             ],
           },
         ],
@@ -1076,7 +1076,7 @@ export const sampleTheme: Theme = {
   h4: {
     fontSize: "10pt",
     fontStyle: "italic",
-    color: "#555555",
+    color: "var(--palette-muted)",
   },
   h5: { fontSize: "9pt" },
   h6: { fontSize: "9pt" },

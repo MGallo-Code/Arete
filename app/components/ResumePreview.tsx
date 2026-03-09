@@ -69,9 +69,6 @@ export default function ResumePreview({ resume }: Props) {
                   }
                 : {})}
             >
-              {isRegionSelected && (
-                <span className={styles.regionLabel}>{regionId}</span>
-              )}
               {blockIds.map((blockId, index) => (
                 <BlockView
                   key={blockId}

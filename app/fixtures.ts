@@ -207,7 +207,7 @@ export const sampleResume: Resume = {
                   content: {
                     type: "text",
                     value: [
-                      { text: "Vercel", style: { fontStyle: "italic" } },
+                      { text: "Nexlify", style: { fontStyle: "italic" } },
                       { text: "  ·  2022 – Present" },
                     ],
                   },
@@ -238,7 +238,7 @@ export const sampleResume: Resume = {
                   content: {
                     type: "text",
                     value: [
-                      { text: "Stripe", style: { fontStyle: "italic" } },
+                      { text: "Paytrek", style: { fontStyle: "italic" } },
                       { text: "  ·  2019 – 2022" },
                     ],
                   },
@@ -269,7 +269,7 @@ export const sampleResume: Resume = {
                   content: {
                     type: "text",
                     value: [
-                      { text: "Airbnb", style: { fontStyle: "italic" } },
+                      { text: "Staylo", style: { fontStyle: "italic" } },
                       { text: "  ·  2016 – 2019" },
                     ],
                   },
@@ -443,7 +443,7 @@ export const sampleResume2: Resume = {
                   content: {
                     type: "text",
                     value: [
-                      { text: "Figma", style: { fontStyle: "italic" } },
+                      { text: "Canza", style: { fontStyle: "italic" } },
                       { text: "  ·  2023 – Present" },
                     ],
                   },
@@ -473,7 +473,7 @@ export const sampleResume2: Resume = {
                   content: {
                     type: "text",
                     value: [
-                      { text: "Linear", style: { fontStyle: "italic" } },
+                      { text: "Tracklo", style: { fontStyle: "italic" } },
                       { text: "  ·  2020 – 2023" },
                     ],
                   },
@@ -726,7 +726,7 @@ export const sampleResume3: Resume = {
                   content: {
                     type: "text",
                     value: [
-                      { text: "Stripe", style: { fontStyle: "italic" } },
+                      { text: "Paytrek", style: { fontStyle: "italic" } },
                       { text: "  ·  2022 – Present" },
                     ],
                   },
@@ -756,7 +756,7 @@ export const sampleResume3: Resume = {
                   content: {
                     type: "text",
                     value: [
-                      { text: "Amazon", style: { fontStyle: "italic" } },
+                      { text: "Shopwave", style: { fontStyle: "italic" } },
                       { text: "  ·  2019 – 2022" },
                     ],
                   },
@@ -926,7 +926,7 @@ export const sampleBlocksBlock: Block = {
         content: {
           type: "text",
           value: [
-            { text: "Vercel", style: { fontStyle: "italic" } },
+            { text: "Nexlify", style: { fontStyle: "italic" } },
             { text: "  ·  2022 – Present" },
           ],
         },

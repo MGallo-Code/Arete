@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useReducer, useEffect, type ReactNode } from "react";
-import type { Resume, Block, Content, RichText, BulletItem, Style, PageSettings } from "../models";
+import type { Resume, Block, Content, RichText, BulletItem, BulletLevel, Style, PageSettings } from "../models";
 
 // --- State ---
 
@@ -54,7 +54,8 @@ export type EditorAction =
       style: Style;
     }
   | { type: "UPDATE_PAGE_SIZE"; size: "letter" | "a4" }
-  | { type: "UPDATE_PAGE_MARGINS"; margins: PageSettings["margins"] };
+  | { type: "UPDATE_PAGE_MARGINS"; margins: PageSettings["margins"] }
+  | { type: "UPDATE_BULLET_LEVELS"; blockId: string; levels: BulletLevel[] };
 
 // Actions that mutate the resume (push to undo stack)
 const MUTATING = new Set([
@@ -79,6 +80,7 @@ const MUTATING = new Set([
   "UPDATE_REGION_STYLE",
   "SET_BLOCK_STYLE",
   "SET_REGION_STYLE",
+  "UPDATE_BULLET_LEVELS",
 ]);
 
 // --- Helpers ---
@@ -350,6 +352,16 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
         resume: updateBlock(state.resume, action.blockId, (b) => {
           if (b.content.type !== "bullets") return b;
           return { ...b, content: { ...b.content, items: action.items } };
+        }),
+      };
+    }
+
+    case "UPDATE_BULLET_LEVELS": {
+      return {
+        ...state,
+        resume: updateBlock(state.resume, action.blockId, (b) => {
+          if (b.content.type !== "bullets") return b;
+          return { ...b, content: { ...b.content, levels: action.levels } };
         }),
       };
     }

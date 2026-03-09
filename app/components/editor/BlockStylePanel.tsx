@@ -1,6 +1,7 @@
 "use client";
 
 import { useEditorRequired, findBlock, getBlockLabel } from "../../contexts/EditorContext";
+import type { BulletLevel } from "../../models";
 import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
@@ -224,6 +225,86 @@ export default function BlockStylePanel() {
           )}
         </div>
       </div>
+
+      {/* Bullet styles — only for bullet blocks */}
+      {block.content.type === "bullets" && (() => {
+        const bulletLevels: BulletLevel[] = block.content.levels ?? [];
+        // Show at least the levels that are actually used, plus the theme defaults
+        const maxUsedLevel = Math.max(0, ...block.content.items.map(i => i.level ?? 0));
+        const displayLevels = Math.max(bulletLevels.length, maxUsedLevel + 1, 1);
+
+        const updateLevel = (levelIndex: number, patch: Partial<BulletLevel>) => {
+          const newLevels = [...bulletLevels];
+          // Extend array if needed
+          while (newLevels.length <= levelIndex) {
+            newLevels.push({});
+          }
+          newLevels[levelIndex] = { ...newLevels[levelIndex], ...patch };
+          dispatch({ type: "UPDATE_BULLET_LEVELS", blockId: selectedBlockId, levels: newLevels });
+        };
+
+        const MARKER_PRESETS = [
+          { label: "None", value: "" },
+          { label: "\u2022 Bullet", value: "\u2022" },
+          { label: "\u2013 Dash", value: "\u2013" },
+          { label: "\u25B8 Triangle", value: "\u25B8" },
+          { label: "\u25E6 Circle", value: "\u25E6" },
+          { label: "\u25AA Square", value: "\u25AA" },
+          { label: "\u2605 Star", value: "\u2605" },
+          { label: "\u2192 Arrow", value: "\u2192" },
+        ];
+
+        return (
+          <>
+            <div className={styles.themeSectionTitle}>Bullet Styles</div>
+            {Array.from({ length: displayLevels }, (_, i) => {
+              const lvl = bulletLevels[i] ?? {};
+              return (
+                <div key={i} className={styles.propRow}>
+                  <label className={styles.propLabel}>Level {i + 1}</label>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                    <select
+                      className={styles.propSelect}
+                      style={{ width: "auto", flex: 1 }}
+                      value={lvl.char ?? ""}
+                      onChange={(e) => updateLevel(i, { char: e.target.value || undefined })}
+                    >
+                      {MARKER_PRESETS.map((p) => (
+                        <option key={p.value} value={p.value}>{p.label}</option>
+                      ))}
+                    </select>
+                    <SpacingInput
+                      compact
+                      value={(lvl.style?.paddingLeft as string) ?? ""}
+                      placeholder="0"
+                      onChange={(v) => updateLevel(i, { style: { ...lvl.style, paddingLeft: v } })}
+                    />
+                    <SpacingInput
+                      compact
+                      value={(lvl.style?.gap as string) ?? ""}
+                      placeholder="0"
+                      onChange={(v) => updateLevel(i, { style: { ...lvl.style, gap: v } })}
+                    />
+                  </div>
+                  <div style={{ display: "flex", gap: 4, marginTop: 2 }}>
+                    <span className={styles.inheritLabel}>indent</span>
+                    <span className={styles.inheritLabel}>gap</span>
+                  </div>
+                </div>
+              );
+            })}
+            <button
+              className={styles.propBtn}
+              onClick={() => {
+                const newLevels = [...bulletLevels, { char: "\u2022" }];
+                dispatch({ type: "UPDATE_BULLET_LEVELS", blockId: selectedBlockId, levels: newLevels });
+              }}
+            >
+              + Add Level
+            </button>
+          </>
+        );
+      })()}
     </div>
   );
 }

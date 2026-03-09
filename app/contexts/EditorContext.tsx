@@ -55,7 +55,9 @@ export type EditorAction =
     }
   | { type: "UPDATE_PAGE_SIZE"; size: "letter" | "a4" }
   | { type: "UPDATE_PAGE_MARGINS"; margins: PageSettings["margins"] }
-  | { type: "UPDATE_BULLET_LEVELS"; blockId: string; levels: BulletLevel[] };
+  | { type: "UPDATE_BULLET_LEVELS"; blockId: string; levels: BulletLevel[] }
+  | { type: "UPDATE_THEME_CANVAS"; style: Style }
+  | { type: "UPDATE_THEME_LINK"; style: Style };
 
 // Actions that mutate the resume (push to undo stack)
 const MUTATING = new Set([
@@ -81,6 +83,8 @@ const MUTATING = new Set([
   "SET_BLOCK_STYLE",
   "SET_REGION_STYLE",
   "UPDATE_BULLET_LEVELS",
+  "UPDATE_THEME_CANVAS",
+  "UPDATE_THEME_LINK",
 ]);
 
 // --- Helpers ---
@@ -543,6 +547,22 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       };
     }
 
+    case "UPDATE_THEME_CANVAS": {
+      const t = state.resume.template;
+      return {
+        ...state,
+        resume: { ...state.resume, template: { ...t, theme: { ...t.theme, canvas: { ...t.theme.canvas, ...action.style } } } },
+      };
+    }
+
+    case "UPDATE_THEME_LINK": {
+      const t = state.resume.template;
+      return {
+        ...state,
+        resume: { ...state.resume, template: { ...t, theme: { ...t.theme, link: { ...t.theme.link, ...action.style } } } },
+      };
+    }
+
     default:
       return state;
   }
@@ -631,11 +651,20 @@ interface EditorContextValue {
   canUndo: boolean;
   canRedo: boolean;
   dispatch: React.Dispatch<EditorAction>;
+  onRequestInsert?: (regionId: string, index: number) => void;
 }
 
 const EditorContext = createContext<EditorContextValue | null>(null);
 
-export function EditorProvider({ resume: initial, children }: { resume: Resume; children: ReactNode }) {
+export function EditorProvider({
+  resume: initial,
+  children,
+  onRequestInsert,
+}: {
+  resume: Resume;
+  children: ReactNode;
+  onRequestInsert?: (regionId: string, index: number) => void;
+}) {
   const [state, dispatch] = useReducer(editorReducer, {
     resume: initial,
     selectedPath: [],
@@ -657,6 +686,9 @@ export function EditorProvider({ resume: initial, children }: { resume: Resume; 
   // Global keyboard shortcuts
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
+      // If a child handler has already handled this key, don't apply global shortcuts
+      if (e.defaultPrevented) return;
+
       // Don't intercept when editing (let browser handle contentEditable keys)
       if (state.editingBlockId) return;
 
@@ -721,8 +753,9 @@ export function EditorProvider({ resume: initial, children }: { resume: Resume; 
       canUndo,
       canRedo,
       dispatch,
+      onRequestInsert,
     }),
-    [state.resume, selectedBlockId, state.selectedPath, state.selectedRegionId, state.editingBlockId, state.editingField, canUndo, canRedo, dispatch],
+    [state.resume, selectedBlockId, state.selectedPath, state.selectedRegionId, state.editingBlockId, state.editingField, canUndo, canRedo, dispatch, onRequestInsert],
   );
 
   return (

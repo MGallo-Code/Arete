@@ -8,15 +8,19 @@ import styles from "./editor.module.css";
 
 interface BlockLibraryProps {
   onClose: () => void;
+  initialRegionId?: string | null;
+  initialIndex?: number;
 }
 
-export default function BlockLibrary({ onClose }: BlockLibraryProps) {
+export default function BlockLibrary({ onClose, initialRegionId, initialIndex }: BlockLibraryProps) {
   const { resume, selectedBlockId, dispatch } = useEditorRequired();
   const [search, setSearch] = useState("");
 
   const regionNames = Object.keys(resume.regionBlockIds);
   const selectedRegion = selectedBlockId ? findBlockRegion(resume, selectedBlockId) : null;
-  const [targetRegion, setTargetRegion] = useState<string>(selectedRegion ?? regionNames[0] ?? "");
+  const [targetRegion, setTargetRegion] = useState<string>(
+    (initialRegionId ?? selectedRegion ?? regionNames[0]) ?? "",
+  );
 
   const filtered = search
     ? blockTemplates.filter(
@@ -33,11 +37,16 @@ export default function BlockLibrary({ onClose }: BlockLibraryProps) {
     const block = template.create();
     const region = targetRegion || regionNames[0];
 
-    let index = (resume.regionBlockIds[region] ?? []).length;
-    if (selectedBlockId) {
-      const ids = resume.regionBlockIds[region] ?? [];
-      const selIdx = ids.indexOf(selectedBlockId);
-      if (selIdx >= 0) index = selIdx + 1;
+    let index: number;
+    if (typeof initialIndex === "number") {
+      index = initialIndex;
+    } else {
+      index = (resume.regionBlockIds[region] ?? []).length;
+      if (selectedBlockId) {
+        const ids = resume.regionBlockIds[region] ?? [];
+        const selIdx = ids.indexOf(selectedBlockId);
+        if (selIdx >= 0) index = selIdx + 1;
+      }
     }
 
     dispatch({ type: "ADD_BLOCK", regionId: region, index, block });

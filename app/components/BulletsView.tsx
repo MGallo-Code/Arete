@@ -136,16 +136,43 @@ export default function BulletsView({ items, levels, blockId }: Props) {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         const currentKey = editingItems[index].key;
+        const el = refsMap.current.get(currentKey);
+        const isEmpty = (el?.textContent ?? "").trim() === "";
+
+        // If current bullet is empty, treat Enter as "finish list":
+        // delete this bullet; if that empties the list, remove all bullets.
+        if (isEmpty) {
+          const remaining = editingItems.filter((_, i) => i !== index);
+
+          if (editor && blockId) {
+            if (remaining.length === 0) {
+              // Entire list deleted
+              editor.dispatch({ type: "UPDATE_BULLET_ITEMS", blockId, items: [] });
+            } else {
+              // Save remaining bullets' DOM back to the model
+              const finalItems = remaining.map((ei) => ({
+                ...ei.item,
+                content: readRef(ei.key),
+              }));
+              editor.dispatch({ type: "UPDATE_BULLET_ITEMS", blockId, items: finalItems });
+            }
+          }
+
+          // Exit editing mode
+          setEditingItems(null);
+          setFocusIndex(null);
+          return;
+        }
+
+        // Non-empty bullet: save current text and insert a new bullet below
         const currentContent = readRef(currentKey);
         const currentLevel = editingItems[index].item.level;
 
         const newEditingItems = [...editingItems];
-        // Update current item with its DOM content
         newEditingItems[index] = {
           ...newEditingItems[index],
           item: { ...newEditingItems[index].item, content: currentContent },
         };
-        // Insert new empty item after current
         const newItem: EditingItem = {
           key: genKey(),
           item: { content: [{ text: "" }], level: currentLevel },
@@ -156,14 +183,12 @@ export default function BulletsView({ items, levels, blockId }: Props) {
         return;
       }
 
-      // Backspace at start of empty bullet → delete it and focus previous
+      // Backspace in an empty bullet → delete it and focus previous
       if (e.key === "Backspace") {
-        const sel = window.getSelection();
-        const atStart = sel && sel.rangeCount > 0 && sel.getRangeAt(0).collapsed && sel.getRangeAt(0).startOffset === 0;
         const el = refsMap.current.get(editingItems[index].key);
         const isEmpty = (el?.textContent ?? "").trim() === "";
 
-        if (atStart && isEmpty) {
+        if (isEmpty) {
           e.preventDefault();
           if (editingItems.length > 1) {
             // Remove this bullet and focus the previous one

@@ -1,10 +1,65 @@
 "use client";
 
+import { useRef } from "react";
 import { useEditorRequired } from "../../contexts/EditorContext";
 import { FONT_PRESETS } from "../../data/constants";
 import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
+
+function ColorPropRow({
+  label,
+  value,
+  fallback,
+  onChange,
+  onClear,
+}: {
+  label: string;
+  value: string | undefined;
+  fallback: string;
+  onChange: (color: string) => void;
+  onClear: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  return (
+    <div className={styles.propRow}>
+      <label className={styles.propLabel}>{label}</label>
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        {value ? (
+          <>
+            <input
+              type="color"
+              className={styles.colorInput}
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+            />
+            <button className={styles.clearBtn} onClick={onClear} title="Clear">
+              ×
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className={styles.colorSwatchBtn}
+              onClick={() => inputRef.current?.click()}
+              title={`Set ${label.toLowerCase()}`}
+            >
+              +
+            </button>
+            <input
+              ref={inputRef}
+              type="color"
+              className={styles.colorSwatchHiddenInput}
+              value={fallback}
+              onChange={(e) => onChange(e.target.value)}
+            />
+            <span className={styles.inheritLabel}>inherit</span>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function RegionStylePanel() {
   const { resume, selectedRegionId, dispatch } = useEditorRequired();
@@ -33,44 +88,22 @@ export default function RegionStylePanel() {
       </div>
 
       {/* Background color */}
-      <div className={styles.propRow}>
-        <label className={styles.propLabel}>Background</label>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <input
-            type="color"
-            className={styles.colorInput}
-            value={(regionStyle.backgroundColor as string) || "#ffffff"}
-            onChange={(e) => updateStyle({ backgroundColor: e.target.value })}
-          />
-          {regionStyle.backgroundColor ? (
-            <button className={styles.clearBtn} onClick={() => clearStyle("backgroundColor")} title="Clear">
-              ×
-            </button>
-          ) : (
-            <span className={styles.inheritLabel}>inherit</span>
-          )}
-        </div>
-      </div>
+      <ColorPropRow
+        label="Background"
+        value={regionStyle.backgroundColor as string | undefined}
+        fallback="#ffffff"
+        onChange={(v) => updateStyle({ backgroundColor: v })}
+        onClear={() => clearStyle("backgroundColor")}
+      />
 
       {/* Text color */}
-      <div className={styles.propRow}>
-        <label className={styles.propLabel}>Text color</label>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <input
-            type="color"
-            className={styles.colorInput}
-            value={(regionStyle.color as string) || "#000000"}
-            onChange={(e) => updateStyle({ color: e.target.value })}
-          />
-          {regionStyle.color ? (
-            <button className={styles.clearBtn} onClick={() => clearStyle("color")} title="Clear">
-              ×
-            </button>
-          ) : (
-            <span className={styles.inheritLabel}>inherit</span>
-          )}
-        </div>
-      </div>
+      <ColorPropRow
+        label="Text color"
+        value={regionStyle.color as string | undefined}
+        fallback="#000000"
+        onChange={(v) => updateStyle({ color: v })}
+        onClear={() => clearStyle("color")}
+      />
 
       {/* Box Model (Margin + Padding) */}
       <BoxModelEditor
@@ -117,11 +150,11 @@ export default function RegionStylePanel() {
           value={(regionStyle.alignItems as string) ?? ""}
           onChange={(e) => updateStyle({ alignItems: e.target.value || undefined })}
         >
-          <option value="">default</option>
-          <option value="flex-start">start</option>
-          <option value="center">center</option>
-          <option value="flex-end">end</option>
-          <option value="stretch">stretch</option>
+          <option value="">Default</option>
+          <option value="flex-start">Top</option>
+          <option value="center">Center</option>
+          <option value="flex-end">Bottom</option>
+          <option value="stretch">Stretch</option>
         </select>
       </div>
 
@@ -159,6 +192,88 @@ export default function RegionStylePanel() {
           )}
         </div>
       </div>
+
+      {/* Border right */}
+      {(() => {
+        const borderVal = (regionStyle.borderRight as string) ?? "";
+        const match = borderVal.match(/^(\d+(?:\.\d+)?)(px|pt)\s+solid\s+(#[0-9a-fA-F]{3,8})$/);
+        const borderWidth = match ? `${match[1]}${match[2]}` : "";
+        const borderColor = match ? match[3] : "#000000";
+        return (
+          <div className={styles.propRow}>
+            <label className={styles.propLabel}>Border right</label>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <SpacingInput
+                compact
+                value={borderWidth}
+                placeholder="0"
+                onChange={(v) => {
+                  if (v) {
+                    updateStyle({ borderRight: `${v} solid ${borderColor}` });
+                  } else {
+                    clearStyle("borderRight");
+                  }
+                }}
+              />
+              <input
+                type="color"
+                className={styles.colorInput}
+                value={borderColor}
+                onChange={(e) => {
+                  const w = borderWidth || "1px";
+                  updateStyle({ borderRight: `${w} solid ${e.target.value}` });
+                }}
+              />
+              {regionStyle.borderRight ? (
+                <button className={styles.clearBtn} onClick={() => clearStyle("borderRight")} title="Clear">×</button>
+              ) : (
+                <span className={styles.inheritLabel}>none</span>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Border bottom */}
+      {(() => {
+        const borderVal = (regionStyle.borderBottom as string) ?? "";
+        const match = borderVal.match(/^(\d+(?:\.\d+)?)(px|pt)\s+solid\s+(#[0-9a-fA-F]{3,8})$/);
+        const borderWidth = match ? `${match[1]}${match[2]}` : "";
+        const borderColor = match ? match[3] : "#000000";
+        return (
+          <div className={styles.propRow}>
+            <label className={styles.propLabel}>Border bottom</label>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <SpacingInput
+                compact
+                value={borderWidth}
+                placeholder="0"
+                onChange={(v) => {
+                  if (v) {
+                    updateStyle({ borderBottom: `${v} solid ${borderColor}` });
+                  } else {
+                    clearStyle("borderBottom");
+                  }
+                }}
+              />
+              <input
+                type="color"
+                className={styles.colorInput}
+                value={borderColor}
+                onChange={(e) => {
+                  const w = borderWidth || "1px";
+                  updateStyle({ borderBottom: `${w} solid ${e.target.value}` });
+                }}
+              />
+              {regionStyle.borderBottom ? (
+                <button className={styles.clearBtn} onClick={() => clearStyle("borderBottom")} title="Clear">×</button>
+              ) : (
+                <span className={styles.inheritLabel}>none</span>
+              )}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

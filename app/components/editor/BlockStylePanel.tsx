@@ -1,11 +1,66 @@
 "use client";
 
+import { useRef } from "react";
 import { useEditorRequired, findBlock, getBlockLabel } from "../../contexts/EditorContext";
 import type { BulletLevel } from "../../models";
 import { FONT_PRESETS } from "../../data/constants";
 import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
+
+function ColorPropRow({
+  label,
+  value,
+  fallback,
+  onChange,
+  onClear,
+}: {
+  label: string;
+  value: string | undefined;
+  fallback: string;
+  onChange: (color: string) => void;
+  onClear: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  return (
+    <div className={styles.propRow}>
+      <label className={styles.propLabel}>{label}</label>
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        {value ? (
+          <>
+            <input
+              type="color"
+              className={styles.colorInput}
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+            />
+            <button className={styles.clearBtn} onClick={onClear} title="Clear">
+              ×
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className={styles.colorSwatchBtn}
+              onClick={() => inputRef.current?.click()}
+              title={`Set ${label.toLowerCase()}`}
+            >
+              +
+            </button>
+            <input
+              ref={inputRef}
+              type="color"
+              className={styles.colorSwatchHiddenInput}
+              value={fallback}
+              onChange={(e) => onChange(e.target.value)}
+            />
+            <span className={styles.inheritLabel}>inherit</span>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function BlockStylePanel() {
   const { resume, selectedBlockId, dispatch } = useEditorRequired();
@@ -62,24 +117,13 @@ export default function BlockStylePanel() {
       />
 
       {/* Background color */}
-      <div className={styles.propRow}>
-        <label className={styles.propLabel}>Background color</label>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <input
-            type="color"
-            className={styles.colorInput}
-            value={(style.backgroundColor as string) || "#ffffff"}
-            onChange={(e) => updateStyle({ backgroundColor: e.target.value })}
-          />
-          {style.backgroundColor ? (
-            <button className={styles.clearBtn} onClick={() => clearStyle("backgroundColor")} title="Clear">
-              ×
-            </button>
-          ) : (
-            <span className={styles.inheritLabel}>inherit</span>
-          )}
-        </div>
-      </div>
+      <ColorPropRow
+        label="Background color"
+        value={style.backgroundColor as string | undefined}
+        fallback="#ffffff"
+        onChange={(v) => updateStyle({ backgroundColor: v })}
+        onClear={() => clearStyle("backgroundColor")}
+      />
 
       {/* Font size override */}
       <div className={styles.propRow}>
@@ -99,24 +143,13 @@ export default function BlockStylePanel() {
       </div>
 
       {/* Color override */}
-      <div className={styles.propRow}>
-        <label className={styles.propLabel}>Color</label>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <input
-            type="color"
-            className={styles.colorInput}
-            value={(style.color as string) || "#000000"}
-            onChange={(e) => updateStyle({ color: e.target.value })}
-          />
-          {style.color ? (
-            <button className={styles.clearBtn} onClick={() => clearStyle("color")} title="Clear">
-              ×
-            </button>
-          ) : (
-            <span className={styles.inheritLabel}>inherit</span>
-          )}
-        </div>
-      </div>
+      <ColorPropRow
+        label="Color"
+        value={style.color as string | undefined}
+        fallback="#000000"
+        onChange={(v) => updateStyle({ color: v })}
+        onClear={() => clearStyle("color")}
+      />
 
       {/* Font weight */}
       <div className={styles.propRow}>
@@ -219,6 +252,49 @@ export default function BlockStylePanel() {
         </div>
       </div>
 
+      {/* Border bottom */}
+      {(() => {
+        const borderVal = (style.borderBottom as string) ?? "";
+        const match = borderVal.match(/^(\d+(?:\.\d+)?)(px|pt)\s+solid\s+(#[0-9a-fA-F]{3,8})$/);
+        const borderWidth = match ? `${match[1]}${match[2]}` : "";
+        const borderColor = match ? match[3] : "#000000";
+        return (
+          <div className={styles.propRow}>
+            <label className={styles.propLabel}>Border bottom</label>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <SpacingInput
+                compact
+                value={borderWidth}
+                placeholder="0"
+                onChange={(v) => {
+                  if (v) {
+                    updateStyle({ borderBottom: `${v} solid ${borderColor}` });
+                  } else {
+                    clearStyle("borderBottom");
+                  }
+                }}
+              />
+              <input
+                type="color"
+                className={styles.colorInput}
+                value={borderColor}
+                onChange={(e) => {
+                  const w = borderWidth || "1px";
+                  updateStyle({ borderBottom: `${w} solid ${e.target.value}` });
+                }}
+              />
+              {style.borderBottom ? (
+                <button className={styles.clearBtn} onClick={() => clearStyle("borderBottom")} title="Clear">
+                  ×
+                </button>
+              ) : (
+                <span className={styles.inheritLabel}>none</span>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Bullet styles — only for bullet blocks */}
       {block.content.type === "bullets" && (() => {
         const hasOverride = !!block.content.levels;
@@ -283,10 +359,30 @@ export default function BlockStylePanel() {
                       placeholder="0"
                       onChange={(v) => updateLevel(i, { style: { ...lvl.style, gap: v } })}
                     />
+                    <input
+                      type="color"
+                      className={styles.colorInput}
+                      value={(lvl.style?.color as string) || "#000000"}
+                      onChange={(e) => updateLevel(i, { style: { ...lvl.style, color: e.target.value } })}
+                    />
+                    {lvl.style?.color ? (
+                      <button
+                        className={styles.clearBtn}
+                        onClick={() => {
+                          const newStyle = { ...lvl.style };
+                          delete (newStyle as Record<string, unknown>).color;
+                          updateLevel(i, { style: newStyle });
+                        }}
+                        title="Clear color"
+                      >
+                        ×
+                      </button>
+                    ) : null}
                   </div>
                   <div style={{ display: "flex", gap: 4, marginTop: 2 }}>
                     <span className={styles.inheritLabel}>indent</span>
                     <span className={styles.inheritLabel}>gap</span>
+                    <span className={styles.inheritLabel}>color</span>
                   </div>
                 </div>
               );

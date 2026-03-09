@@ -583,6 +583,60 @@
   font-family: var(--font-geist-mono), monospace;
 }
 
+.headingGroup {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headingGroup:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.headingDetailRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding-left: 28px;
+}
+
+.headingSmallInput {
+  width: 64px;
+  padding: 3px 6px;
+  font-size: 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.headingSmallInput:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+
+.headingSmallInput::placeholder {
+  color: #bbb;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-style: italic;
+}
+
+.headingSmallSelect {
+  padding: 3px 4px;
+  font-size: 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  cursor: pointer;
+}
+
 .toggleGroup {
   display: flex;
   border: 1px solid var(--color-border);
@@ -650,29 +704,76 @@
   border-radius: 2px;
 }
 
+
 /* --- Block selection overlay --- */
 
 .selectableBlock {
   position: relative;
   cursor: pointer;
   border-radius: 2px;
-  outline: 2px solid transparent;
-  outline-offset: -1px;
-  transition:
-    outline-color 0.15s,
-    background 0.15s;
+  outline: 1px solid transparent;
+  outline-offset: 1px;
+  transition: outline-color 0.15s;
 }
 
 .selectableBlock:hover {
-  outline-color: #2563eb44;
+  outline-color: rgba(37, 99, 235, 0.15);
 }
 
 .selectedBlock {
-  outline-color: #2563eb !important;
+  outline-color: rgba(37, 99, 235, 0.45) !important;
 }
 
 .expandedBlock {
-  outline-color: #2563eb33 !important;
+  outline-color: rgba(37, 99, 235, 0.12) !important;
+}
+
+/* --- Floating Toolbar --- */
+
+.floatingToolbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 1px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+.toolbarBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.toolbarBtn:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.toolbarBtn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.toolbarBtnDanger:hover:not(:disabled) {
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 /* --- Box Model Diagram --- */
@@ -800,6 +901,37 @@
   color: #999;
   font-style: italic;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.colorSwatchBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px dashed var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  color: #999;
+  padding: 0;
+  position: relative;
+}
+
+.colorSwatchBtn:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  background: #2563eb08;
+}
+
+.colorSwatchHiddenInput {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* --- Spacing Input --- */

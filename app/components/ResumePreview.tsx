@@ -46,16 +46,26 @@ export default function ResumePreview({ resume }: Props) {
             <div
               key={regionId}
               style={{ gridArea: regionId, ...regionStyles[regionId] }}
-              {...(editor ? {
-                className: `${styles.selectableBlock} ${editor.selectedRegionId === regionId ? styles.selectedBlock : ""}`,
-                onClick: (e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  editor.dispatch({ type: "SELECT_REGION", regionId });
-                },
-              } : {})}
+              {...(editor
+                ? {
+                    className: `${styles.selectableBlock} ${
+                      editor.selectedRegionId === regionId ? styles.selectedBlock : ""
+                    }`,
+                    onClick: (e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      editor.dispatch({ type: "SELECT_REGION", regionId });
+                    },
+                  }
+                : {})}
             >
-              {blockIds.map((blockId) => (
-                <BlockView key={blockId} block={resume.blocks[blockId]} />
+              {blockIds.map((blockId, index) => (
+                <BlockView
+                  key={blockId}
+                  block={resume.blocks[blockId]}
+                  regionId={editor ? regionId : undefined}
+                  blockIndex={editor ? index : undefined}
+                  totalBlocks={editor ? blockIds.length : undefined}
+                />
               ))}
             </div>
           ))}

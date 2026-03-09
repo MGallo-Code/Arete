@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { EditorProvider, useEditorRequired } from "../../contexts/EditorContext";
 import { sampleResume, sampleResume2, sampleResume3, testResume } from "../../fixtures";
 import type { Resume } from "../../models";
@@ -20,10 +20,21 @@ const RESUMES: Record<string, Resume> = {
 
 type SidebarTab = "selection" | "theme";
 
-function EditorInner() {
+function EditorInner({
+  onOpenLibrary,
+  onOpenLibraryAt,
+  libraryOpen,
+  insertTarget,
+  onCloseLibrary,
+}: {
+  onOpenLibrary: () => void;
+  onOpenLibraryAt: (regionId: string, index: number) => void;
+  libraryOpen: boolean;
+  insertTarget: { regionId: string; index: number } | null;
+  onCloseLibrary: () => void;
+}) {
   const { resume, selectedBlockId, selectedRegionId, dispatch } = useEditorRequired();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [libraryOpen, setLibraryOpen] = useState(false);
   const [manualTab, setManualTab] = useState<SidebarTab | null>(null);
   const [prevHasSelection, setPrevHasSelection] = useState(false);
 
@@ -47,18 +58,19 @@ function EditorInner() {
   return (
     <div className={styles.shell}>
       {/* Preview */}
-      <div
-        className={styles.previewArea}
-        onClick={() => dispatch({ type: "SELECT_BLOCK", path: [] })}
-      >
-        <div className={styles.previewWrapper} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.previewArea}>
+        <div className={styles.previewWrapper}>
           <ResumePreview resume={resume} />
         </div>
       </div>
 
       {/* Toggle button when sidebar is closed */}
       {!sidebarOpen && (
-        <button className={styles.openSidebarBtn} onClick={() => setSidebarOpen(true)}>
+        <button
+          type="button"
+          className={styles.openSidebarBtn}
+          onClick={() => setSidebarOpen(true)}
+        >
           Edit
         </button>
       )}
@@ -70,7 +82,12 @@ function EditorInner() {
           <div className={styles.sidebarHeader}>
             <div className={styles.sidebarHeaderRow}>
               <div className={styles.sidebarTitle}>Arete Editor</div>
-              <button className={styles.closeBtn} title="Close editor" onClick={closeSidebar}>
+              <button
+                type="button"
+                className={styles.closeBtn}
+                title="Close editor"
+                onClick={closeSidebar}
+              >
                 ×
               </button>
             </div>
@@ -89,8 +106,9 @@ function EditorInner() {
               ))}
             </select>
             <button
+              type="button"
               className={styles.insertBlockBtn}
-              onClick={() => setLibraryOpen(true)}
+              onClick={onOpenLibrary}
             >
               + Insert Block
             </button>
@@ -100,12 +118,14 @@ function EditorInner() {
           {hasSelection && (
             <div className={styles.sidebarTabs}>
               <button
+                type="button"
                 className={`${styles.sidebarTab} ${activeTab === "selection" ? styles.sidebarTabActive : ""}`}
                 onClick={() => setActiveTab("selection")}
               >
                 {selectedBlockId ? "Block" : "Region"}
               </button>
               <button
+                type="button"
                 className={`${styles.sidebarTab} ${activeTab === "theme" ? styles.sidebarTabActive : ""}`}
                 onClick={() => setActiveTab("theme")}
               >
@@ -129,15 +149,44 @@ function EditorInner() {
       )}
 
       {/* Block Library Modal */}
-      {libraryOpen && <BlockLibrary onClose={() => setLibraryOpen(false)} />}
+      {libraryOpen && (
+        <BlockLibrary
+          onClose={onCloseLibrary}
+          initialRegionId={insertTarget?.regionId}
+          initialIndex={insertTarget?.index}
+        />
+      )}
     </div>
   );
 }
 
 export default function EditorShell() {
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const [insertTarget, setInsertTarget] = useState<{ regionId: string; index: number } | null>(null);
+
+  const openLibraryAt = useCallback((regionId: string, index: number) => {
+    setInsertTarget({ regionId, index });
+    setLibraryOpen(true);
+  }, []);
+
+  const closeLibrary = useCallback(() => {
+    setLibraryOpen(false);
+    setInsertTarget(null);
+  }, []);
+
+  const openLibrary = useCallback(() => {
+    setLibraryOpen(true);
+  }, []);
+
   return (
-    <EditorProvider resume={sampleResume}>
-      <EditorInner />
+    <EditorProvider resume={sampleResume} onRequestInsert={openLibraryAt}>
+      <EditorInner
+        onOpenLibrary={openLibrary}
+        onOpenLibraryAt={openLibraryAt}
+        libraryOpen={libraryOpen}
+        insertTarget={insertTarget}
+        onCloseLibrary={closeLibrary}
+      />
     </EditorProvider>
   );
 }

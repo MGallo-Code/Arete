@@ -5,14 +5,18 @@ import { useEditor } from "../contexts/EditorContext";
 import ContentView from "./ContentView";
 import RichTextView from "./RichTextView";
 import EditableRichText from "./editor/EditableRichText";
+import FloatingToolbar from "./editor/FloatingToolbar";
 import styles from "./editor/editor.module.css";
 
 interface Props {
   block: Block;
   ancestorPath?: string[];
+  regionId?: string;
+  blockIndex?: number;
+  totalBlocks?: number;
 }
 
-export default function BlockView({ block, ancestorPath }: Props) {
+export default function BlockView({ block, ancestorPath, regionId, blockIndex, totalBlocks }: Props) {
   const theme = useTheme();
   const editor = useEditor();
 
@@ -84,8 +88,21 @@ export default function BlockView({ block, ancestorPath }: Props) {
       }
     : {};
 
+  // --- Floating toolbar (only for top-level selected blocks, not when editing) ---
+  const showToolbar = isSelected && !isEditing && regionId != null && blockIndex != null && totalBlocks != null;
+
   return (
     <div style={block.style} {...editorProps}>
+      {showToolbar && (
+        <FloatingToolbar
+          blockId={block.id}
+          regionId={regionId!}
+          blockIndex={blockIndex!}
+          totalBlocks={totalBlocks!}
+          dispatch={editor!.dispatch}
+          onRequestInsert={editor!.onRequestInsert}
+        />
+      )}
       {header}
       <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} />
     </div>

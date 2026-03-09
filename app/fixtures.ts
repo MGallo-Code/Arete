@@ -68,9 +68,9 @@ export const sampleResume: Resume = {
       h6: { fontSize: "9pt" },
       bullets: [
         // level 0 — top-level bullets
-        { char: "•", style: { fontSize: "10pt", lineHeight: "1.5", paddingLeft: "0px" } },
+        { char: "•", style: { fontSize: "10pt", lineHeight: "1.5", gap: "0.35em" } },
         // level 1 — indented sub-bullets
-        { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px" } },
+        { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px", gap: "0.35em" } },
       ],
       link: {
         color: "#2563eb",
@@ -386,8 +386,8 @@ export const sampleResume2: Resume = {
       h5: { fontSize: "9pt" },
       h6: { fontSize: "9pt" },
       bullets: [
-        { char: "–", style: { fontSize: "10pt", lineHeight: "1.6", paddingLeft: "0px" } },
-        { char: "·", style: { fontSize: "9pt", lineHeight: "1.6", paddingLeft: "12px" } },
+        { char: "–", style: { fontSize: "10pt", lineHeight: "1.6", gap: "0.35em" } },
+        { char: "·", style: { fontSize: "9pt", lineHeight: "1.6", paddingLeft: "12px", gap: "0.35em" } },
       ],
       link: { color: "#2563eb" },
     },
@@ -587,8 +587,8 @@ export const sampleResume3: Resume = {
       h5: { fontSize: "9pt" },
       h6: { fontSize: "9pt" },
       bullets: [
-        { char: "▸", style: { fontSize: "10pt", lineHeight: "1.5", paddingLeft: "0px", color: "#ffffff" } },
-        { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "10px", color: "#93c5fd" } },
+        { char: "▸", style: { fontSize: "10pt", lineHeight: "1.5", gap: "0.35em", color: "#ffffff" } },
+        { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "10px", gap: "0.35em", color: "#93c5fd" } },
       ],
       link: { color: "#93c5fd" },
     },
@@ -840,8 +840,8 @@ export const sampleTheme: Theme = {
   h5: { fontSize: "9pt" },
   h6: { fontSize: "9pt" },
   bullets: [
-    { char: "•", style: { fontSize: "10pt", lineHeight: "1.5", paddingLeft: "0px" } },
-    { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px" } },
+    { char: "•", style: { fontSize: "10pt", lineHeight: "1.5", gap: "0.35em" } },
+    { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px", gap: "0.35em" } },
   ],
   link: {
     color: "#2563eb",
@@ -893,8 +893,8 @@ export const sampleBulletsBlock: Block = {
     type: "bullets",
     // per-list override — different marker/indent from theme default
     levels: [
-      { char: "▸", style: { fontSize: "10pt", paddingLeft: "0px" } },
-      { char: "–", style: { fontSize: "9pt", paddingLeft: "14px" } },
+      { char: "▸", style: { fontSize: "10pt", gap: "0.35em" } },
+      { char: "–", style: { fontSize: "9pt", paddingLeft: "14px", gap: "0.35em" } },
     ],
     items: [
       { content: [{ text: "Reduced cold-start latency by " }, { text: "60%", style: { fontWeight: "bold" } }] },

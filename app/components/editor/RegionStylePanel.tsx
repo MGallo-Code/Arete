@@ -20,17 +20,10 @@ export default function RegionStylePanel() {
   const theme = resume.template.theme;
   const regionStyle = resume.template.regionStyles[selectedRegionId] ?? {};
 
-  // Parse shorthand margin/padding to show as defaults when longhand isn't set
+  // Parse shorthand padding to show as defaults when longhand isn't set
   const defaults = useMemo(() => {
     const result: Record<string, string> = {};
 
-    if (regionStyle.margin && typeof regionStyle.margin === "string") {
-      const parsed = parseShorthand(regionStyle.margin as string);
-      result.marginTop = parsed.top;
-      result.marginRight = parsed.right;
-      result.marginBottom = parsed.bottom;
-      result.marginLeft = parsed.left;
-    }
     if (regionStyle.padding && typeof regionStyle.padding === "string") {
       const parsed = parseShorthand(regionStyle.padding as string);
       result.paddingTop = parsed.top;
@@ -40,7 +33,7 @@ export default function RegionStylePanel() {
     }
 
     return result;
-  }, [regionStyle.margin, regionStyle.padding]);
+  }, [regionStyle.padding]);
 
   const updateStyle = (patch: Record<string, string | undefined>) => {
     dispatch({ type: "UPDATE_REGION_STYLE", regionId: selectedRegionId, style: patch });
@@ -63,26 +56,20 @@ export default function RegionStylePanel() {
 
       {/* 1. Spacing — Box Model (Margin + Padding) */}
       <BoxModelEditor
-        marginTop={(regionStyle.marginTop as string) ?? ""}
-        marginRight={(regionStyle.marginRight as string) ?? ""}
-        marginBottom={(regionStyle.marginBottom as string) ?? ""}
-        marginLeft={(regionStyle.marginLeft as string) ?? ""}
+        hideMargin
+        marginTop=""
+        marginRight=""
+        marginBottom=""
+        marginLeft=""
         paddingTop={(regionStyle.paddingTop as string) ?? ""}
         paddingRight={(regionStyle.paddingRight as string) ?? ""}
         paddingBottom={(regionStyle.paddingBottom as string) ?? ""}
         paddingLeft={(regionStyle.paddingLeft as string) ?? ""}
-        defaultMarginTop={defaults.marginTop}
-        defaultMarginRight={defaults.marginRight}
-        defaultMarginBottom={defaults.marginBottom}
-        defaultMarginLeft={defaults.marginLeft}
         defaultPaddingTop={defaults.paddingTop}
         defaultPaddingRight={defaults.paddingRight}
         defaultPaddingBottom={defaults.paddingBottom}
         defaultPaddingLeft={defaults.paddingLeft}
-        onMarginChange={(side, value) => {
-          const key = `margin${side[0].toUpperCase()}${side.slice(1)}`;
-          updateStyle({ [key]: value });
-        }}
+        onMarginChange={() => {}}
         onPaddingChange={(side, value) => {
           const key = `padding${side[0].toUpperCase()}${side.slice(1)}`;
           updateStyle({ [key]: value });

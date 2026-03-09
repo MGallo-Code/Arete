@@ -22,6 +22,7 @@ interface BoxModelEditorProps {
   defaultPaddingRight?: string;
   defaultPaddingBottom?: string;
   defaultPaddingLeft?: string;
+  hideMargin?: boolean;
 }
 
 export default function BoxModelEditor({
@@ -30,7 +31,39 @@ export default function BoxModelEditor({
   onMarginChange, onPaddingChange,
   defaultMarginTop, defaultMarginRight, defaultMarginBottom, defaultMarginLeft,
   defaultPaddingTop, defaultPaddingRight, defaultPaddingBottom, defaultPaddingLeft,
+  hideMargin,
 }: BoxModelEditorProps) {
+  const paddingLayer = (
+    <div className={styles.boxModelPadding}>
+      <span className={styles.boxModelLabel}>padding</span>
+      <div className={styles.boxModelTop}>
+        <SpacingInput compact value={paddingTop} placeholder={defaultPaddingTop || "0"} onChange={(v) => onPaddingChange("top", v)} />
+      </div>
+      <div className={styles.boxModelRight}>
+        <SpacingInput compact value={paddingRight} placeholder={defaultPaddingRight || "0"} onChange={(v) => onPaddingChange("right", v)} />
+      </div>
+      <div className={styles.boxModelBottom}>
+        <SpacingInput compact value={paddingBottom} placeholder={defaultPaddingBottom || "0"} onChange={(v) => onPaddingChange("bottom", v)} />
+      </div>
+      <div className={styles.boxModelLeft}>
+        <SpacingInput compact value={paddingLeft} placeholder={defaultPaddingLeft || "0"} onChange={(v) => onPaddingChange("left", v)} />
+      </div>
+
+      {/* Content area (innermost) */}
+      <div className={styles.boxModelContent}>
+        content
+      </div>
+    </div>
+  );
+
+  if (hideMargin) {
+    return (
+      <div className={styles.boxModel}>
+        {paddingLayer}
+      </div>
+    );
+  }
+
   return (
     <div className={styles.boxModel}>
       {/* Margin layer (outermost) */}
@@ -49,27 +82,7 @@ export default function BoxModelEditor({
           <SpacingInput compact value={marginLeft} placeholder={defaultMarginLeft || "0"} onChange={(v) => onMarginChange("left", v)} />
         </div>
 
-        {/* Padding layer (middle) */}
-        <div className={styles.boxModelPadding}>
-          <span className={styles.boxModelLabel}>padding</span>
-          <div className={styles.boxModelTop}>
-            <SpacingInput compact value={paddingTop} placeholder={defaultPaddingTop || "0"} onChange={(v) => onPaddingChange("top", v)} />
-          </div>
-          <div className={styles.boxModelRight}>
-            <SpacingInput compact value={paddingRight} placeholder={defaultPaddingRight || "0"} onChange={(v) => onPaddingChange("right", v)} />
-          </div>
-          <div className={styles.boxModelBottom}>
-            <SpacingInput compact value={paddingBottom} placeholder={defaultPaddingBottom || "0"} onChange={(v) => onPaddingChange("bottom", v)} />
-          </div>
-          <div className={styles.boxModelLeft}>
-            <SpacingInput compact value={paddingLeft} placeholder={defaultPaddingLeft || "0"} onChange={(v) => onPaddingChange("left", v)} />
-          </div>
-
-          {/* Content area (innermost) */}
-          <div className={styles.boxModelContent}>
-            content
-          </div>
-        </div>
+        {paddingLayer}
       </div>
     </div>
   );

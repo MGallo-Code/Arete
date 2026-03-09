@@ -45,7 +45,7 @@ export default function ResumePreview({ resume }: Props) {
           {Object.entries(resume.regionBlockIds).map(([regionId, blockIds]) => (
             <div
               key={regionId}
-              style={{ gridArea: regionId, ...regionStyles[regionId] }}
+              style={{ display: "flex", flexDirection: "column" as const, gridArea: regionId, ...regionStyles[regionId] }}
               {...(editor
                 ? {
                     className: `${styles.selectableBlock} ${

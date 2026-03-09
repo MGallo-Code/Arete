@@ -8,7 +8,8 @@ type Unit = (typeof UNITS)[number];
 
 /** Parse a CSS value like "10px", "0.5in", "12pt" into number + unit */
 function parseValue(value: string): { num: string; unit: Unit } {
-  if (!value || value === "0") return { num: value || "", unit: "px" };
+  if (!value) return { num: "", unit: "px" };
+  if (value === "0") return { num: "0", unit: "px" };
   const match = value.match(/^(-?[\d.]+)\s*(px|pt|in|em|rem|%)$/);
   if (match) return { num: match[1], unit: match[2] as Unit };
   // If it's just a number with no unit, treat as px
@@ -20,7 +21,8 @@ function parseValue(value: string): { num: string; unit: Unit } {
 
 /** Combine number + unit back to CSS value */
 function toCSS(num: string, unit: Unit): string {
-  if (!num || num === "0") return "0";
+  if (!num) return "";
+  if (num === "0") return `0${unit}`; // preserve unit through round-trips
   return `${num}${unit}`;
 }
 

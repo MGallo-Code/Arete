@@ -78,10 +78,10 @@ export default function EditableRichText({
 
   const handleBlur = useCallback(() => {
     if (!cancelledRef.current) {
-      onCancel();
+      save();
     }
     cancelledRef.current = false;
-  }, [onCancel]);
+  }, [save]);
 
   // Render empty element — innerHTML is set in useEffect
   const Wrapper = Tag as React.ElementType;

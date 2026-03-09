@@ -21,14 +21,12 @@ const RESUMES: Record<string, Resume> = {
 type SidebarTab = "selection" | "theme";
 
 function EditorInner({
-  onOpenLibrary,
-  onOpenLibraryAt,
+  onOpenLibrary: _onOpenLibrary,
   libraryOpen,
   insertTarget,
   onCloseLibrary,
 }: {
   onOpenLibrary: () => void;
-  onOpenLibraryAt: (regionId: string, index: number) => void;
   libraryOpen: boolean;
   insertTarget: { regionId: string; index: number } | null;
   onCloseLibrary: () => void;
@@ -105,13 +103,6 @@ function EditorInner({
                 </option>
               ))}
             </select>
-            <button
-              type="button"
-              className={styles.insertBlockBtn}
-              onClick={onOpenLibrary}
-            >
-              + Insert Block
-            </button>
           </div>
 
           {/* Tabs */}
@@ -182,7 +173,6 @@ export default function EditorShell() {
     <EditorProvider resume={sampleResume} onRequestInsert={openLibraryAt}>
       <EditorInner
         onOpenLibrary={openLibrary}
-        onOpenLibraryAt={openLibraryAt}
         libraryOpen={libraryOpen}
         insertTarget={insertTarget}
         onCloseLibrary={closeLibrary}

@@ -2,6 +2,7 @@
 
 import { useEditorRequired } from "../../contexts/EditorContext";
 import { FONT_PRESETS } from "../../data/constants";
+import { parseGridTemplate, updateColumnWidth, updateRowHeight, getColumnRegions, getRowRegions } from "../../utils/gridUtils";
 import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
@@ -277,6 +278,66 @@ export default function ThemePanel() {
           onPaddingChange={() => {}}
         />
       </div>
+
+      {/* Grid Layout */}
+      <div className={styles.themeSectionTitle}>Grid Layout</div>
+      {(() => {
+        const parsed = parseGridTemplate(resume.template.grid);
+        return (
+          <>
+            {/* Columns */}
+            {parsed.cols.length > 1 && (
+              <div className={styles.propRow}>
+                <label className={styles.propLabel}>Columns</label>
+                {parsed.cols.map((col, i) => {
+                  const regions = getColumnRegions(parsed, i);
+                  return (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                      <span className={styles.inheritLabel} style={{ width: 60, flexShrink: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={regions.join(", ")}>
+                        {regions.join(", ")}
+                      </span>
+                      <input
+                        type="text"
+                        className={styles.propInput}
+                        style={{ width: 80 }}
+                        value={col}
+                        onChange={(e) => {
+                          const newGrid = updateColumnWidth(resume.template.grid, i, e.target.value);
+                          dispatch({ type: "UPDATE_GRID", grid: newGrid });
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {/* Rows */}
+            <div className={styles.propRow}>
+              <label className={styles.propLabel}>Rows</label>
+              {parsed.rows.map((row, i) => {
+                const regions = getRowRegions(parsed, i);
+                return (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                    <span className={styles.inheritLabel} style={{ width: 60, flexShrink: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={regions.join(", ")}>
+                      {regions.join(", ")}
+                    </span>
+                    <input
+                      type="text"
+                      className={styles.propInput}
+                      style={{ width: 80 }}
+                      value={row.height}
+                      onChange={(e) => {
+                        const newGrid = updateRowHeight(resume.template.grid, i, e.target.value);
+                        dispatch({ type: "UPDATE_GRID", grid: newGrid });
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        );
+      })()}
 
       {/* Undo/Redo indicator */}
       <div className={styles.themeSectionTitle}>Actions</div>

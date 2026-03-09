@@ -57,7 +57,8 @@ export type EditorAction =
   | { type: "UPDATE_PAGE_MARGINS"; margins: PageSettings["margins"] }
   | { type: "UPDATE_BULLET_LEVELS"; blockId: string; levels: BulletLevel[] }
   | { type: "UPDATE_THEME_CANVAS"; style: Style }
-  | { type: "UPDATE_THEME_LINK"; style: Style };
+  | { type: "UPDATE_THEME_LINK"; style: Style }
+  | { type: "UPDATE_GRID"; grid: string };
 
 // Actions that mutate the resume (push to undo stack)
 const MUTATING = new Set([
@@ -85,6 +86,7 @@ const MUTATING = new Set([
   "UPDATE_BULLET_LEVELS",
   "UPDATE_THEME_CANVAS",
   "UPDATE_THEME_LINK",
+  "UPDATE_GRID",
 ]);
 
 // --- Helpers ---
@@ -560,6 +562,14 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       return {
         ...state,
         resume: { ...state.resume, template: { ...t, theme: { ...t.theme, link: { ...t.theme.link, ...action.style } } } },
+      };
+    }
+
+    case "UPDATE_GRID": {
+      const t = state.resume.template;
+      return {
+        ...state,
+        resume: { ...state.resume, template: { ...t, grid: action.grid } },
       };
     }
 

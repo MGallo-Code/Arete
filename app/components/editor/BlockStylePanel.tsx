@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useEditorRequired, findBlock, getBlockLabel } from "../../contexts/EditorContext";
-import type { BulletLevel } from "../../models";
+import type { BulletLevel, Style } from "../../models";
 import { FONT_PRESETS } from "../../data/constants";
+import { parseShorthand } from "../../utils/cssUtils";
 import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
@@ -73,6 +74,43 @@ export default function BlockStylePanel() {
 
   const style = block.style ?? {};
 
+  // Compute inherited margin/padding defaults from theme heading styles
+  const defaults = useMemo(() => {
+    const tag = block.header?.tag;
+    const themeStyle: Style | undefined = tag ? theme[tag] : undefined;
+    if (!themeStyle) return {};
+
+    const result: Record<string, string> = {};
+
+    // Check longhand properties first, then parse shorthand
+    if (themeStyle.margin && typeof themeStyle.margin === "string") {
+      const parsed = parseShorthand(themeStyle.margin as string);
+      result.marginTop = parsed.top;
+      result.marginRight = parsed.right;
+      result.marginBottom = parsed.bottom;
+      result.marginLeft = parsed.left;
+    }
+    if (themeStyle.padding && typeof themeStyle.padding === "string") {
+      const parsed = parseShorthand(themeStyle.padding as string);
+      result.paddingTop = parsed.top;
+      result.paddingRight = parsed.right;
+      result.paddingBottom = parsed.bottom;
+      result.paddingLeft = parsed.left;
+    }
+
+    // Longhand properties override shorthand
+    if (themeStyle.marginTop) result.marginTop = themeStyle.marginTop as string;
+    if (themeStyle.marginRight) result.marginRight = themeStyle.marginRight as string;
+    if (themeStyle.marginBottom) result.marginBottom = themeStyle.marginBottom as string;
+    if (themeStyle.marginLeft) result.marginLeft = themeStyle.marginLeft as string;
+    if (themeStyle.paddingTop) result.paddingTop = themeStyle.paddingTop as string;
+    if (themeStyle.paddingRight) result.paddingRight = themeStyle.paddingRight as string;
+    if (themeStyle.paddingBottom) result.paddingBottom = themeStyle.paddingBottom as string;
+    if (themeStyle.paddingLeft) result.paddingLeft = themeStyle.paddingLeft as string;
+
+    return result;
+  }, [block.header?.tag, theme]);
+
   const updateStyle = (patch: Record<string, string | undefined>) => {
     dispatch({ type: "UPDATE_BLOCK_STYLE", blockId: selectedBlockId, style: patch });
   };
@@ -106,6 +144,14 @@ export default function BlockStylePanel() {
         paddingRight={(style.paddingRight as string) ?? ""}
         paddingBottom={(style.paddingBottom as string) ?? ""}
         paddingLeft={(style.paddingLeft as string) ?? ""}
+        defaultMarginTop={defaults.marginTop}
+        defaultMarginRight={defaults.marginRight}
+        defaultMarginBottom={defaults.marginBottom}
+        defaultMarginLeft={defaults.marginLeft}
+        defaultPaddingTop={defaults.paddingTop}
+        defaultPaddingRight={defaults.paddingRight}
+        defaultPaddingBottom={defaults.paddingBottom}
+        defaultPaddingLeft={defaults.paddingLeft}
         onMarginChange={(side, value) => {
           const key = `margin${side[0].toUpperCase()}${side.slice(1)}`;
           updateStyle({ [key]: value });
@@ -233,21 +279,6 @@ export default function BlockStylePanel() {
           />
           {style.lineHeight && (
             <button className={styles.clearBtn} onClick={() => clearStyle("lineHeight")} title="Clear">×</button>
-          )}
-        </div>
-      </div>
-
-      {/* Gap */}
-      <div className={styles.propRow}>
-        <label className={styles.propLabel}>Gap</label>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <SpacingInput
-            value={(style.gap as string) ?? ""}
-            placeholder="0"
-            onChange={(v) => updateStyle({ gap: v })}
-          />
-          {style.gap && (
-            <button className={styles.clearBtn} onClick={() => clearStyle("gap")} title="Clear">×</button>
           )}
         </div>
       </div>

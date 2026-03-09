@@ -1,25 +1,50 @@
 "use client";
-import type { Block, Content, Resume, Template } from "../models";
+import type { Resume } from "../models";
 import BlockView from "./BlockView";
+
+const PAGE_SIZES = {
+  letter: { width: "8.5in", height: "11in" },
+  a4: { width: "210mm", height: "297mm" },
+};
 
 interface Props {
   resume: Resume;
 }
+
 export default function ResumePreview({ resume }: Props) {
-  const margins = resume.template.page.margins;
+  const { page, grid, regionStyles, theme } = resume.template;
+  const { width, height } = PAGE_SIZES[page.size];
 
   return (
-    <main style={{ display: "grid", gridTemplate: resume.template.grid, ...margins }}>
-      {Object.entries(resume.regionBlockIds).map(([regionId, blockIds]) => (
-        <div
-          key={regionId}
-          style={{ gridArea: regionId, ...resume.template.regionStyles[regionId] }}
-        >
-          {blockIds.map((blockId) => (
-            <BlockView key={blockId} block={resume.blocks[blockId]} theme={resume.template.theme} />
-          ))}
-        </div>
-      ))}
+    <main
+      style={{
+        ...theme.root,
+        width,
+        height,
+        paddingTop: page.margins.top,
+        paddingRight: page.margins.right,
+        paddingBottom: page.margins.bottom,
+        paddingLeft: page.margins.left,
+        boxSizing: "border-box",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          ...theme.canvas,
+          display: "grid",
+          gridTemplate: grid,
+          height: "100%",
+        }}
+      >
+        {Object.entries(resume.regionBlockIds).map(([regionId, blockIds]) => (
+          <div key={regionId} style={{ gridArea: regionId, ...regionStyles[regionId] }}>
+            {blockIds.map((blockId) => (
+              <BlockView key={blockId} block={resume.blocks[blockId]} theme={theme} />
+            ))}
+          </div>
+        ))}
+      </div>
     </main>
   );
 }

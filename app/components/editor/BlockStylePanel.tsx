@@ -1,7 +1,6 @@
 "use client";
 
 import { useEditorRequired, findBlock, getBlockLabel } from "../../contexts/EditorContext";
-import { useTheme } from "../../contexts/ThemeContext";
 import type { BulletLevel } from "../../models";
 import BoxModelEditor from "./BoxModelEditor";
 import SpacingInput from "./SpacingInput";
@@ -18,7 +17,7 @@ const FONT_PRESETS = [
 
 export default function BlockStylePanel() {
   const { resume, selectedBlockId, dispatch } = useEditorRequired();
-  const theme = useTheme();
+  const theme = resume.template.theme;
 
   if (!selectedBlockId) return null;
 

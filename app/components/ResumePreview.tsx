@@ -51,14 +51,16 @@ export default function ResumePreview({ resume }: Props) {
             height: "100%",
           }}
         >
-          {Object.entries(resume.regionBlockIds).map(([regionId, blockIds]) => (
+          {Object.entries(resume.regionBlockIds).map(([regionId, blockIds]) => {
+            const isRegionSelected = editor?.selectedRegionId === regionId;
+            return (
             <div
               key={regionId}
               style={{ display: "flex", flexDirection: "column" as const, gridArea: regionId, ...regionStyles[regionId] }}
               {...(editor
                 ? {
                     className: `${styles.selectableBlock} ${
-                      editor.selectedRegionId === regionId ? styles.selectedBlock : ""
+                      isRegionSelected ? styles.selectedRegion : ""
                     }`,
                     onClick: (e: React.MouseEvent) => {
                       e.stopPropagation();
@@ -67,6 +69,9 @@ export default function ResumePreview({ resume }: Props) {
                   }
                 : {})}
             >
+              {isRegionSelected && (
+                <span className={styles.regionLabel}>{regionId}</span>
+              )}
               {blockIds.map((blockId, index) => (
                 <BlockView
                   key={blockId}
@@ -77,7 +82,8 @@ export default function ResumePreview({ resume }: Props) {
                 />
               ))}
             </div>
-          ))}
+          );
+          })}
         </div>
       </main>
     </ThemeProvider>

@@ -736,6 +736,28 @@
   background-color: rgba(37, 99, 235, 0.03);
 }
 
+.selectedRegion {
+  outline: 2px dashed rgba(37, 99, 235, 0.5) !important;
+  outline-offset: 1px;
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
+.regionLabel {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 9px;
+  font-weight: 600;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background: #2563eb;
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 3px;
+  z-index: 10;
+  pointer-events: none;
+  line-height: 1.4;
+}
+
 .expandedBlock {
   outline-color: rgba(37, 99, 235, 0.15) !important;
 }

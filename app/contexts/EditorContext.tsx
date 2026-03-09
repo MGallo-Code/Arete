@@ -765,11 +765,80 @@ export function EditorProvider({
         }
         e.preventDefault();
         dispatch({ type: "REMOVE_BLOCK_ANYWHERE", blockId: selectedBlockId });
+        return;
+      }
+
+      // Guard: remaining shortcuts need no focus in form inputs
+      const active = document.activeElement;
+      if (
+        active instanceof HTMLInputElement ||
+        active instanceof HTMLTextAreaElement ||
+        active instanceof HTMLSelectElement ||
+        (active as HTMLElement)?.isContentEditable
+      ) {
+        return;
+      }
+
+      // Escape: deselect current block
+      if (e.key === "Escape" && state.selectedPath.length > 0) {
+        e.preventDefault();
+        dispatch({ type: "SELECT_BLOCK", path: [] });
+        return;
+      }
+
+      // Enter: start editing selected block
+      if (e.key === "Enter" && selectedBlockId) {
+        e.preventDefault();
+        const block = findBlock(resumeRef.current.blocks, selectedBlockId);
+        if (block) {
+          // Prefer editing content; fall back to header if content is empty/image
+          const field: "header" | "content" =
+            block.content.type === "text" || block.content.type === "bullets"
+              ? "content"
+              : block.header
+                ? "header"
+                : "content";
+          dispatch({ type: "START_EDITING", blockId: selectedBlockId, field });
+        }
+        return;
+      }
+
+      // Arrow key navigation between blocks
+      if ((e.key === "ArrowDown" || e.key === "ArrowUp") && selectedBlockId) {
+        e.preventDefault();
+        const resume = resumeRef.current;
+        const regions = Object.entries(resume.regionBlockIds);
+        if (regions.length === 0) return;
+
+        // Build a flat ordered list of all top-level block IDs with their region+path info
+        const allBlocks: { blockId: string; regionId: string }[] = [];
+        for (const [regionId, blockIds] of regions) {
+          for (const blockId of blockIds) {
+            allBlocks.push({ blockId, regionId });
+          }
+        }
+        if (allBlocks.length === 0) return;
+
+        const currentIndex = allBlocks.findIndex((b) => b.blockId === selectedBlockId);
+        if (currentIndex === -1) return;
+
+        let nextIndex: number;
+        if (e.key === "ArrowDown") {
+          nextIndex = currentIndex + 1;
+          if (nextIndex >= allBlocks.length) return; // already at the end
+        } else {
+          nextIndex = currentIndex - 1;
+          if (nextIndex < 0) return; // already at the start
+        }
+
+        const next = allBlocks[nextIndex];
+        dispatch({ type: "SELECT_BLOCK", path: [next.blockId] });
+        return;
       }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [state.editingBlockId, selectedBlockId]);
+  }, [state.editingBlockId, selectedBlockId, state.selectedPath]);
 
   const canUndo = state.past.length > 0;
   const canRedo = state.future.length > 0;

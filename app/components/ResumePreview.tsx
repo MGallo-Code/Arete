@@ -1,7 +1,9 @@
 "use client";
+import { useEditor } from "../contexts/EditorContext";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import type { Resume } from "../models";
 import BlockView from "./BlockView";
+import styles from "./editor/editor.module.css";
 
 const PAGE_SIZES = {
   letter: { width: "8.5in", height: "11in" },
@@ -13,6 +15,7 @@ interface Props {
 }
 
 export default function ResumePreview({ resume }: Props) {
+  const editor = useEditor();
   const { page, grid, regionStyles, theme } = resume.template;
   const { width, height } = PAGE_SIZES[page.size];
 
@@ -40,7 +43,17 @@ export default function ResumePreview({ resume }: Props) {
           }}
         >
           {Object.entries(resume.regionBlockIds).map(([regionId, blockIds]) => (
-            <div key={regionId} style={{ gridArea: regionId, ...regionStyles[regionId] }}>
+            <div
+              key={regionId}
+              style={{ gridArea: regionId, ...regionStyles[regionId] }}
+              {...(editor ? {
+                className: `${styles.selectableBlock} ${editor.selectedRegionId === regionId ? styles.selectedBlock : ""}`,
+                onClick: (e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  editor.dispatch({ type: "SELECT_REGION", regionId });
+                },
+              } : {})}
+            >
               {blockIds.map((blockId) => (
                 <BlockView key={blockId} block={resume.blocks[blockId]} />
               ))}

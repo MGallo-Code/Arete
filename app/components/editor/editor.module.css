@@ -1,0 +1,630 @@
+/* --- Editor Shell --- */
+
+.shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-bg-subtle);
+}
+
+/* --- Sidebar --- */
+
+.sidebar {
+  width: 300px;
+  min-width: 300px;
+  background: var(--color-bg);
+  border-left: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  order: 1;
+}
+
+.sidebarHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebarHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.closeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+}
+
+.closeBtn:hover {
+  background: var(--color-bg-subtle);
+  color: var(--color-fg);
+}
+
+.sidebarTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.resumeSelect {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.sidebarBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+/* --- Insert Block Button --- */
+
+.insertBlockBtn {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  border: 1px dashed var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg);
+  color: #888;
+  cursor: pointer;
+  transition:
+    background 0.1s,
+    color 0.1s,
+    border-color 0.1s;
+}
+
+.insertBlockBtn:hover {
+  background: var(--color-bg-subtle);
+  color: var(--color-fg);
+  border-color: #2563eb66;
+}
+
+/* --- Modal --- */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modalCard {
+  width: 640px;
+  max-width: 90vw;
+  max-height: 80vh;
+  background: var(--color-bg);
+  border-radius: 10px;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.18),
+    0 1px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modalTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.modalControls {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modalBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.templateGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+/* --- Block Tree --- */
+
+.regionGroup {
+  margin-bottom: 4px;
+}
+
+.regionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 16px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.addBlockBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.addBlockBtn:hover {
+  background: var(--color-bg-subtle);
+  color: var(--color-fg);
+}
+
+.treeNode {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px 3px 16px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  color: var(--color-fg);
+  border-left: 2px solid transparent;
+  transition: background 0.1s;
+  user-select: none;
+}
+
+.treeNode:hover {
+  background: var(--color-bg-subtle);
+}
+
+.treeNodeSelected {
+  background: #2563eb12;
+  border-left-color: #2563eb;
+}
+
+.treeNodeSelected:hover {
+  background: #2563eb18;
+}
+
+.nodeIcon {
+  flex-shrink: 0;
+  font-size: 11px;
+  width: 16px;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.nodeLabel {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.nodeActions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.treeNode:hover .nodeActions {
+  opacity: 1;
+}
+
+.nodeActionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+}
+
+.nodeActionBtn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.nodeActionBtn:hover:not(:disabled) {
+  background: var(--color-border);
+  color: var(--color-fg);
+}
+
+.nodeActionBtnDanger:hover:not(:disabled) {
+  background: #fecaca;
+  color: #dc2626;
+}
+
+.childNodes {
+  padding-left: 16px;
+}
+
+/* --- Properties Panel --- */
+
+.propertiesPanel {
+  border-top: 1px solid var(--color-border);
+  padding: 12px 16px;
+  overflow-y: auto;
+  max-height: 50%;
+}
+
+.propertiesTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  margin-bottom: 10px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.propRow {
+  margin-bottom: 10px;
+}
+
+.propLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: #888;
+  margin-bottom: 3px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.propInput {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.propInput:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+
+.propSelect {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.propTextarea {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-mono), monospace;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.propTextarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+
+.propBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+  background: var(--color-bg-subtle);
+  color: #888;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.propBtnRow {
+  display: flex;
+  gap: 6px;
+}
+
+.propBtn {
+  padding: 4px 10px;
+  font-size: 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  cursor: pointer;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.propBtn:hover {
+  background: var(--color-bg-subtle);
+}
+
+.propBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.propBtnDanger {
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.propBtnDanger:hover {
+  background: #fef2f2;
+}
+
+/* --- Block Library --- */
+
+.libraryPanel {
+  padding: 0;
+}
+
+.libraryCategory {
+  padding: 8px 20px;
+}
+
+.categoryTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  margin-bottom: 6px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.templateCard {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 6px 10px;
+  margin-bottom: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--color-bg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  transition:
+    background 0.1s,
+    border-color 0.1s;
+}
+
+.templateCard:hover {
+  background: var(--color-bg-subtle);
+  border-color: #2563eb66;
+}
+
+.templateCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.templateName {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.templatePreview {
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+  max-height: 80px;
+}
+
+/* --- Theme Panel --- */
+
+.themePanel {
+  padding: 8px 16px;
+}
+
+.themeSectionTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.themeSectionTitle:first-child {
+  margin-top: 0;
+}
+
+.colorInput {
+  width: 32px;
+  height: 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 1px;
+  background: var(--color-bg);
+}
+
+.headingRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.headingTag {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  width: 20px;
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.toggleGroup {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.toggleBtn {
+  padding: 4px 12px;
+  font-size: 11px;
+  border: none;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  cursor: pointer;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.toggleBtn:not(:last-child) {
+  border-right: 1px solid var(--color-border);
+}
+
+.toggleActive {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.marginGrid {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.marginField {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.marginLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: #888;
+  width: 12px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* --- Open sidebar button --- */
+
+.openSidebarBtn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.openSidebarBtn:hover {
+  background: var(--color-bg-subtle);
+}
+
+/* --- Preview Area --- */
+
+.previewArea {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  padding: 32px;
+}
+
+.previewWrapper {
+  flex-shrink: 0;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 2px;
+}
+
+/* --- Block selection overlay --- */
+
+.selectableBlock {
+  position: relative;
+  cursor: pointer;
+  border-radius: 2px;
+  outline: 2px solid transparent;
+  outline-offset: -1px;
+  transition:
+    outline-color 0.15s,
+    background 0.15s;
+}
+
+.selectableBlock:hover {
+  outline-color: #2563eb44;
+}
+
+.selectedBlock {
+  outline-color: #2563eb !important;
+}

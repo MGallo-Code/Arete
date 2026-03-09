@@ -1,6 +1,8 @@
 import ResumePreview from "./components/ResumePreview";
-import { sampleResume } from "./fixtures";
+import { testResume } from "./fixtures";
+
+// Use testResume for feature verification; switch to sampleResume for normal demo
 
 export default function Home() {
-  return <ResumePreview resume={sampleResume} />;
+  return <ResumePreview resume={testResume} />;
 }

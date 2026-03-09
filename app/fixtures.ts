@@ -800,6 +800,226 @@ export const sampleResume3: Resume = {
   },
 };
 
+// --- Test Resume: exercises ALL features for visual/CSS verification ---
+// Use this to verify: h1-h6, rich text (links/bold/italic), bullets (level 0/1),
+// custom bullet levels, image content, nested blocks, block styles, region styles
+
+export const testResume: Resume = {
+  id: "test-all-features",
+  title: "Feature Test Resume",
+  createdAt: "2026-03-09T00:00:00Z",
+  updatedAt: "2026-03-09T00:00:00Z",
+
+  template: {
+    id: "test-template",
+    name: "Feature Test",
+    grid: '"header header" auto "sidebar main" 1fr / 28% 72%',
+    regionStyles: {
+      header: {
+        background: "linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)",
+        padding: "20px 24px",
+        color: "#ffffff",
+      },
+      sidebar: {
+        background: "#f8fafc",
+        padding: "20px 16px",
+        borderRight: "1px solid #e2e8f0",
+      },
+      main: {
+        padding: "20px 24px",
+      },
+    },
+    page: {
+      size: "letter",
+      margins: { top: "12px", right: "12px", bottom: "12px", left: "12px" },
+    },
+    fonts: ["Georgia", "Inter"],
+    theme: {
+      root: {
+        fontFamily: "Georgia, serif",
+        fontSize: "10pt",
+        lineHeight: "1.5",
+        color: "#1a1a1a",
+        background: "#ffffff",
+      },
+      canvas: {},
+      h1: { fontSize: "20pt", fontWeight: "bold", color: "#ffffff" },
+      h2: {
+        fontSize: "8pt",
+        fontWeight: "bold",
+        textTransform: "uppercase",
+        letterSpacing: "0.1em",
+        color: "#2563eb",
+        marginBottom: "4px",
+        marginTop: "12px",
+        borderBottom: "1px solid #2563eb",
+      },
+      h3: { fontSize: "10pt", fontWeight: "bold" },
+      h4: { fontSize: "10pt", fontStyle: "italic", color: "#555" },
+      h5: { fontSize: "9pt", fontWeight: "bold" },
+      h6: { fontSize: "9pt", fontStyle: "italic" },
+      bullets: [
+        { char: "•", style: { fontSize: "10pt", lineHeight: "1.5", gap: "0.35em" } },
+        { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px", gap: "0.35em" } },
+      ],
+      link: { color: "#2563eb", textDecoration: "underline" },
+    },
+  },
+
+  regionBlockIds: {
+    header: ["test-block-name"],
+    sidebar: ["test-block-contact", "test-block-image", "test-block-headings"],
+    main: ["test-block-summary", "test-block-experience", "test-block-bullets"],
+  },
+
+  blocks: {
+    "test-block-name": {
+      id: "test-block-name",
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "test-name-title",
+            header: { content: [{ text: "Feature Test Candidate" }], tag: "h1" },
+            content: { type: "text", value: [] },
+          },
+          {
+            id: "test-name-subtitle",
+            content: {
+              type: "text",
+              value: [
+                { text: "Resume Tailoring Specialist", style: { fontSize: "12pt", color: "#93c5fd" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+
+    "test-block-contact": {
+      id: "test-block-contact",
+      header: { content: [{ text: "Contact" }], tag: "h2" },
+      content: {
+        type: "bullets",
+        items: [
+          { content: [{ text: "test@arete.example" }] },
+          {
+            content: [
+              { text: "linkedin.com/test", link: "https://linkedin.com", style: { fontWeight: "bold" } },
+            ],
+          },
+          {
+            content: [
+              { text: "github.com/test", link: "https://github.com" },
+            ],
+          },
+        ],
+      },
+    },
+
+    "test-block-image": {
+      id: "test-block-image",
+      header: { content: [{ text: "Photo" }], tag: "h2" },
+      content: {
+        type: "image",
+        src: "https://picsum.photos/seed/arete/120/120",
+        alt: "Profile",
+        style: { borderRadius: "50%", width: "80px", height: "80px", display: "block" },
+      },
+    },
+
+    "test-block-headings": {
+      id: "test-block-headings",
+      header: { content: [{ text: "All Headings" }], tag: "h2" },
+      content: {
+        type: "blocks",
+        children: [
+          { id: "h3", header: { content: [{ text: "H3 Heading" }], tag: "h3" }, content: { type: "text", value: [{ text: "h3 text" }] } },
+          { id: "h4", header: { content: [{ text: "H4 Heading" }], tag: "h4" }, content: { type: "text", value: [{ text: "h4 text" }] } },
+          { id: "h5", header: { content: [{ text: "H5 Heading" }], tag: "h5" }, content: { type: "text", value: [{ text: "h5 text" }] } },
+          { id: "h6", header: { content: [{ text: "H6 Heading" }], tag: "h6" }, content: { type: "text", value: [{ text: "h6 text" }] } },
+        ],
+      },
+    },
+
+    "test-block-summary": {
+      id: "test-block-summary",
+      header: { content: [{ text: "Summary" }], tag: "h2" },
+      content: {
+        type: "text",
+        value: [
+          {
+            text: "Rich text: ",
+          },
+          { text: "bold", style: { fontWeight: "bold" } },
+          { text: ", " },
+          { text: "italic", style: { fontStyle: "italic" } },
+          { text: ", and " },
+          { text: "link", link: "https://arete.example", style: { color: "#2563eb" } },
+          { text: "." },
+        ],
+      },
+    },
+
+    "test-block-experience": {
+      id: "test-block-experience",
+      header: { content: [{ text: "Experience" }], tag: "h2" },
+      content: {
+        type: "blocks",
+        children: [
+          {
+            id: "test-job-1",
+            content: {
+              type: "blocks",
+              children: [
+                {
+                  id: "test-job-1-title",
+                  header: { content: [{ text: "Staff Engineer" }], tag: "h3" },
+                  content: {
+                    type: "text",
+                    value: [
+                      { text: "Acme Corp", style: { fontStyle: "italic" } },
+                      { text: "  ·  2022 – Present" },
+                    ],
+                  },
+                },
+                {
+                  id: "test-job-1-bullets",
+                  content: {
+                    type: "bullets",
+                    items: [
+                      { content: [{ text: "Top-level bullet." }] },
+                      { content: [{ text: "Another top-level bullet." }] },
+                      { content: [{ text: "Indented sub-bullet (level 1)." }], level: 1 },
+                      { content: [{ text: "Mixed: ", style: {} }, { text: "bold", style: { fontWeight: "bold" } }, { text: " and ", style: {} }, { text: "italic", style: { fontStyle: "italic" } }] },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+
+    "test-block-bullets": {
+      id: "test-block-bullets",
+      header: { content: [{ text: "Custom Bullets" }], tag: "h2" },
+      content: {
+        type: "bullets",
+        levels: [
+          { char: "▸", style: { fontSize: "10pt", gap: "0.35em", color: "#059669" } },
+          { char: "·", style: { fontSize: "9pt", paddingLeft: "14px", gap: "0.35em" } },
+        ],
+        items: [
+          { content: [{ text: "Custom marker (▸) for level 0." }] },
+          { content: [{ text: "Custom marker (·) for level 1." }], level: 1 },
+        ],
+      },
+    },
+  },
+};
+
 // --- Theme fixture ---
 
 export const sampleTheme: Theme = {

@@ -224,87 +224,67 @@ export default function RegionStylePanel() {
         </div>
       </div>
 
-      {/* Border right */}
-      {(() => {
-        const borderVal = (regionStyle.borderRight as string) ?? "";
-        const match = borderVal.match(/^(\d+(?:\.\d+)?)(px|pt)\s+solid\s+(#[0-9a-fA-F]{3,8})$/);
-        const borderWidth = match ? `${match[1]}${match[2]}` : "";
-        const borderColor = match ? match[3] : "#000000";
-        return (
-          <div className={styles.propRow}>
-            <label className={styles.propLabel}>Border right</label>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <SpacingInput
-                compact
-                value={borderWidth}
-                placeholder="0"
-                onChange={(v) => {
-                  if (v) {
-                    updateStyle({ borderRight: `${v} solid ${borderColor}` });
-                  } else {
-                    clearStyle("borderRight");
-                  }
-                }}
-              />
-              <input
-                type="color"
-                className={styles.colorInput}
-                value={borderColor}
-                onChange={(e) => {
-                  const w = borderWidth || "1px";
-                  updateStyle({ borderRight: `${w} solid ${e.target.value}` });
-                }}
-              />
-              {regionStyle.borderRight ? (
-                <button className={styles.clearBtn} onClick={() => clearStyle("borderRight")} title="Clear">×</button>
-              ) : (
-                <span className={styles.inheritLabel}>none</span>
-              )}
-            </div>
-          </div>
-        );
-      })()}
+      {/* Borders */}
+      <div className={styles.themeSectionTitle}>Borders</div>
+      <div className={styles.bordersGrid}>
+        {(["Top", "Right", "Bottom", "Left"] as const).map((side) => {
+          const key = `border${side}` as keyof typeof regionStyle;
+          const borderVal = (regionStyle[key] as string) ?? "";
+          const match = borderVal.match(/^(\d+(?:\.\d+)?)(px|pt)\s+solid\s+(#[0-9a-fA-F]{3,8})$/);
+          const borderWidth = match ? `${match[1]}${match[2]}` : "";
+          const borderColor = match ? match[3] : "#000000";
+          return [
+            <span key={`${side}-label`} className={styles.borderSideLabel}>{side[0]}</span>,
+            <SpacingInput
+              key={`${side}-width`}
+              compact
+              value={borderWidth}
+              placeholder="0"
+              onChange={(v) => {
+                if (v) {
+                  updateStyle({ [key]: `${v} solid ${borderColor}` });
+                } else {
+                  clearStyle(key);
+                }
+              }}
+            />,
+            <input
+              key={`${side}-color`}
+              type="color"
+              className={styles.colorInput}
+              value={borderColor}
+              onChange={(e) => {
+                const w = borderWidth || "1px";
+                updateStyle({ [key]: `${w} solid ${e.target.value}` });
+              }}
+            />,
+            regionStyle[key] ? (
+              <button key={`${side}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear">
+                ×
+              </button>
+            ) : (
+              <span key={`${side}-none`} className={styles.inheritLabel}>none</span>
+            ),
+          ];
+        })}
+      </div>
 
-      {/* Border bottom */}
-      {(() => {
-        const borderVal = (regionStyle.borderBottom as string) ?? "";
-        const match = borderVal.match(/^(\d+(?:\.\d+)?)(px|pt)\s+solid\s+(#[0-9a-fA-F]{3,8})$/);
-        const borderWidth = match ? `${match[1]}${match[2]}` : "";
-        const borderColor = match ? match[3] : "#000000";
-        return (
-          <div className={styles.propRow}>
-            <label className={styles.propLabel}>Border bottom</label>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <SpacingInput
-                compact
-                value={borderWidth}
-                placeholder="0"
-                onChange={(v) => {
-                  if (v) {
-                    updateStyle({ borderBottom: `${v} solid ${borderColor}` });
-                  } else {
-                    clearStyle("borderBottom");
-                  }
-                }}
-              />
-              <input
-                type="color"
-                className={styles.colorInput}
-                value={borderColor}
-                onChange={(e) => {
-                  const w = borderWidth || "1px";
-                  updateStyle({ borderBottom: `${w} solid ${e.target.value}` });
-                }}
-              />
-              {regionStyle.borderBottom ? (
-                <button className={styles.clearBtn} onClick={() => clearStyle("borderBottom")} title="Clear">×</button>
-              ) : (
-                <span className={styles.inheritLabel}>none</span>
-              )}
-            </div>
-          </div>
-        );
-      })()}
+      {/* Border radius */}
+      <div className={styles.propRow} style={{ marginTop: 6 }}>
+        <label className={styles.propLabel}>Border radius</label>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <SpacingInput
+            value={(regionStyle.borderRadius as string) ?? ""}
+            placeholder="0"
+            onChange={(v) => updateStyle({ borderRadius: v })}
+          />
+          {regionStyle.borderRadius && (
+            <button className={styles.clearBtn} onClick={() => clearStyle("borderRadius")} title="Clear">
+              ×
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

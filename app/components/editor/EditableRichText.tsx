@@ -51,6 +51,9 @@ export default function EditableRichText({
       if (e.key === "Escape") {
         e.preventDefault();
         cancelledRef.current = true;
+        // Blur explicitly AFTER setting the ref so handleBlur sees it
+        // and skips saving. onCancel() is called after blur completes.
+        ref.current?.blur();
         onCancel();
         return;
       }

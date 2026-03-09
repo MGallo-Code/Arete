@@ -57,6 +57,10 @@ export default function SpacingInput({
     onChange(toCSS(newNum, unit));
   };
 
+  const blurOnEnter = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") (e.target as HTMLElement).blur();
+  };
+
   const handleUnitChange = (newUnit: Unit) => {
     setUnit(newUnit);
     if (num) {
@@ -75,6 +79,7 @@ export default function SpacingInput({
           value={num}
           placeholder={parsedPlaceholder.num || "0"}
           onChange={(e) => handleNumChange(e.target.value)}
+          onKeyDown={blurOnEnter}
         />
         <select
           className={styles.spacingCompactUnit}

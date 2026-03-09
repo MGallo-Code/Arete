@@ -21,12 +21,10 @@ const RESUMES: Record<string, Resume> = {
 type SidebarTab = "selection" | "theme";
 
 function EditorInner({
-  onOpenLibrary: _onOpenLibrary,
   libraryOpen,
   insertTarget,
   onCloseLibrary,
 }: {
-  onOpenLibrary: () => void;
   libraryOpen: boolean;
   insertTarget: { regionId: string; index: number } | null;
   onCloseLibrary: () => void;
@@ -126,7 +124,14 @@ function EditorInner({
           )}
 
           {/* Panel content */}
-          <div className={styles.sidebarBody}>
+          <div
+            className={styles.sidebarBody}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
+                (e.target as HTMLElement).blur();
+              }
+            }}
+          >
             {hasSelection && activeTab === "selection" ? (
               <>
                 <BlockStylePanel />
@@ -165,14 +170,9 @@ export default function EditorShell() {
     setInsertTarget(null);
   }, []);
 
-  const openLibrary = useCallback(() => {
-    setLibraryOpen(true);
-  }, []);
-
   return (
     <EditorProvider resume={sampleResume} onRequestInsert={openLibraryAt}>
       <EditorInner
-        onOpenLibrary={openLibrary}
         libraryOpen={libraryOpen}
         insertTarget={insertTarget}
         onCloseLibrary={closeLibrary}

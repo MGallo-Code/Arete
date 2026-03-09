@@ -717,15 +717,17 @@
 }
 
 .selectableBlock:hover {
-  outline-color: rgba(37, 99, 235, 0.15);
+  outline-color: rgba(37, 99, 235, 0.12);
 }
 
 .selectedBlock {
-  outline-color: rgba(37, 99, 235, 0.45) !important;
+  outline: 2px solid rgba(37, 99, 235, 0.6) !important;
+  outline-offset: 1px;
+  background-color: rgba(37, 99, 235, 0.03);
 }
 
 .expandedBlock {
-  outline-color: rgba(37, 99, 235, 0.12) !important;
+  outline-color: rgba(37, 99, 235, 0.15) !important;
 }
 
 /* --- Floating Toolbar --- */
@@ -1039,4 +1041,22 @@
 .spacingFullUnit:focus {
   outline: none;
   border-color: #2563eb;
+}
+
+/* --- Borders Section --- */
+
+.bordersGrid {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 4px 6px;
+  align-items: center;
+}
+
+.borderSideLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: #888;
+  font-family: var(--font-geist-mono), monospace;
+  width: 12px;
+  text-align: center;
 }

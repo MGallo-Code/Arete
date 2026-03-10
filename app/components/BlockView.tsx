@@ -1,7 +1,7 @@
 import { JSX } from "react";
 import type { Block } from "../models";
 import { useTheme } from "../contexts/ThemeContext";
-import { useEditor } from "../contexts/EditorContext";
+import { useEditor, getBlockLabel } from "../contexts/EditorContext";
 import ContentView from "./ContentView";
 import RichTextView from "./RichTextView";
 import EditableRichText from "./editor/EditableRichText";
@@ -72,11 +72,16 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
   const parentId = ancestorPath && ancestorPath.length > 0 ? ancestorPath[ancestorPath.length - 1] : null;
   const canSelect = !parentId || (editor?.selectedPath.includes(parentId) ?? false);
 
+  const blockLabel = getBlockLabel(block);
+
   const editorProps = editor && canSelect
     ? {
+        role: "group" as const,
+        "aria-label": blockLabel,
+        tabIndex: 0,
         className: [
           styles.selectableBlock,
-          isSelected ? styles.selectedBlock : "",
+          isEditing ? styles.editingBlock : isSelected ? styles.selectedBlock : "",
           isExpanded ? styles.expandedBlock : "",
         ].filter(Boolean).join(" "),
         onClick: (e: React.MouseEvent) => {

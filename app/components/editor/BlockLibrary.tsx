@@ -1,18 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import { useEditorRequired, findBlockRegion } from "../../contexts/EditorContext";
 import { blockTemplates, categories } from "../../data/blockTemplates";
 import BlockPreview from "./BlockPreview";
 import styles from "./editor.module.css";
 
 interface BlockLibraryProps {
-  onClose: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   initialRegionId?: string | null;
   initialIndex?: number;
 }
 
-export default function BlockLibrary({ onClose, initialRegionId, initialIndex }: BlockLibraryProps) {
+export default function BlockLibrary({ open, onOpenChange, initialRegionId, initialIndex }: BlockLibraryProps) {
   const { resume, selectedBlockId, dispatch } = useEditorRequired();
   const [search, setSearch] = useState("");
 
@@ -50,69 +52,72 @@ export default function BlockLibrary({ onClose, initialRegionId, initialIndex }:
     }
 
     dispatch({ type: "ADD_BLOCK", regionId: region, index, block });
-    onClose();
+    onOpenChange(false);
   };
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.modalHeader}>
-          <div className={styles.modalTitle}>Insert Block</div>
-          <button className={styles.closeBtn} onClick={onClose} title="Close">
-            ×
-          </button>
-        </div>
-        <div className={styles.modalControls}>
-          <input
-            className={styles.propInput}
-            placeholder="Search blocks..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            autoFocus
-          />
-          <div style={{ marginTop: 6 }}>
-            <label className={styles.propLabel}>Insert into</label>
-            <select
-              className={styles.propSelect}
-              value={targetRegion}
-              onChange={(e) => setTargetRegion(e.target.value)}
-            >
-              {regionNames.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      <Dialog.Portal>
+        <Dialog.Overlay className={styles.modalOverlay} />
+        <Dialog.Content className={styles.modalCard} aria-describedby={undefined}>
+          <div className={styles.modalHeader}>
+            <Dialog.Title className={styles.modalTitle}>Insert Block</Dialog.Title>
+            <Dialog.Close asChild>
+              <button className={styles.closeBtn} title="Close">×</button>
+            </Dialog.Close>
           </div>
-        </div>
-        <div className={styles.modalBody}>
-          {categories.map((cat) => {
-            const items = filtered.filter((t) => t.category === cat.id);
-            if (items.length === 0) return null;
-            return (
-              <div key={cat.id} className={styles.libraryCategory}>
-                <div className={styles.categoryTitle}>{cat.label}</div>
-                <div className={styles.templateGrid}>
-                  {items.map((t) => (
-                    <button
-                      key={t.id}
-                      className={styles.templateCard}
-                      onClick={() => handleInsert(t.id)}
-                    >
-                      <div className={styles.templateCardHeader}>
-                        <div className={styles.templateName}>{t.name}</div>
-                      </div>
-                      <div className={styles.templatePreview}>
-                        <BlockPreview create={t.create} />
-                      </div>
-                    </button>
-                  ))}
+          <div className={styles.modalControls}>
+            <input
+              className={styles.propInput}
+              placeholder="Search blocks..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              autoFocus
+            />
+            <div style={{ marginTop: 6 }}>
+              <label className={styles.propLabel}>Insert into</label>
+              <select
+                className={styles.propSelect}
+                value={targetRegion}
+                onChange={(e) => setTargetRegion(e.target.value)}
+              >
+                {regionNames.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className={styles.modalBody}>
+            {categories.map((cat) => {
+              const items = filtered.filter((t) => t.category === cat.id);
+              if (items.length === 0) return null;
+              return (
+                <div key={cat.id} className={styles.libraryCategory}>
+                  <div className={styles.categoryTitle}>{cat.label}</div>
+                  <div className={styles.templateGrid}>
+                    {items.map((t) => (
+                      <button
+                        key={t.id}
+                        className={styles.templateCard}
+                        onClick={() => handleInsert(t.id)}
+                      >
+                        <div className={styles.templateCardHeader}>
+                          <div className={styles.templateName}>{t.name}</div>
+                        </div>
+                        <div className={styles.templatePreview}>
+                          <BlockPreview create={t.create} />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
+              );
+            })}
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

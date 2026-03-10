@@ -62,7 +62,8 @@ export type EditorAction =
   | { type: "UPDATE_GRID"; grid: string }
   | { type: "UPDATE_THEME_PALETTE"; palette: ColorPalette | undefined }
   | { type: "APPLY_PALETTE_PRESET"; palette: ColorPalette }
-  | { type: "UPDATE_IMAGE_CONTENT"; blockId: string; src?: string; alt?: string; style?: Style };
+  | { type: "UPDATE_IMAGE_CONTENT"; blockId: string; src?: string; alt?: string; style?: Style }
+  | { type: "SWITCH_TEMPLATE"; template: import("../models").Template };
 
 // Actions that mutate the resume (push to undo stack)
 const MUTATING = new Set([
@@ -94,6 +95,7 @@ const MUTATING = new Set([
   "UPDATE_THEME_PALETTE",
   "APPLY_PALETTE_PRESET",
   "UPDATE_IMAGE_CONTENT",
+  "SWITCH_TEMPLATE",
 ]);
 
 // --- Helpers ---
@@ -612,6 +614,49 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       return {
         ...state,
         resume: { ...state.resume, template: { ...t, theme: newTheme } },
+      };
+    }
+
+    case "SWITCH_TEMPLATE": {
+      const newTemplate = action.template;
+      const oldResume = state.resume;
+      const oldRegionIds = Object.keys(oldResume.regionBlockIds);
+      const newRegionIds = Object.keys(newTemplate.regionStyles);
+
+      // Remap blocks: match region names where possible, dump leftover into first new region
+      const newRegionBlockIds: Record<string, string[]> = {};
+      for (const r of newRegionIds) newRegionBlockIds[r] = [];
+
+      const usedBlockIds = new Set<string>();
+      for (const regionId of newRegionIds) {
+        if (oldResume.regionBlockIds[regionId]) {
+          newRegionBlockIds[regionId] = [...oldResume.regionBlockIds[regionId]];
+          for (const id of newRegionBlockIds[regionId]) usedBlockIds.add(id);
+        }
+      }
+
+      // Collect orphaned blocks from old regions not present in new template
+      const orphanedIds: string[] = [];
+      for (const regionId of oldRegionIds) {
+        if (!newRegionIds.includes(regionId)) {
+          for (const id of oldResume.regionBlockIds[regionId]) {
+            if (!usedBlockIds.has(id)) orphanedIds.push(id);
+          }
+        }
+      }
+      if (orphanedIds.length > 0 && newRegionIds.length > 0) {
+        newRegionBlockIds[newRegionIds[0]].push(...orphanedIds);
+      }
+
+      return {
+        ...state,
+        resume: {
+          ...oldResume,
+          template: newTemplate,
+          regionBlockIds: newRegionBlockIds,
+        },
+        selectedPath: [],
+        selectedRegionId: null,
       };
     }
 

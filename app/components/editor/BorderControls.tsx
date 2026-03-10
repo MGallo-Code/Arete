@@ -121,9 +121,6 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
 
   return (
     <>
-      {/* ---- Borders ---- */}
-      <div className={styles.themeSectionTitle}>Borders</div>
-
       {/* Unified border row */}
       <div className={styles.propRow}>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -251,8 +248,8 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
         </div>
       )}
 
-      {/* ---- Border Radius ---- */}
-      <div className={styles.themeSectionTitle} style={{ marginTop: 8 }}>Border Radius</div>
+      {/* Border Radius */}
+      <div className={styles.themeSectionTitle} style={{ marginTop: 8 }}>Radius</div>
 
       {/* Unified radius row */}
       <div className={styles.propRow}>

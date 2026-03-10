@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import type { RichText } from "../models";
 
@@ -5,11 +6,11 @@ interface Props {
   richText: RichText;
 }
 
-export default function RichTextView({ richText }: Props) {
+export default memo(function RichTextView({ richText }: Props) {
   const theme = useTheme();
   return richText.map((run, index) => {
     return run.link ? (
-      <a key={index} href={run.link} style={{ ...theme.link, ...run.style }}>
+      <a key={index} href={run.link} style={{ ...theme.link, ...run.style }} rel="noopener noreferrer" target="_blank">
         {run.text}
       </a>
     ) : (
@@ -18,4 +19,4 @@ export default function RichTextView({ richText }: Props) {
       </span>
     );
   });
-}
+});

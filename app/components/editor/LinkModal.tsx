@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import styles from "./editor.module.css";
 
 interface LinkModalProps {
   initialUrl: string;
-  /** Pixel position to anchor near (top-left of the modal) */
   anchorRect?: { top: number; left: number };
   onApply: (url: string) => void;
   onRemove: () => void;
@@ -21,12 +22,9 @@ export default function LinkModal({
 }: LinkModalProps) {
   const [url, setUrl] = useState(initialUrl);
   const inputRef = useRef<HTMLInputElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
   const hasExistingLink = initialUrl.length > 0;
 
-  // Auto-focus input on mount
   useEffect(() => {
-    // Small delay to ensure DOM is ready
     requestAnimationFrame(() => {
       inputRef.current?.focus();
       inputRef.current?.select();
@@ -54,7 +52,6 @@ export default function LinkModal({
     [handleSubmit, onCancel],
   );
 
-  // Position the modal near the selection, or center it
   const positionStyle: React.CSSProperties = anchorRect
     ? {
         position: "fixed",
@@ -70,45 +67,50 @@ export default function LinkModal({
       };
 
   return (
-    <div
-      className={styles.linkModalOverlay}
-      data-link-modal
-      onMouseDown={(e) => {
-        // Clicking the backdrop cancels
-        if (e.target === e.currentTarget) {
-          onCancel();
-        }
-      }}
-    >
-      <div ref={cardRef} className={styles.linkModalCard} style={positionStyle}>
-        <label className={styles.linkModalLabel}>URL</label>
-        <input
-          ref={inputRef}
-          className={styles.linkModalInput}
-          type="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="https://..."
+    <Dialog.Root open onOpenChange={(open) => { if (!open) onCancel(); }}>
+      <Dialog.Portal>
+        <Dialog.Overlay
+          className={styles.linkModalOverlay}
+          data-link-modal
         />
-        <div className={styles.linkModalActions}>
-          <button
-            className={styles.linkModalApplyBtn}
-            onClick={handleSubmit}
-            disabled={!url.trim()}
-          >
-            Apply
-          </button>
-          {hasExistingLink && (
-            <button className={styles.linkModalRemoveBtn} onClick={onRemove}>
-              Remove link
+        <Dialog.Content
+          className={styles.linkModalCard}
+          style={positionStyle}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          aria-describedby={undefined}
+        >
+          <VisuallyHidden.Root asChild>
+            <Dialog.Title>Edit Link</Dialog.Title>
+          </VisuallyHidden.Root>
+          <label className={styles.linkModalLabel}>URL</label>
+          <input
+            ref={inputRef}
+            className={styles.linkModalInput}
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="https://..."
+          />
+          <div className={styles.linkModalActions}>
+            <button
+              className={styles.linkModalApplyBtn}
+              onClick={handleSubmit}
+              disabled={!url.trim()}
+            >
+              Apply
             </button>
-          )}
-          <button className={styles.linkModalCancelBtn} onClick={onCancel}>
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
+            {hasExistingLink && (
+              <button className={styles.linkModalRemoveBtn} onClick={onRemove}>
+                Remove link
+              </button>
+            )}
+            <button className={styles.linkModalCancelBtn} onClick={onCancel}>
+              Cancel
+            </button>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

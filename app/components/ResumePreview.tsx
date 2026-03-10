@@ -1,45 +1,10 @@
 "use client";
-import type { EditorAction } from "../contexts/EditorContext";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useEditor } from "../contexts/EditorContext";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import type { Resume } from "../models";
 import BlockView from "./BlockView";
 import styles from "./editor/editor.module.css";
-
-function InsertionZone({
-  regionId,
-  index,
-  onRequestInsert,
-  dispatch,
-}: {
-  regionId: string;
-  index: number;
-  onRequestInsert?: (regionId: string, index: number) => void;
-  dispatch: React.Dispatch<EditorAction>;
-}) {
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onRequestInsert) {
-      onRequestInsert(regionId, index);
-    } else {
-      dispatch({ type: "ADD_BLOCK", regionId, index });
-    }
-  };
-
-  return (
-    <div className={styles.insertionZone} onClick={handleClick}>
-      <div className={styles.insertionZoneLine} />
-      <button
-        type="button"
-        className={styles.insertionZoneBtn}
-        aria-label={`Insert block at position ${index}`}
-        onClick={handleClick}
-      >
-        +
-      </button>
-    </div>
-  );
-}
 
 const PAGE_SIZES = {
   letter: { width: "8.5in", height: "11in" },
@@ -52,8 +17,25 @@ interface Props {
 
 export default function ResumePreview({ resume }: Props) {
   const editor = useEditor();
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
   const { page, grid, regionStyles, theme } = resume.template;
   const { width, height } = PAGE_SIZES[page.size];
+
+  const checkOverflow = useCallback(() => {
+    const el = gridRef.current;
+    if (!el) return;
+    setIsOverflowing(el.scrollHeight > el.clientHeight + 1);
+  }, []);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(() => checkOverflow());
+    observer.observe(el);
+    checkOverflow();
+    return () => observer.disconnect();
+  }, [checkOverflow]);
 
   // Emit palette as CSS custom properties so var(--palette-*) works
   const paletteVars: Record<string, string> = {};
@@ -80,11 +62,13 @@ export default function ResumePreview({ resume }: Props) {
         } as React.CSSProperties}
       >
         <div
+          ref={gridRef}
           style={{
             ...theme.canvas,
             display: "grid",
             gridTemplate: grid,
             height: "100%",
+            position: "relative",
           }}
         >
           {Object.entries(resume.regionBlockIds).map(([regionId, blockIds]) => {
@@ -92,6 +76,8 @@ export default function ResumePreview({ resume }: Props) {
             return (
             <div
               key={regionId}
+              role="region"
+              aria-label={regionId}
               style={{ display: "flex", flexDirection: "column" as const, gridArea: regionId, ...regionStyles[regionId] }}
               {...(editor
                 ? {
@@ -105,52 +91,21 @@ export default function ResumePreview({ resume }: Props) {
                   }
                 : {})}
             >
-              {editor
-                ? blockIds.flatMap((blockId, index) => {
-                    const items = [];
-                    if (index === 0) {
-                      items.push(
-                        <InsertionZone
-                          key={`insert-${regionId}-0`}
-                          regionId={regionId}
-                          index={0}
-                          onRequestInsert={editor.onRequestInsert}
-                          dispatch={editor.dispatch}
-                        />
-                      );
-                    }
-                    items.push(
-                      <BlockView
-                        key={blockId}
-                        block={resume.blocks[blockId]}
-                        regionId={regionId}
-                        blockIndex={index}
-                        totalBlocks={blockIds.length}
-                      />
-                    );
-                    items.push(
-                      <InsertionZone
-                        key={`insert-${regionId}-${index + 1}`}
-                        regionId={regionId}
-                        index={index + 1}
-                        onRequestInsert={editor.onRequestInsert}
-                        dispatch={editor.dispatch}
-                      />
-                    );
-                    return items;
-                  })
-                : blockIds.map((blockId, index) => (
-                    <BlockView
-                      key={blockId}
-                      block={resume.blocks[blockId]}
-                      blockIndex={index}
-                      totalBlocks={blockIds.length}
-                    />
-                  ))
-              }
+              {blockIds.map((blockId, index) => (
+                <BlockView
+                  key={blockId}
+                  block={resume.blocks[blockId]}
+                  regionId={editor ? regionId : undefined}
+                  blockIndex={index}
+                  totalBlocks={blockIds.length}
+                />
+              ))}
             </div>
           );
           })}
+          {isOverflowing && editor && (
+            <div className={styles.overflowIndicator} aria-label="Content overflows page boundary" />
+          )}
         </div>
       </main>
     </ThemeProvider>

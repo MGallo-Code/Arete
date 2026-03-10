@@ -1,0 +1,236 @@
+import type { Template } from "../models";
+
+export interface TemplatePreset {
+  id: string;
+  name: string;
+  description: string;
+  template: Template;
+}
+
+export const templatePresets: TemplatePreset[] = [
+  {
+    id: "classic-two-col",
+    name: "Classic Two-Column",
+    description: "Traditional layout with sidebar and main content area",
+    template: {
+      id: "classic-two-col",
+      name: "Classic Two-Column",
+      grid: '"header header" auto "sidebar main" 1fr / 30% 70%',
+      regionStyles: {
+        header: { background: "var(--palette-background)", padding: "24px 32px", borderBottom: "2px solid var(--palette-primary)" },
+        sidebar: { background: "var(--palette-background)", padding: "24px 20px" },
+        main: { padding: "24px 32px" },
+      },
+      page: { size: "letter", margins: { top: "0", right: "0", bottom: "0", left: "0" } },
+      fonts: ["Georgia"],
+      theme: {
+        root: { fontFamily: "Georgia, serif", fontSize: "10pt", lineHeight: "1.5", color: "#1a1a1a", background: "#ffffff" },
+        canvas: {},
+        h1: { fontSize: "22pt", fontWeight: "bold", letterSpacing: "0.02em", color: "#1a1a1a" },
+        h2: { fontSize: "9pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--palette-primary)", padding: "0 0 2px 0", margin: "0 0 6px 0", borderBottom: "1px solid var(--palette-primary)" },
+        h3: { fontSize: "10pt", fontWeight: "bold" },
+        h4: { fontSize: "10pt", fontStyle: "italic", color: "var(--palette-muted)" },
+        h5: { fontSize: "9pt", fontWeight: "bold" },
+        h6: { fontSize: "9pt", fontStyle: "italic" },
+        bullets: [
+          { char: "\u2022", style: { fontSize: "10pt", lineHeight: "1.5", gap: "0.35em" } },
+          { char: "\u2013", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px" } },
+        ],
+        link: { color: "var(--palette-accent)" },
+        palette: { primary: "#2563eb", secondary: "#1e40af", accent: "#3b82f6", muted: "#94a3b8", background: "#f8fafc" },
+      },
+    },
+  },
+  {
+    id: "modern-minimal",
+    name: "Modern Minimal",
+    description: "Clean single-column with bold header band",
+    template: {
+      id: "modern-minimal",
+      name: "Modern Minimal",
+      grid: '"header" auto "main" 1fr / 1fr',
+      regionStyles: {
+        header: { background: "var(--palette-primary)", padding: "32px 40px", color: "#ffffff" },
+        main: { padding: "32px 40px" },
+      },
+      page: { size: "letter", margins: { top: "0", right: "0", bottom: "0", left: "0" } },
+      fonts: ["Inter"],
+      theme: {
+        root: { fontFamily: "'Inter', sans-serif", fontSize: "10pt", lineHeight: "1.5", color: "#111827", background: "#ffffff" },
+        canvas: {},
+        h1: { fontSize: "24pt", fontWeight: "bold", color: "#ffffff", letterSpacing: "-0.01em" },
+        h2: { fontSize: "8pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.15em", color: "var(--palette-secondary)", marginTop: "20px", marginBottom: "8px" },
+        h3: { fontSize: "10pt", fontWeight: "bold" },
+        h4: { fontSize: "10pt", color: "var(--palette-secondary)" },
+        h5: { fontSize: "9pt", fontWeight: "bold" },
+        h6: { fontSize: "9pt", fontStyle: "italic" },
+        bullets: [
+          { char: "\u2013", style: { fontSize: "10pt", lineHeight: "1.6", gap: "0.35em" } },
+          { char: "\u00B7", style: { fontSize: "9pt", lineHeight: "1.6", paddingLeft: "12px" } },
+        ],
+        link: { color: "var(--palette-accent)" },
+        palette: { primary: "#111827", secondary: "#6b7280", accent: "#2563eb", muted: "#9ca3af", background: "#ffffff" },
+      },
+    },
+  },
+  {
+    id: "navy-split",
+    name: "Navy Split",
+    description: "Dark sidebar with contrasting main content",
+    template: {
+      id: "navy-split",
+      name: "Navy Split",
+      grid: '"sidebar main" 1fr / 45% 55%',
+      regionStyles: {
+        sidebar: { background: "var(--palette-primary)", padding: "36px 28px", color: "#ffffff" },
+        main: { padding: "36px 32px" },
+      },
+      page: { size: "letter", margins: { top: "0", right: "0", bottom: "0", left: "0" } },
+      fonts: ["DM Sans"],
+      theme: {
+        root: { fontFamily: "'DM Sans', sans-serif", fontSize: "10pt", lineHeight: "1.5", color: "#1a1a2e", background: "#ffffff" },
+        canvas: {},
+        h1: { fontSize: "20pt", fontWeight: "bold", color: "#ffffff", lineHeight: "1.2" },
+        h2: { fontSize: "8pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--palette-accent)", borderBottom: "1px solid var(--palette-secondary)", marginBottom: "6px" },
+        h3: { fontSize: "10pt", fontWeight: "bold", color: "#ffffff" },
+        h4: { fontSize: "9pt", color: "var(--palette-muted)" },
+        h5: { fontSize: "9pt", fontWeight: "bold" },
+        h6: { fontSize: "9pt", fontStyle: "italic" },
+        bullets: [
+          { char: "\u25B8", style: { fontSize: "10pt", lineHeight: "1.5", gap: "0.35em", color: "#ffffff" } },
+          { char: "\u2013", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "10px", color: "var(--palette-muted)" } },
+        ],
+        link: { color: "var(--palette-muted)" },
+        palette: { primary: "#1e3a5f", secondary: "#2d5a8e", accent: "#7eb8f7", muted: "#93c5fd", background: "#ffffff" },
+      },
+    },
+  },
+  {
+    id: "bold-sidebar",
+    name: "Bold Sidebar",
+    description: "Vibrant purple sidebar with clean main area",
+    template: {
+      id: "bold-sidebar",
+      name: "Bold Sidebar",
+      grid: '"sidebar main" 1fr / 35% 65%',
+      regionStyles: {
+        sidebar: { background: "var(--palette-primary)", padding: "32px 24px", color: "#ffffff" },
+        main: { padding: "32px 28px" },
+      },
+      page: { size: "letter", margins: { top: "0", right: "0", bottom: "0", left: "0" } },
+      fonts: ["Raleway"],
+      theme: {
+        root: { fontFamily: "'Raleway', sans-serif", fontSize: "10pt", lineHeight: "1.5", color: "#2d2d2d", background: "#ffffff" },
+        canvas: {},
+        h1: { fontSize: "22pt", fontWeight: "bold", color: "#ffffff", lineHeight: "1.2" },
+        h2: { fontSize: "9pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--palette-accent)", marginTop: "16px", marginBottom: "6px" },
+        h3: { fontSize: "10pt", fontWeight: "bold" },
+        h4: { fontSize: "10pt", color: "var(--palette-muted)" },
+        h5: { fontSize: "9pt", fontWeight: "bold" },
+        h6: { fontSize: "9pt", fontStyle: "italic" },
+        bullets: [
+          { char: "\u2022", style: { fontSize: "10pt", lineHeight: "1.5", gap: "0.35em" } },
+          { char: "\u2013", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px" } },
+        ],
+        link: { color: "var(--palette-accent)" },
+        palette: { primary: "#7c3aed", secondary: "#5b21b6", accent: "#a78bfa", muted: "#9ca3af", background: "#faf5ff" },
+      },
+    },
+  },
+  {
+    id: "clean-single",
+    name: "Clean Single Column",
+    description: "Minimal single-column with teal accents",
+    template: {
+      id: "clean-single",
+      name: "Clean Single Column",
+      grid: '"header" auto "main" 1fr / 1fr',
+      regionStyles: {
+        header: { padding: "28px 40px", borderBottom: "3px solid var(--palette-primary)" },
+        main: { padding: "24px 40px" },
+      },
+      page: { size: "letter", margins: { top: "0", right: "0", bottom: "0", left: "0" } },
+      fonts: ["Source Sans Pro"],
+      theme: {
+        root: { fontFamily: "'Source Sans Pro', sans-serif", fontSize: "10pt", lineHeight: "1.5", color: "#1f2937", background: "#ffffff" },
+        canvas: {},
+        h1: { fontSize: "26pt", fontWeight: "bold", color: "#1f2937", letterSpacing: "-0.02em" },
+        h2: { fontSize: "10pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--palette-primary)", borderBottom: "1px solid var(--palette-muted)", marginTop: "18px", marginBottom: "6px" },
+        h3: { fontSize: "10pt", fontWeight: "bold" },
+        h4: { fontSize: "10pt", color: "var(--palette-muted)" },
+        h5: { fontSize: "9pt", fontWeight: "bold" },
+        h6: { fontSize: "9pt", fontStyle: "italic" },
+        bullets: [
+          { char: "\u2022", style: { fontSize: "10pt", lineHeight: "1.6", gap: "0.4em" } },
+          { char: "\u2013", style: { fontSize: "9pt", lineHeight: "1.6", paddingLeft: "14px" } },
+        ],
+        link: { color: "var(--palette-accent)" },
+        palette: { primary: "#0d9488", secondary: "#0f766e", accent: "#14b8a6", muted: "#9ca3af", background: "#f0fdfa" },
+      },
+    },
+  },
+  {
+    id: "warm-accent",
+    name: "Warm Accent",
+    description: "Earthy tones with warm header band and sidebar",
+    template: {
+      id: "warm-accent",
+      name: "Warm Accent",
+      grid: '"header header" auto "sidebar main" 1fr / 32% 68%',
+      regionStyles: {
+        header: { background: "var(--palette-primary)", padding: "28px 32px", color: "#ffffff" },
+        sidebar: { padding: "20px 20px", background: "var(--palette-background)" },
+        main: { padding: "20px 28px" },
+      },
+      page: { size: "letter", margins: { top: "0", right: "0", bottom: "0", left: "0" } },
+      fonts: ["Lora"],
+      theme: {
+        root: { fontFamily: "'Lora', serif", fontSize: "10pt", lineHeight: "1.55", color: "#3b2f2f", background: "#ffffff" },
+        canvas: {},
+        h1: { fontSize: "22pt", fontWeight: "bold", color: "#ffffff" },
+        h2: { fontSize: "9pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--palette-primary)", borderBottom: "1px solid var(--palette-accent)", marginTop: "16px", marginBottom: "6px" },
+        h3: { fontSize: "10pt", fontWeight: "bold" },
+        h4: { fontSize: "10pt", color: "var(--palette-muted)" },
+        h5: { fontSize: "9pt", fontWeight: "bold" },
+        h6: { fontSize: "9pt", fontStyle: "italic" },
+        bullets: [
+          { char: "\u2022", style: { fontSize: "10pt", lineHeight: "1.55", gap: "0.35em" } },
+          { char: "\u2013", style: { fontSize: "9pt", lineHeight: "1.55", paddingLeft: "12px" } },
+        ],
+        link: { color: "var(--palette-accent)" },
+        palette: { primary: "#92400e", secondary: "#78350f", accent: "#d97706", muted: "#a8a29e", background: "#faf5f0" },
+      },
+    },
+  },
+  {
+    id: "compact",
+    name: "Compact",
+    description: "Dense single-column with red accents",
+    template: {
+      id: "compact",
+      name: "Compact",
+      grid: '"main" 1fr / 1fr',
+      regionStyles: {
+        main: { padding: "24px 36px" },
+      },
+      page: { size: "letter", margins: { top: "0", right: "0", bottom: "0", left: "0" } },
+      fonts: ["IBM Plex Sans"],
+      theme: {
+        root: { fontFamily: "'IBM Plex Sans', monospace", fontSize: "9pt", lineHeight: "1.45", color: "#1a1a1a", background: "#ffffff" },
+        canvas: {},
+        h1: { fontSize: "18pt", fontWeight: "bold", color: "#1a1a1a" },
+        h2: { fontSize: "8pt", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--palette-primary)", borderBottom: "1px solid var(--palette-primary)", marginTop: "12px", marginBottom: "4px" },
+        h3: { fontSize: "9pt", fontWeight: "bold" },
+        h4: { fontSize: "9pt", color: "var(--palette-muted)" },
+        h5: { fontSize: "8pt", fontWeight: "bold" },
+        h6: { fontSize: "8pt", fontStyle: "italic" },
+        bullets: [
+          { char: "\u25B8", style: { fontSize: "9pt", lineHeight: "1.45", gap: "0.3em" } },
+          { char: "\u00B7", style: { fontSize: "8pt", lineHeight: "1.45", paddingLeft: "10px" } },
+        ],
+        link: { color: "var(--palette-accent)" },
+        palette: { primary: "#dc2626", secondary: "#991b1b", accent: "#ef4444", muted: "#6b7280", background: "#fef2f2" },
+      },
+    },
+  },
+];

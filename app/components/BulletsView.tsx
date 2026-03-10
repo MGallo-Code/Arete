@@ -14,11 +14,11 @@ interface Props {
   blockId?: string;
 }
 
-// --- Stable key generation ---
+// --- Stable key generation (ref-based per instance to survive HMR) ---
 
-let nextKey = 0;
-function genKey(): string {
-  return `bi-${nextKey++}`;
+function useKeyGenerator() {
+  const counterRef = useRef(0);
+  return useCallback(() => `bi-${counterRef.current++}`, []);
 }
 
 // --- Editing item with stable key ---
@@ -80,6 +80,7 @@ function EditableBulletContent({
 
 export default function BulletsView({ items, levels, blockId }: Props) {
   const editor = useEditor();
+  const genKey = useKeyGenerator();
   const [editingItems, setEditingItems] = useState<EditingItem[] | null>(null);
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const refsMap = useRef<Map<string, HTMLDivElement>>(new Map());

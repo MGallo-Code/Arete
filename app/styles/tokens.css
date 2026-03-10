@@ -1,0 +1,21 @@
+:root {
+  /* Editor accent */
+  --editor-accent: #2563eb;
+  --editor-accent-hover: #1d4ed8;
+  --editor-accent-subtle: rgba(37, 99, 235, 0.06);
+  --editor-accent-muted: rgba(37, 99, 235, 0.12);
+  --editor-accent-outline: rgba(37, 99, 235, 0.6);
+
+  /* Semantic */
+  --editor-danger: #dc2626;
+  --editor-danger-hover: #b91c1c;
+  --editor-muted-text: #888;
+
+  /* Sizing */
+  --editor-sidebar-width: 300px;
+  --editor-font-xs: 9px;
+  --editor-font-sm: 10px;
+  --editor-font-base: 11px;
+  --editor-radius-sm: 3px;
+  --editor-radius-md: 5px;
+}

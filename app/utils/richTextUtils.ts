@@ -1,5 +1,19 @@
 import type { RichText, TextRun, Style } from "../models";
 
+/** Shallow-compare two optional Style objects */
+function stylesEqual(a: Style | undefined, b: Style | undefined): boolean {
+  if (a === b) return true;
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  for (const key of keysA) {
+    if ((a as Record<string, unknown>)[key] !== (b as Record<string, unknown>)[key]) return false;
+  }
+  return true;
+}
+
 /** Escape HTML special characters */
 export function esc(text: string): string {
   return text
@@ -82,11 +96,7 @@ export function domToRichText(container: HTMLElement): RichText {
   const merged: TextRun[] = [];
   for (const run of runs) {
     const prev = merged[merged.length - 1];
-    if (
-      prev &&
-      prev.link === run.link &&
-      JSON.stringify(prev.style ?? null) === JSON.stringify(run.style ?? null)
-    ) {
+    if (prev && prev.link === run.link && stylesEqual(prev.style, run.style)) {
       prev.text += run.text;
     } else {
       merged.push({ ...run });

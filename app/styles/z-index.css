@@ -1,0 +1,8 @@
+:root {
+  --z-insertion-zone: 5;
+  --z-floating-toolbar: 10;
+  --z-open-sidebar-btn: 20;
+  --z-inline-toolbar: 50;
+  --z-modal-overlay: 100;
+  --z-link-modal: 200;
+}

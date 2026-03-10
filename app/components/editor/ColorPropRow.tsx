@@ -90,7 +90,7 @@ export default function ColorPropRow({
               aria-label={`Pick ${label.toLowerCase()} color`}
               onChange={(e) => onChange(e.target.value)}
             />
-            <span className={styles.inheritLabel}>inherit</span>
+            <span className={styles.inheritLabel}>Inherit</span>
           </>
         )}
       </div>

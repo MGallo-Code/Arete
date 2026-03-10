@@ -189,7 +189,7 @@ export default function BlockStylePanel() {
             value={(style.fontFamily as string) ?? ""}
             onChange={(e) => updateStyle({ fontFamily: e.target.value || undefined })}
           >
-            <option value="">inherit</option>
+            <option value="">Inherit</option>
             {FONT_PRESETS.map((f) => (
               <option key={f.value} value={f.value}>{f.label}</option>
             ))}
@@ -240,7 +240,7 @@ export default function BlockStylePanel() {
               ×
             </button>
           )}
-          {!style.fontWeight && <span className={styles.inheritLabel}>inherit</span>}
+          {!style.fontWeight && <span className={styles.inheritLabel}>Inherit</span>}
         </div>
       </div>
 
@@ -252,7 +252,7 @@ export default function BlockStylePanel() {
             className={styles.propInput}
             style={{ width: "auto", flex: 1 }}
             value={(style.lineHeight as string) ?? ""}
-            placeholder="inherit"
+            placeholder="Inherit"
             onChange={(e) => updateStyle({ lineHeight: e.target.value })}
           />
           {style.lineHeight && (
@@ -270,7 +270,7 @@ export default function BlockStylePanel() {
             className={styles.propInput}
             style={{ width: "auto", flex: 1 }}
             value={(style.letterSpacing as string) ?? ""}
-            placeholder="inherit"
+            placeholder="Inherit"
             onChange={(e) => updateStyle({ letterSpacing: e.target.value || undefined })}
           />
           {style.letterSpacing && (
@@ -329,7 +329,65 @@ export default function BlockStylePanel() {
       {/* 5 & 6. Borders + Border Radius */}
       <BorderControls style={style} updateStyle={updateStyle} clearStyle={clearStyle} />
 
-      {/* 7. Content-specific — Bullet styles */}
+      {/* 7a. Content-specific — Image controls */}
+      {block.content.type === "image" && (() => {
+        const imgContent = block.content;
+        return (
+          <>
+            <div className={styles.themeSectionTitle}>Image</div>
+            <div className={styles.propRow}>
+              <label className={styles.propLabel}>Source URL</label>
+              <input
+                className={styles.propInput}
+                style={{ width: "auto", flex: 1 }}
+                value={imgContent.src}
+                placeholder="https://..."
+                onChange={(e) =>
+                  dispatch({ type: "UPDATE_IMAGE_CONTENT", blockId: selectedBlockId, src: e.target.value })
+                }
+              />
+            </div>
+            <div className={styles.propRow}>
+              <label className={styles.propLabel}>Alt text</label>
+              <input
+                className={styles.propInput}
+                style={{ width: "auto", flex: 1 }}
+                value={imgContent.alt ?? ""}
+                placeholder="Describe the image"
+                onChange={(e) =>
+                  dispatch({ type: "UPDATE_IMAGE_CONTENT", blockId: selectedBlockId, alt: e.target.value })
+                }
+              />
+            </div>
+            <div className={styles.propRow}>
+              <label className={styles.propLabel}>Width</label>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <SpacingInput
+                  value={(imgContent.style?.width as string) ?? ""}
+                  placeholder="auto"
+                  onChange={(v) =>
+                    dispatch({ type: "UPDATE_IMAGE_CONTENT", blockId: selectedBlockId, style: { width: v || undefined } })
+                  }
+                />
+              </div>
+            </div>
+            <div className={styles.propRow}>
+              <label className={styles.propLabel}>Height</label>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <SpacingInput
+                  value={(imgContent.style?.height as string) ?? ""}
+                  placeholder="auto"
+                  onChange={(v) =>
+                    dispatch({ type: "UPDATE_IMAGE_CONTENT", blockId: selectedBlockId, style: { height: v || undefined } })
+                  }
+                />
+              </div>
+            </div>
+          </>
+        );
+      })()}
+
+      {/* 7b. Content-specific — Bullet styles */}
       {block.content.type === "bullets" && (() => {
         const hasOverride = !!block.content.levels;
         // Effective levels: per-block override, or theme fallback
@@ -366,7 +424,7 @@ export default function BlockStylePanel() {
           <>
             <div className={styles.themeSectionTitle}>
               Bullet Styles
-              {!hasOverride && <span className={styles.inheritLabel} style={{ marginLeft: 6, textTransform: "none" }}>from theme</span>}
+              {!hasOverride && <span className={styles.inheritLabel} style={{ marginLeft: 6, textTransform: "none" }}>Inherit</span>}
             </div>
             {Array.from({ length: displayLevels }, (_, i) => {
               const lvl = effectiveLevels[i] ?? {};
@@ -379,11 +437,21 @@ export default function BlockStylePanel() {
                       style={{ width: "auto", flex: 1 }}
                       value={lvl.char ?? ""}
                       onChange={(e) => updateLevel(i, { char: e.target.value || undefined })}
+                      title="Marker char"
                     >
                       {MARKER_PRESETS.map((p) => (
                         <option key={p.value} value={p.value}>{p.label}</option>
                       ))}
                     </select>
+                    <input
+                      type="text"
+                      className={styles.propInput}
+                      style={{ width: "auto", flex: 1 }}
+                      value={lvl.image ?? ""}
+                      placeholder="Image URL"
+                      title="Marker image URL (overrides char)"
+                      onChange={(e) => updateLevel(i, { image: e.target.value || undefined })}
+                    />
                     <SpacingInput
                       compact
                       value={(lvl.style?.paddingLeft as string) ?? ""}
@@ -436,9 +504,11 @@ export default function BlockStylePanel() {
                     )}
                   </div>
                   <div style={{ display: "flex", gap: 4, marginTop: 2 }}>
+                    <span className={styles.inheritLabel}>marker</span>
+                    <span className={styles.inheritLabel}>{lvl.image ? "image \u2713" : "image"}</span>
                     <span className={styles.inheritLabel}>indent</span>
                     <span className={styles.inheritLabel}>gap</span>
-                    <span className={styles.inheritLabel}>{lvl.style?.color ? "color" : "inherit"}</span>
+                    <span className={styles.inheritLabel}>{lvl.style?.color ? "color" : "Inherit"}</span>
                   </div>
                 </div>
               );

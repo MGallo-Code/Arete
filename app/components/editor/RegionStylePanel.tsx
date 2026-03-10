@@ -107,7 +107,7 @@ export default function RegionStylePanel() {
             value={(regionStyle.fontFamily as string) ?? ""}
             onChange={(e) => updateStyle({ fontFamily: e.target.value || undefined })}
           >
-            <option value="">inherit</option>
+            <option value="">Inherit</option>
             {FONT_PRESETS.map((f) => (
               <option key={f.value} value={f.value}>{f.label}</option>
             ))}
@@ -158,7 +158,7 @@ export default function RegionStylePanel() {
               ×
             </button>
           )}
-          {!regionStyle.fontWeight && <span className={styles.inheritLabel}>inherit</span>}
+          {!regionStyle.fontWeight && <span className={styles.inheritLabel}>Inherit</span>}
         </div>
       </div>
 
@@ -170,7 +170,7 @@ export default function RegionStylePanel() {
             className={styles.propInput}
             style={{ width: "auto", flex: 1 }}
             value={(regionStyle.lineHeight as string) ?? ""}
-            placeholder="inherit"
+            placeholder="Inherit"
             onChange={(e) => updateStyle({ lineHeight: e.target.value })}
           />
           {regionStyle.lineHeight && (
@@ -188,7 +188,7 @@ export default function RegionStylePanel() {
             className={styles.propInput}
             style={{ width: "auto", flex: 1 }}
             value={(regionStyle.letterSpacing as string) ?? ""}
-            placeholder="inherit"
+            placeholder="Inherit"
             onChange={(e) => updateStyle({ letterSpacing: e.target.value || undefined })}
           />
           {regionStyle.letterSpacing && (

@@ -63,11 +63,17 @@
   font-size: 16px;
   line-height: 1;
   padding: 0;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .closeBtn:hover {
   background: var(--color-bg-subtle);
   color: var(--color-fg);
+}
+
+.closeBtn:focus-visible {
+  outline: 2px solid var(--editor-accent);
+  outline-offset: 1px;
 }
 
 .sidebarTitle {
@@ -94,11 +100,13 @@
   flex-direction: column;
   flex: 1;
   overflow: hidden;
+  min-height: 0;
 }
 
 .sidebarScrollRoot {
   flex: 1;
   overflow: hidden;
+  min-height: 0;
 }
 
 .sidebarBody {
@@ -179,6 +187,11 @@
   background: var(--color-bg-subtle);
   color: var(--color-fg);
   border-color: #2563eb66;
+}
+
+.insertBlockBtn:focus-visible {
+  outline: 2px solid var(--editor-accent);
+  outline-offset: 1px;
 }
 
 /* --- Modal --- */
@@ -273,11 +286,17 @@
   border-radius: 4px;
   font-size: 14px;
   line-height: 1;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .addBlockBtn:hover {
   background: var(--color-bg-subtle);
   color: var(--color-fg);
+}
+
+.addBlockBtn:focus-visible {
+  outline: 2px solid var(--editor-accent);
+  outline-offset: 1px;
 }
 
 .treeNode {
@@ -348,6 +367,7 @@
   font-size: 12px;
   line-height: 1;
   padding: 0;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .nodeActionBtn:disabled {
@@ -358,6 +378,11 @@
 .nodeActionBtn:hover:not(:disabled) {
   background: var(--color-border);
   color: var(--color-fg);
+}
+
+.nodeActionBtn:focus-visible {
+  outline: 2px solid var(--editor-accent);
+  outline-offset: 1px;
 }
 
 .nodeActionBtnDanger:hover:not(:disabled) {
@@ -534,6 +559,11 @@
   border-color: #2563eb66;
 }
 
+.templateCard:focus-visible {
+  outline: 2px solid var(--editor-accent);
+  outline-offset: 1px;
+}
+
 .templateCardHeader {
   display: flex;
   align-items: center;
@@ -557,7 +587,7 @@
 /* --- Panel Sections --- */
 
 .panelSection {
-  padding: 10px 16px;
+  padding: 10px 0;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -566,6 +596,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
+  padding: 0 12px;
 }
 
 .panelTitle {
@@ -582,9 +613,8 @@
 }
 
 .selectionPanel {
-  padding: 10px 16px;
+  padding: 10px 0;
   border-bottom: 1px solid var(--color-border);
-  background: #2563eb06;
 }
 
 .selectionPanelTitle {
@@ -996,10 +1026,11 @@
   background: transparent;
   color: #999;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 4px;
   font-size: 14px;
   line-height: 1;
   padding: 0;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .clearBtn:hover {
@@ -1034,6 +1065,7 @@
   color: #999;
   padding: 0;
   position: relative;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .colorSwatchBtn:hover {
@@ -1244,6 +1276,11 @@
   color: #2563eb;
 }
 
+.advancedToggle:focus-visible {
+  outline: 2px solid var(--editor-accent);
+  outline-offset: 1px;
+}
+
 /* --- Palette Swatches --- */
 
 .paletteSwatches {
@@ -1452,6 +1489,11 @@
   background: #f3f4f6;
 }
 
+.inlineToolbarBtn:focus-visible {
+  outline: 2px solid var(--editor-accent);
+  outline-offset: 1px;
+}
+
 .inlineToolbarBtnActive {
   background: #2563eb;
   color: #fff;
@@ -1466,52 +1508,79 @@
 
 /* --- Collapsible Sections --- */
 
+.collapsibleRoot {
+  border-bottom: 1px solid var(--color-border);
+}
+
 .collapsibleTrigger {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 4px;
   width: 100%;
-  padding: 0;
-  margin-top: 12px;
-  margin-bottom: 8px;
+  padding: 6px 12px;
+  margin: 0;
   border: none;
-  background: transparent;
-  font-size: var(--editor-font-sm);
+  border-radius: 0;
+  background: var(--editor-section-bg);
+  font-size: var(--editor-font-base);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--editor-muted-text);
+  color: var(--color-fg);
   cursor: pointer;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   text-align: left;
+  transition: background 0.1s, color 0.1s;
+  user-select: none;
 }
 
 .collapsibleTrigger:hover {
+  background: var(--editor-section-bg-hover);
+  color: var(--editor-accent);
+}
+
+.collapsibleTrigger:focus-visible {
+  outline: 2px solid var(--editor-accent);
+  outline-offset: -2px;
+}
+
+[data-state="open"] > .collapsibleTrigger {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.collapsibleChevron {
+  display: block;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  color: var(--editor-muted-text);
+  transition: transform 0.15s ease, color 0.1s;
+}
+
+[data-state="open"] > .collapsibleTrigger > .collapsibleChevron {
+  transform: rotate(90deg);
   color: var(--color-fg);
 }
 
-.collapsibleTrigger:first-child {
-  margin-top: 0;
+.collapsibleTrigger:hover > .collapsibleChevron {
+  color: var(--editor-accent);
 }
 
-.collapsibleArrow {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 5px solid currentColor;
-  transition: transform 0.15s;
-  flex-shrink: 0;
+.collapsibleIcon {
+  display: none;
 }
 
-[data-state="closed"] > .collapsibleTrigger > .collapsibleArrow,
-.collapsibleTrigger[data-state="closed"] > .collapsibleArrow {
-  transform: rotate(-90deg);
+.collapsibleLabel {
+  flex: 1;
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-size: var(--editor-font-xs);
+  letter-spacing: 0.05em;
+  font-weight: 600;
 }
 
 .collapsibleContent {
   overflow: hidden;
+  padding: 8px 12px;
 }
 
 .collapsibleContent[data-state="closed"] {
@@ -1550,8 +1619,8 @@
   flex-direction: column;
   align-items: center;
   padding: 10px;
-  border: 2px solid var(--color-border);
-  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
   background: var(--color-bg);
   cursor: pointer;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -1564,8 +1633,13 @@
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
 }
 
+.templatePickerCard:focus-visible {
+  outline: 2px solid var(--editor-accent);
+  outline-offset: 1px;
+}
+
 .templatePickerCardActive {
-  border-color: var(--editor-accent);
+  border: 2px solid var(--editor-accent);
   background: var(--editor-accent-subtle);
 }
 

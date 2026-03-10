@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useReducer, useEffect, useMemo, useRef, type ReactNode } from "react";
 import type { Resume, Block, Content, RichText, BulletItem, BulletLevel, Style, PageSettings, ColorPalette } from "../models";
-import { applyPaletteToTheme } from "../utils/paletteUtils";
 
 // --- State ---
 
@@ -610,7 +609,8 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
 
     case "APPLY_PALETTE_PRESET": {
       const t = state.resume.template;
-      const newTheme = applyPaletteToTheme(t.theme, action.palette);
+      // Only update the palette hex values — CSS vars auto-cascade
+      const newTheme = { ...t.theme, palette: action.palette };
       return {
         ...state,
         resume: { ...state.resume, template: { ...t, theme: newTheme } },

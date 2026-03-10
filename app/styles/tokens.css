@@ -11,6 +11,10 @@
   --editor-danger-hover: #b91c1c;
   --editor-muted-text: #888;
 
+  /* Section disclosure */
+  --editor-section-bg: rgba(0, 0, 0, 0.03);
+  --editor-section-bg-hover: rgba(0, 0, 0, 0.06);
+
   /* Sizing */
   --editor-sidebar-width: 300px;
   --editor-font-xs: 9px;

@@ -8,6 +8,7 @@ import { isPaletteVar, resolvePaletteVar } from "../../utils/paletteUtils";
 import BoxModelEditor from "./BoxModelEditor";
 import CollapsibleSection from "./CollapsibleSection";
 import PropertyRow from "./PropertyRow";
+import { IconColors, IconPalette, IconTypography, IconLinks, IconHeader, IconPage, IconGrid, IconHistory } from "./SectionIcons";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
 
@@ -65,7 +66,7 @@ export default function ThemePanel() {
       </div>
 
       {/* Colors */}
-      <CollapsibleSection title="Colors" defaultOpen>
+      <CollapsibleSection title="Colors" icon={<IconColors />} defaultOpen>
         <PropertyRow label="Text color">
           <input
             type="color"
@@ -109,7 +110,7 @@ export default function ThemePanel() {
       </CollapsibleSection>
 
       {/* Color Palette */}
-      <CollapsibleSection title="Color Palette" defaultOpen={false}>
+      <CollapsibleSection title="Color Palette" icon={<IconPalette />} defaultOpen={false}>
         <PropertyRow label="Preset">
           <select
             className={styles.propSelect}
@@ -181,7 +182,7 @@ export default function ThemePanel() {
       </CollapsibleSection>
 
       {/* Typography */}
-      <CollapsibleSection title="Base Typography" defaultOpen>
+      <CollapsibleSection title="Typography" icon={<IconTypography />} defaultOpen>
         <PropertyRow label="Font family">
           <select
             className={styles.propSelect}
@@ -211,7 +212,7 @@ export default function ThemePanel() {
       </CollapsibleSection>
 
       {/* Links */}
-      <CollapsibleSection title="Links" defaultOpen>
+      <CollapsibleSection title="Links" icon={<IconLinks />} defaultOpen>
         <PropertyRow label="Link color">
           <div className={styles.headingRow}>
             <input
@@ -237,7 +238,7 @@ export default function ThemePanel() {
       </CollapsibleSection>
 
       {/* Headings */}
-      <CollapsibleSection title="Headings" defaultOpen={false}>
+      <CollapsibleSection title="Headings" icon={<IconHeader />} defaultOpen={false}>
         {TAGS.map((tag) => {
           const headingStyle = theme[tag];
           const border = parseBorder(headingStyle.borderBottom as string | undefined, theme.palette);
@@ -348,7 +349,7 @@ export default function ThemePanel() {
       </CollapsibleSection>
 
       {/* Page */}
-      <CollapsibleSection title="Page" defaultOpen={false}>
+      <CollapsibleSection title="Page" icon={<IconPage />} defaultOpen={false}>
         <PropertyRow label="Size">
           <div className={styles.toggleGroup}>
             <button
@@ -384,7 +385,7 @@ export default function ThemePanel() {
       </CollapsibleSection>
 
       {/* Grid Layout */}
-      <CollapsibleSection title="Grid Layout" defaultOpen={false}>
+      <CollapsibleSection title="Grid" icon={<IconGrid />} defaultOpen={false}>
         {(() => {
           const parsed = parseGridTemplate(resume.template.grid);
           return (
@@ -441,7 +442,7 @@ export default function ThemePanel() {
       </CollapsibleSection>
 
       {/* Actions */}
-      <CollapsibleSection title="Actions" defaultOpen>
+      <CollapsibleSection title="History" icon={<IconHistory />} defaultOpen>
         <div className={styles.propBtnRow}>
           <button
             className={styles.propBtn}

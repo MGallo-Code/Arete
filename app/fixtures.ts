@@ -22,9 +22,11 @@ export const sampleResume: Resume = {
       sidebar: {
         background: "var(--palette-background)",
         padding: "24px 20px",
+        gap: "12px",
       },
       main: {
         padding: "24px 32px",
+        gap: "14px",
       },
     },
     page: {
@@ -1762,20 +1764,27 @@ export const testResume: Resume = {
         fontWeight: "bold",
         textTransform: "uppercase",
         letterSpacing: "0.1em",
-        color: "#2563eb",
+        color: "var(--palette-primary)",
         marginBottom: "4px",
         marginTop: "12px",
-        borderBottom: "1px solid #2563eb",
+        borderBottom: "1px solid var(--palette-primary)",
       },
       h3: { fontSize: "10pt", fontWeight: "bold" },
-      h4: { fontSize: "10pt", fontStyle: "italic", color: "#555" },
+      h4: { fontSize: "10pt", fontStyle: "italic", color: "var(--palette-muted)" },
       h5: { fontSize: "9pt", fontWeight: "bold" },
       h6: { fontSize: "9pt", fontStyle: "italic" },
       bullets: [
         { char: "•", style: { fontSize: "10pt", lineHeight: "1.5", gap: "0.35em" } },
         { char: "–", style: { fontSize: "9pt", lineHeight: "1.5", paddingLeft: "12px", gap: "0.35em" } },
       ],
-      link: { color: "#2563eb", textDecoration: "underline" },
+      link: { color: "var(--palette-accent)", textDecoration: "underline" },
+      palette: {
+        primary: "#2563eb",
+        secondary: "#1e40af",
+        accent: "#3b82f6",
+        muted: "#555555",
+        background: "#f8fafc",
+      },
     },
   },
 

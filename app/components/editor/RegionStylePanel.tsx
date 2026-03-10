@@ -8,6 +8,7 @@ import BoxModelEditor from "./BoxModelEditor";
 import CollapsibleSection from "./CollapsibleSection";
 import ColorControls from "./ColorControls";
 import PropertyRow from "./PropertyRow";
+import { IconColors, IconTypography, IconLayout, IconBoxModel, IconBorders } from "./SectionIcons";
 import SpacingInput from "./SpacingInput";
 import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
@@ -55,7 +56,7 @@ export default function RegionStylePanel() {
       </div>
 
       {/* Colors */}
-      <CollapsibleSection title="Colors" defaultOpen>
+      <CollapsibleSection title="Colors" icon={<IconColors />} defaultOpen>
         <ColorControls
           style={regionStyle}
           updateStyle={updateStyle}
@@ -65,7 +66,7 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Typography */}
-      <CollapsibleSection title="Typography" defaultOpen>
+      <CollapsibleSection title="Typography" icon={<IconTypography />} defaultOpen>
         <TypographyControls
           style={regionStyle}
           updateStyle={updateStyle}
@@ -74,7 +75,7 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Layout */}
-      <CollapsibleSection title="Layout" defaultOpen>
+      <CollapsibleSection title="Layout" icon={<IconLayout />} defaultOpen>
         <PropertyRow label="Align items">
           <select
             className={styles.propSelect}
@@ -103,7 +104,7 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Box Model */}
-      <CollapsibleSection title="Box Model" defaultOpen={false}>
+      <CollapsibleSection title="Box Model" icon={<IconBoxModel />} defaultOpen={false}>
         <BoxModelEditor
           hideMargin
           marginTop=""
@@ -127,7 +128,7 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Borders */}
-      <CollapsibleSection title="Borders" defaultOpen={false}>
+      <CollapsibleSection title="Borders" icon={<IconBorders />} defaultOpen={false}>
         <BorderControls style={regionStyle} updateStyle={updateStyle} clearStyle={clearStyle} />
       </CollapsibleSection>
     </div>

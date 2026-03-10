@@ -1,9 +1,45 @@
 "use client";
+import type { EditorAction } from "../contexts/EditorContext";
 import { useEditor } from "../contexts/EditorContext";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import type { Resume } from "../models";
 import BlockView from "./BlockView";
 import styles from "./editor/editor.module.css";
+
+function InsertionZone({
+  regionId,
+  index,
+  onRequestInsert,
+  dispatch,
+}: {
+  regionId: string;
+  index: number;
+  onRequestInsert?: (regionId: string, index: number) => void;
+  dispatch: React.Dispatch<EditorAction>;
+}) {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onRequestInsert) {
+      onRequestInsert(regionId, index);
+    } else {
+      dispatch({ type: "ADD_BLOCK", regionId, index });
+    }
+  };
+
+  return (
+    <div className={styles.insertionZone} onClick={handleClick}>
+      <div className={styles.insertionZoneLine} />
+      <button
+        type="button"
+        className={styles.insertionZoneBtn}
+        aria-label={`Insert block at position ${index}`}
+        onClick={handleClick}
+      >
+        +
+      </button>
+    </div>
+  );
+}
 
 const PAGE_SIZES = {
   letter: { width: "8.5in", height: "11in" },
@@ -69,15 +105,49 @@ export default function ResumePreview({ resume }: Props) {
                   }
                 : {})}
             >
-              {blockIds.map((blockId, index) => (
-                <BlockView
-                  key={blockId}
-                  block={resume.blocks[blockId]}
-                  regionId={editor ? regionId : undefined}
-                  blockIndex={editor ? index : undefined}
-                  totalBlocks={editor ? blockIds.length : undefined}
-                />
-              ))}
+              {editor
+                ? blockIds.flatMap((blockId, index) => {
+                    const items = [];
+                    if (index === 0) {
+                      items.push(
+                        <InsertionZone
+                          key={`insert-${regionId}-0`}
+                          regionId={regionId}
+                          index={0}
+                          onRequestInsert={editor.onRequestInsert}
+                          dispatch={editor.dispatch}
+                        />
+                      );
+                    }
+                    items.push(
+                      <BlockView
+                        key={blockId}
+                        block={resume.blocks[blockId]}
+                        regionId={regionId}
+                        blockIndex={index}
+                        totalBlocks={blockIds.length}
+                      />
+                    );
+                    items.push(
+                      <InsertionZone
+                        key={`insert-${regionId}-${index + 1}`}
+                        regionId={regionId}
+                        index={index + 1}
+                        onRequestInsert={editor.onRequestInsert}
+                        dispatch={editor.dispatch}
+                      />
+                    );
+                    return items;
+                  })
+                : blockIds.map((blockId, index) => (
+                    <BlockView
+                      key={blockId}
+                      block={resume.blocks[blockId]}
+                      blockIndex={index}
+                      totalBlocks={blockIds.length}
+                    />
+                  ))
+              }
             </div>
           );
           })}

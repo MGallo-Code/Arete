@@ -61,7 +61,8 @@ export type EditorAction =
   | { type: "UPDATE_THEME_LINK"; style: Style }
   | { type: "UPDATE_GRID"; grid: string }
   | { type: "UPDATE_THEME_PALETTE"; palette: ColorPalette | undefined }
-  | { type: "APPLY_PALETTE_PRESET"; palette: ColorPalette };
+  | { type: "APPLY_PALETTE_PRESET"; palette: ColorPalette }
+  | { type: "UPDATE_IMAGE_CONTENT"; blockId: string; src?: string; alt?: string; style?: Style };
 
 // Actions that mutate the resume (push to undo stack)
 const MUTATING = new Set([
@@ -92,6 +93,7 @@ const MUTATING = new Set([
   "UPDATE_GRID",
   "UPDATE_THEME_PALETTE",
   "APPLY_PALETTE_PRESET",
+  "UPDATE_IMAGE_CONTENT",
 ]);
 
 // --- Helpers ---
@@ -402,6 +404,24 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
         resume: updateBlock(state.resume, action.blockId, (b) => {
           if (b.content.type !== "bullets") return b;
           return { ...b, content: { ...b.content, levels: action.levels } };
+        }),
+      };
+    }
+
+    case "UPDATE_IMAGE_CONTENT": {
+      return {
+        ...state,
+        resume: updateBlock(state.resume, action.blockId, (b) => {
+          if (b.content.type !== "image") return b;
+          return {
+            ...b,
+            content: {
+              ...b.content,
+              ...(action.src !== undefined ? { src: action.src } : {}),
+              ...(action.alt !== undefined ? { alt: action.alt } : {}),
+              ...(action.style !== undefined ? { style: { ...b.content.style, ...action.style } } : {}),
+            },
+          };
         }),
       };
     }

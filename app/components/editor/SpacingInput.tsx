@@ -45,6 +45,10 @@ export default function SpacingInput({
   const [num, setNum] = useState(() => parseValue(value).num);
   const [unit, setUnit] = useState<Unit>(() => parseValue(value).unit);
   const [prevValue, setPrevValue] = useState(value);
+  const [error, setError] = useState(false);
+
+  /** A valid spacing number: optional minus, digits, optional decimal + digits */
+  const isValidNum = (v: string) => v === "" || /^-?\d+(\.\d+)?$/.test(v);
 
   // Sync from props when value changes externally (e.g. undo)
   if (value !== prevValue) {
@@ -52,20 +56,31 @@ export default function SpacingInput({
     const p = parseValue(value);
     setNum(p.num);
     setUnit(p.unit);
+    setError(false);
   }
 
   const handleNumChange = (newNum: string) => {
     setNum(newNum);
-    onChange(toCSS(newNum, unit));
+    if (error) setError(false);
   };
 
-  const blurOnEnter = (e: React.KeyboardEvent) => {
+  const validate = () => {
+    if (!isValidNum(num)) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    onChange(toCSS(num, unit));
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") (e.target as HTMLElement).blur();
   };
 
   const handleUnitChange = (newUnit: Unit) => {
     setUnit(newUnit);
-    if (num) {
+    if (num && isValidNum(num)) {
+      setError(false);
       onChange(toCSS(num, newUnit));
     }
   };
@@ -77,11 +92,12 @@ export default function SpacingInput({
         <input
           type="text"
           inputMode="decimal"
-          className={styles.spacingCompactNum}
+          className={`${styles.spacingCompactNum}${error ? ` ${styles.spacingInputError}` : ""}`}
           value={num}
           placeholder={parsedPlaceholder.num || "0"}
           onChange={(e) => handleNumChange(e.target.value)}
-          onKeyDown={blurOnEnter}
+          onBlur={validate}
+          onKeyDown={handleKeyDown}
           {...(label ? { "aria-label": label } : {})}
         />
         <select
@@ -105,10 +121,12 @@ export default function SpacingInput({
       <input
         type="text"
         inputMode="decimal"
-        className={styles.spacingFullNum}
+        className={`${styles.spacingFullNum}${error ? ` ${styles.spacingInputError}` : ""}`}
         value={num}
         placeholder={parsedPlaceholder.num || "0"}
         onChange={(e) => handleNumChange(e.target.value)}
+        onBlur={validate}
+        onKeyDown={handleKeyDown}
         {...(label ? { "aria-label": label } : {})}
       />
       <select

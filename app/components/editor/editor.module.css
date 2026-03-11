@@ -57,7 +57,7 @@
   height: 24px;
   border: none;
   background: transparent;
-  color: #888;
+  color: var(--editor-muted-text);
   cursor: pointer;
   border-radius: 4px;
   font-size: 16px;
@@ -124,13 +124,13 @@
 
 .scrollbarThumb {
   flex: 1;
-  background: rgba(0, 0, 0, 0.15);
+  background: var(--editor-scrollbar-normal);
   border-radius: 4px;
   position: relative;
 }
 
 .scrollbarThumb:hover {
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--editor-scrollbar-hover);
 }
 
 /* --- Sidebar Tabs --- */
@@ -149,7 +149,7 @@
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   border: none;
   background: transparent;
-  color: #888;
+  color: var(--editor-muted-text);
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: color 0.1s, border-color 0.1s;
@@ -164,6 +164,85 @@
   border-bottom-color: var(--editor-accent);
 }
 
+/* --- Breadcrumbs --- */
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 12px;
+  background: var(--color-bg-subtle);
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+  white-space: nowrap;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.breadcrumbBtn {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--editor-muted-text);
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.breadcrumbBtn:hover {
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
+.breadcrumbBtn:focus-visible {
+  outline: 2px solid var(--editor-accent);
+  outline-offset: 1px;
+}
+
+.breadcrumbSep {
+  font-size: 10px;
+  color: var(--color-border);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+/* --- Guidance Card --- */
+
+.guidanceCard {
+  margin: 12px 12px 4px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  text-align: center;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.guidanceTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-fg);
+  margin-bottom: 4px;
+}
+
+.guidanceDesc {
+  font-size: 11px;
+  color: var(--editor-muted-text);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.guidanceActions {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
 /* --- Insert Block Button --- */
 
 .insertBlockBtn {
@@ -175,7 +254,7 @@
   border: 1px dashed var(--color-border);
   border-radius: 6px;
   background: var(--color-bg);
-  color: #888;
+  color: var(--editor-muted-text);
   cursor: pointer;
   transition:
     background 0.1s,
@@ -186,7 +265,7 @@
 .insertBlockBtn:hover {
   background: var(--color-bg-subtle);
   color: var(--color-fg);
-  border-color: #2563eb66;
+  border-color: var(--editor-accent-muted-border);
 }
 
 .insertBlockBtn:focus-visible {
@@ -199,7 +278,7 @@
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--editor-modal-overlay);
   z-index: var(--z-modal-overlay);
 }
 
@@ -269,7 +348,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #888;
+  color: var(--editor-muted-text);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
@@ -281,7 +360,7 @@
   height: 18px;
   border: none;
   background: transparent;
-  color: #888;
+  color: var(--editor-muted-text);
   cursor: pointer;
   border-radius: 4px;
   font-size: 14px;
@@ -318,12 +397,12 @@
 }
 
 .treeNodeSelected {
-  background: #2563eb12;
-  border-left-color: #2563eb;
+  background: var(--editor-accent-muted);
+  border-left-color: var(--editor-accent);
 }
 
 .treeNodeSelected:hover {
-  background: #2563eb18;
+  background: var(--editor-accent-muted);
 }
 
 .nodeIcon {
@@ -361,7 +440,7 @@
   height: 20px;
   border: none;
   background: transparent;
-  color: #888;
+  color: var(--editor-muted-text);
   cursor: pointer;
   border-radius: 4px;
   font-size: 12px;
@@ -386,8 +465,8 @@
 }
 
 .nodeActionBtnDanger:hover:not(:disabled) {
-  background: #fecaca;
-  color: #dc2626;
+  background: var(--editor-danger-light);
+  color: var(--editor-danger);
 }
 
 .childNodes {
@@ -408,7 +487,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #888;
+  color: var(--editor-muted-text);
   margin-bottom: 10px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
@@ -421,7 +500,7 @@
   display: block;
   font-size: 11px;
   font-weight: 500;
-  color: #888;
+  color: var(--editor-muted-text);
   margin-bottom: 3px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
@@ -439,8 +518,8 @@
 
 .propInput:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb22;
+  border-color: var(--editor-accent);
+  box-shadow: 0 0 0 2px var(--editor-accent-focus-shadow);
 }
 
 .propSelect {
@@ -469,8 +548,8 @@
 
 .propTextarea:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb22;
+  border-color: var(--editor-accent);
+  box-shadow: 0 0 0 2px var(--editor-accent-focus-shadow);
 }
 
 .propBadge {
@@ -479,7 +558,7 @@
   font-size: 11px;
   border-radius: 4px;
   background: var(--color-bg-subtle);
-  color: #888;
+  color: var(--editor-muted-text);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
@@ -504,7 +583,7 @@
 }
 
 .propBtn:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--editor-accent);
   outline-offset: 1px;
 }
 
@@ -514,12 +593,12 @@
 }
 
 .propBtnDanger {
-  color: #dc2626;
-  border-color: #fca5a5;
+  color: var(--editor-danger);
+  border-color: var(--editor-danger-border);
 }
 
 .propBtnDanger:hover {
-  background: #fef2f2;
+  background: var(--editor-danger-light-bg);
 }
 
 /* --- Block Library --- */
@@ -533,7 +612,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #888;
+  color: var(--editor-muted-text);
   margin-bottom: 6px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
@@ -556,7 +635,7 @@
 
 .templateCard:hover {
   background: var(--color-bg-subtle);
-  border-color: #2563eb66;
+  border-color: var(--editor-accent-muted-border);
 }
 
 .templateCard:focus-visible {
@@ -608,7 +687,7 @@
 
 .panelSubtitle {
   font-size: 10px;
-  color: #999;
+  color: var(--editor-muted-text-lighter);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
@@ -620,7 +699,7 @@
 .selectionPanelTitle {
   font-size: 11px;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--editor-accent);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   margin-bottom: 2px;
 }
@@ -630,7 +709,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #888;
+  color: var(--editor-muted-text);
   margin-top: 12px;
   margin-bottom: 8px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -660,7 +739,7 @@
 .headingTag {
   font-size: 11px;
   font-weight: 600;
-  color: #888;
+  color: var(--editor-muted-text);
   width: 20px;
   font-family: var(--font-geist-mono), monospace;
 }
@@ -698,12 +777,12 @@
 
 .headingSmallInput:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb22;
+  border-color: var(--editor-accent);
+  box-shadow: 0 0 0 2px var(--editor-accent-focus-shadow);
 }
 
 .headingSmallInput::placeholder {
-  color: #bbb;
+  color: var(--editor-placeholder-text);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   font-style: italic;
 }
@@ -741,13 +820,13 @@
 }
 
 .toggleBtn:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--editor-accent);
   outline-offset: 1px;
 }
 
 .toggleActive {
-  background: #2563eb;
-  color: #ffffff;
+  background: var(--editor-accent);
+  color: var(--color-bg-inverse);
 }
 
 /* --- Open sidebar button --- */
@@ -813,7 +892,7 @@
 }
 
 .selectableBlock:hover::after {
-  border-color: rgba(37, 99, 235, 0.12);
+  border-color: var(--editor-accent-muted);
 }
 
 .selectableBlock:focus-visible {
@@ -824,17 +903,17 @@
 }
 
 .selectedBlock::after {
-  border: 2px solid rgba(37, 99, 235, 0.6) !important;
+  border: 2px solid var(--editor-accent-outline) !important;
 }
 .selectedBlock {
-  background-color: rgba(37, 99, 235, 0.03);
+  background-color: var(--editor-accent-editing-bg);
 }
 
 .selectedRegion::after {
-  border: 2px dashed rgba(37, 99, 235, 0.5) !important;
+  border: 2px dashed var(--editor-accent-region-outline) !important;
 }
 .selectedRegion {
-  background-color: rgba(37, 99, 235, 0.05);
+  background-color: var(--editor-accent-region-bg);
 }
 
 .regionLabel {
@@ -844,8 +923,8 @@
   font-size: 9px;
   font-weight: 600;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  background: #2563eb;
-  color: #fff;
+  background: var(--editor-accent);
+  color: var(--color-bg-inverse);
   padding: 1px 6px;
   border-radius: 3px;
   z-index: var(--z-floating-toolbar);
@@ -854,14 +933,14 @@
 }
 
 .expandedBlock::after {
-  border-color: rgba(37, 99, 235, 0.15) !important;
+  border-color: var(--editor-accent-expanded) !important;
 }
 
 .editingBlock::after {
   border: 2px dotted var(--editor-accent-outline) !important;
 }
 .editingBlock {
-  background-color: rgba(37, 99, 235, 0.02);
+  background-color: var(--editor-accent-editing-bg);
 }
 
 /* --- Floating Toolbar --- */
@@ -872,8 +951,8 @@
   right: 0;
   display: flex;
   gap: 1px;
-  background: #fff;
-  border: 1px solid #e2e8f0;
+  background: var(--color-bg-inverse);
+  border: 1px solid var(--editor-toolbar-border);
   border-radius: 6px;
   padding: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
@@ -888,7 +967,7 @@
   height: 22px;
   border: none;
   background: transparent;
-  color: #64748b;
+  color: var(--editor-toolbar-text);
   cursor: pointer;
   border-radius: 4px;
   font-size: 13px;
@@ -898,12 +977,12 @@
 }
 
 .toolbarBtn:hover:not(:disabled) {
-  background: #f1f5f9;
-  color: #1e293b;
+  background: var(--editor-toolbar-hover-bg);
+  color: var(--editor-toolbar-hover-text);
 }
 
 .toolbarBtn:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--editor-accent);
   outline-offset: 1px;
 }
 
@@ -913,13 +992,13 @@
 }
 
 .toolbarBtnDanger:hover:not(:disabled) {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--editor-danger-light-bg);
+  color: var(--editor-danger);
 }
 
 .toolbarBtnConfirmDelete {
-  background: #dc2626;
-  color: #fff;
+  background: var(--editor-danger);
+  color: var(--color-bg-inverse);
   font-size: 10px;
   font-weight: 600;
   padding: 2px 6px;
@@ -927,8 +1006,8 @@
 }
 
 .toolbarBtnConfirmDelete:hover:not(:disabled) {
-  background: #b91c1c;
-  color: #fff;
+  background: var(--editor-danger-hover);
+  color: var(--color-bg-inverse);
 }
 
 /* --- Box Model Diagram --- */
@@ -962,8 +1041,8 @@
     / 40px 1fr 40px;
   gap: 0;
   padding: 4px;
-  background: rgba(249, 115, 22, 0.08);
-  border: 1.5px solid rgba(249, 115, 22, 0.3);
+  background: var(--editor-box-margin-bg);
+  border: 1.5px solid var(--editor-box-margin-border);
   border-radius: 4px;
   min-height: 120px;
 }
@@ -979,8 +1058,8 @@
     / 40px 1fr 40px;
   gap: 0;
   padding: 4px;
-  background: rgba(34, 197, 94, 0.08);
-  border: 1.5px solid rgba(34, 197, 94, 0.3);
+  background: var(--editor-box-padding-bg);
+  border: 1.5px solid var(--editor-box-padding-border);
   border-radius: 3px;
 }
 
@@ -989,11 +1068,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(59, 130, 246, 0.08);
-  border: 1.5px solid rgba(59, 130, 246, 0.3);
+  background: var(--editor-box-content-bg);
+  border: 1.5px solid var(--editor-box-content-border);
   border-radius: 2px;
   font-size: 10px;
-  color: #3b82f6;
+  color: var(--editor-box-content-text);
   font-weight: 500;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   min-height: 24px;
@@ -1012,11 +1091,11 @@
 }
 
 .boxModelMargin > .boxModelLabel {
-  color: #f97316;
+  color: var(--editor-box-margin-label);
 }
 
 .boxModelPadding > .boxModelLabel {
-  color: #22c55e;
+  color: var(--editor-box-padding-label);
 }
 
 .boxModelTop {
@@ -1053,7 +1132,7 @@
   height: 18px;
   border: none;
   background: transparent;
-  color: #999;
+  color: var(--editor-muted-text-lighter);
   cursor: pointer;
   border-radius: 4px;
   font-size: 14px;
@@ -1063,18 +1142,18 @@
 }
 
 .clearBtn:hover {
-  background: #fecaca;
-  color: #dc2626;
+  background: var(--editor-danger-light);
+  color: var(--editor-danger);
 }
 
 .clearBtn:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--editor-accent);
   outline-offset: 1px;
 }
 
 .inheritLabel {
   font-size: 10px;
-  color: #999;
+  color: var(--editor-muted-text-lighter);
   font-style: italic;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
@@ -1091,20 +1170,20 @@
   cursor: pointer;
   font-size: 13px;
   line-height: 1;
-  color: #999;
+  color: var(--editor-muted-text-lighter);
   padding: 0;
   position: relative;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .colorSwatchBtn:hover {
-  border-color: #2563eb;
-  color: #2563eb;
-  background: #2563eb08;
+  border-color: var(--editor-accent);
+  color: var(--editor-accent);
+  background: var(--editor-accent-subtle);
 }
 
 .colorSwatchBtn:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--editor-accent);
   outline-offset: 1px;
 }
 
@@ -1145,9 +1224,9 @@
 
 .spacingCompactNum:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: var(--editor-accent);
   background: var(--color-bg);
-  box-shadow: 0 0 0 2px #2563eb22;
+  box-shadow: 0 0 0 2px var(--editor-accent-focus-shadow);
 }
 
 .spacingCompactNum::placeholder {
@@ -1163,7 +1242,7 @@
   border-left: none;
   border-radius: 0 2px 2px 0;
   background: transparent;
-  color: #999;
+  color: var(--editor-muted-text-lighter);
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
@@ -1202,14 +1281,14 @@
 
 .spacingFullNum:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb22;
+  border-color: var(--editor-accent);
+  box-shadow: 0 0 0 2px var(--editor-accent-focus-shadow);
 }
 
 .spacingInputError {
-  outline: 2px solid #dc2626;
+  outline: 2px solid var(--editor-danger);
   outline-offset: -1px;
-  border-color: #dc2626;
+  border-color: var(--editor-danger);
 }
 
 .spacingFullUnit {
@@ -1226,7 +1305,7 @@
 
 .spacingFullUnit:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: var(--editor-accent);
 }
 
 /* --- Borders Section --- */
@@ -1259,8 +1338,8 @@
 
 .borderStyleSelect:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb22;
+  border-color: var(--editor-accent);
+  box-shadow: 0 0 0 2px var(--editor-accent-focus-shadow);
 }
 
 .borderStyleSelectCompact {
@@ -1277,14 +1356,14 @@
 
 .borderStyleSelectCompact:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb22;
+  border-color: var(--editor-accent);
+  box-shadow: 0 0 0 2px var(--editor-accent-focus-shadow);
 }
 
 .borderSideLabel {
   font-size: 10px;
   font-weight: 500;
-  color: #888;
+  color: var(--editor-muted-text);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   width: 56px;
 }
@@ -1297,12 +1376,12 @@
   background: transparent;
   font-size: 10px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  color: #999;
+  color: var(--editor-muted-text-lighter);
   cursor: pointer;
 }
 
 .advancedToggle:hover {
-  color: #2563eb;
+  color: var(--editor-accent);
 }
 
 .advancedToggle:focus-visible {
@@ -1322,7 +1401,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  border: 1.5px solid var(--editor-swatch-border);
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
@@ -1333,11 +1412,11 @@
 
 .paletteSwatch:hover {
   transform: scale(1.2);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 0 0 2px var(--editor-accent-hover-glow);
 }
 
 .paletteSwatchActive {
-  box-shadow: 0 0 0 2px #2563eb;
+  box-shadow: 0 0 0 2px var(--editor-accent);
 }
 
 .palettePresetRow {
@@ -1359,7 +1438,7 @@
 
 .palettePresetRow:hover {
   background: var(--color-bg-subtle);
-  border-color: #2563eb66;
+  border-color: var(--editor-accent-muted-border);
 }
 
 .palettePresetLabel {
@@ -1399,7 +1478,7 @@
   display: block;
   font-size: 11px;
   font-weight: 600;
-  color: #888;
+  color: var(--editor-muted-text);
   margin-bottom: 4px;
 }
 
@@ -1417,8 +1496,8 @@
 
 .linkModalInput:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb22;
+  border-color: var(--editor-accent);
+  box-shadow: 0 0 0 2px var(--editor-accent-focus-shadow);
 }
 
 .linkModalActions {
@@ -1433,14 +1512,14 @@
   font-weight: 600;
   border: none;
   border-radius: 5px;
-  background: #2563eb;
-  color: #fff;
+  background: var(--editor-accent);
+  color: var(--color-bg-inverse);
   cursor: pointer;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .linkModalApplyBtn:hover:not(:disabled) {
-  background: #1d4ed8;
+  background: var(--editor-accent-hover);
 }
 
 .linkModalApplyBtn:disabled {
@@ -1452,16 +1531,16 @@
   padding: 4px 12px;
   font-size: 11px;
   font-weight: 500;
-  border: 1px solid #fca5a5;
+  border: 1px solid var(--editor-danger-border);
   border-radius: 5px;
   background: var(--color-bg);
-  color: #dc2626;
+  color: var(--editor-danger);
   cursor: pointer;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .linkModalRemoveBtn:hover {
-  background: #fef2f2;
+  background: var(--editor-danger-light-bg);
 }
 
 .linkModalCancelBtn {
@@ -1487,8 +1566,8 @@
   display: flex;
   gap: 2px;
   padding: 4px;
-  background: #fff;
-  border: 1px solid #e2e8f0;
+  background: var(--color-bg-inverse);
+  border: 1px solid var(--editor-toolbar-border);
   border-radius: 6px;
   box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.12),
@@ -1524,19 +1603,19 @@
 }
 
 .inlineToolbarBtnActive {
-  background: #2563eb;
-  color: #fff;
+  background: var(--editor-accent);
+  color: var(--color-bg-inverse);
 }
 
 .inlineToolbarBtnActive:hover {
-  background: #1d4ed8;
-  color: #fff;
+  background: var(--editor-accent-hover);
+  color: var(--color-bg-inverse);
 }
 
 .inlineToolbarSep {
   width: 1px;
   height: 18px;
-  background: #e2e8f0;
+  background: var(--editor-toolbar-border);
   margin: 0 2px;
   flex-shrink: 0;
   align-self: center;
@@ -1635,8 +1714,8 @@
   padding: 4px 8px;
   font-size: 11px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  background: #1e293b;
-  color: #f8fafc;
+  background: var(--editor-tooltip-bg);
+  color: var(--editor-tooltip-text);
   border-radius: var(--editor-radius-sm);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   white-space: nowrap;
@@ -1644,7 +1723,7 @@
 }
 
 .tooltipArrow {
-  fill: #1e293b;
+  fill: var(--editor-tooltip-bg);
 }
 
 /* --- Template Picker --- */
@@ -1754,7 +1833,7 @@
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   font-weight: 600;
   color: var(--editor-danger);
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--editor-overflow-label-bg);
   padding: 1px 6px;
   border-radius: var(--editor-radius-sm);
   white-space: nowrap;

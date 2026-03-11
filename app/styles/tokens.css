@@ -15,6 +15,55 @@
   --editor-section-bg: rgba(0, 0, 0, 0.03);
   --editor-section-bg-hover: rgba(0, 0, 0, 0.06);
 
+  /* Focus / shadows */
+  --editor-accent-focus-shadow: rgba(37, 99, 235, 0.13);
+  --editor-accent-muted-border: rgba(37, 99, 235, 0.40);
+  --editor-accent-region-outline: rgba(37, 99, 235, 0.5);
+  --editor-accent-region-bg: rgba(37, 99, 235, 0.05);
+  --editor-accent-expanded: rgba(37, 99, 235, 0.15);
+  --editor-accent-editing-bg: rgba(37, 99, 235, 0.02);
+  --editor-accent-hover-glow: rgba(37, 99, 235, 0.30);
+
+  /* Danger variants */
+  --editor-danger-light: #fecaca;
+  --editor-danger-light-bg: #fef2f2;
+  --editor-danger-border: #fca5a5;
+
+  /* Muted / placeholder */
+  --editor-muted-text-lighter: #999;
+  --editor-placeholder-text: #bbb;
+  --color-bg-inverse: #ffffff;
+
+  /* Toolbar */
+  --editor-toolbar-text: #64748b;
+  --editor-toolbar-hover-bg: #f1f5f9;
+  --editor-toolbar-hover-text: #1e293b;
+  --editor-toolbar-border: #e2e8f0;
+
+  /* Scrollbar */
+  --editor-scrollbar-normal: rgba(0, 0, 0, 0.15);
+  --editor-scrollbar-hover: rgba(0, 0, 0, 0.25);
+
+  /* Modal */
+  --editor-modal-overlay: rgba(0, 0, 0, 0.4);
+
+  /* Box model diagram */
+  --editor-box-margin-bg: rgba(249, 115, 22, 0.08);
+  --editor-box-margin-border: rgba(249, 115, 22, 0.3);
+  --editor-box-margin-label: #f97316;
+  --editor-box-padding-bg: rgba(34, 197, 94, 0.08);
+  --editor-box-padding-border: rgba(34, 197, 94, 0.3);
+  --editor-box-padding-label: #22c55e;
+  --editor-box-content-bg: rgba(59, 130, 246, 0.08);
+  --editor-box-content-border: rgba(59, 130, 246, 0.3);
+  --editor-box-content-text: #3b82f6;
+
+  /* Misc */
+  --editor-swatch-border: rgba(0, 0, 0, 0.12);
+  --editor-tooltip-bg: #1e293b;
+  --editor-tooltip-text: #f8fafc;
+  --editor-overflow-label-bg: rgba(255, 255, 255, 0.9);
+
   /* Sizing */
   --editor-sidebar-width: 300px;
   --editor-font-xs: 9px;

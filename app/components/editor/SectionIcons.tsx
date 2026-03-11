@@ -147,6 +147,18 @@ export function IconBoxShadow() {
   );
 }
 
+/** Four horizontal lines — content type */
+export function IconContent() {
+  return (
+    <svg {...props}>
+      <line x1="2" y1="3" x2="12" y2="3" />
+      <line x1="2" y1="6" x2="10" y2="6" />
+      <line x1="2" y1="9" x2="12" y2="9" />
+      <line x1="2" y1="12" x2="9" y2="12" />
+    </svg>
+  );
+}
+
 /** Counter-clockwise arrow — history/undo */
 export function IconHistory() {
   return (

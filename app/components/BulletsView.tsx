@@ -126,10 +126,25 @@ export default function BulletsView({ items, levels, blockId }: Props) {
         content: readRef(ei.key),
       }));
       editor.dispatch({ type: "UPDATE_BULLET_ITEMS", blockId, items: finalItems });
+      editor.dispatch({ type: "STOP_EDITING" });
     }
     setEditingItems(null);
     setFocusIndex(null);
   }, [editor, blockId, editingItems, readRef]);
+
+  // Bridge: auto-enter editing when EditorContext requests it (e.g. pressing Enter on a selected bullet block)
+  useEffect(() => {
+    if (
+      editor &&
+      blockId &&
+      editor.editingBlockId === blockId &&
+      editor.editingField === "content" &&
+      !editingItems
+    ) {
+      setEditingItems(items.map((item) => ({ key: genKey(), item })));
+      setFocusIndex(0);
+    }
+  }, [editor, blockId, editingItems, items, genKey]);
 
   // Focus management: when focusIndex or editingItems change, focus the target bullet
   useEffect(() => {

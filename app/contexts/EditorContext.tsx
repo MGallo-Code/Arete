@@ -62,7 +62,8 @@ export type EditorAction =
   | { type: "UPDATE_THEME_PALETTE"; palette: ColorPalette | undefined }
   | { type: "APPLY_PALETTE_PRESET"; palette: ColorPalette }
   | { type: "UPDATE_IMAGE_CONTENT"; blockId: string; src?: string; alt?: string; style?: Style }
-  | { type: "SWITCH_TEMPLATE"; template: import("../models").Template };
+  | { type: "SWITCH_TEMPLATE"; template: import("../models").Template }
+  | { type: "CHANGE_CONTENT_TYPE"; blockId: string; newType: "text" | "bullets" | "image" };
 
 // Actions that mutate the resume (push to undo stack)
 const MUTATING = new Set([
@@ -95,6 +96,7 @@ const MUTATING = new Set([
   "APPLY_PALETTE_PRESET",
   "UPDATE_IMAGE_CONTENT",
   "SWITCH_TEMPLATE",
+  "CHANGE_CONTENT_TYPE",
 ]);
 
 // --- Helpers ---
@@ -657,6 +659,75 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
         },
         selectedPath: [],
         selectedRegionId: null,
+      };
+    }
+
+    case "CHANGE_CONTENT_TYPE": {
+      const { blockId, newType } = action;
+      const block = findBlock(state.resume.blocks, blockId);
+      if (!block || block.content.type === newType) return state;
+
+      let newContent: Content;
+      const oldContent = block.content;
+
+      switch (newType) {
+        case "text": {
+          if (oldContent.type === "bullets") {
+            // Join all bullet items' content with newline separators
+            const runs: RichText = [];
+            oldContent.items.forEach((item, i) => {
+              if (i > 0) runs.push({ text: "\n" });
+              runs.push(...item.content);
+            });
+            newContent = { type: "text", value: runs.length > 0 ? runs : [{ text: "" }] };
+          } else if (oldContent.type === "image") {
+            newContent = { type: "text", value: [{ text: oldContent.alt || "" }] };
+          } else {
+            // blocks → text (extract plain text)
+            newContent = { type: "text", value: [{ text: "" }] };
+          }
+          break;
+        }
+        case "bullets": {
+          if (oldContent.type === "text") {
+            newContent = {
+              type: "bullets",
+              items: [{ content: oldContent.value, level: 0 }],
+            };
+          } else if (oldContent.type === "image") {
+            newContent = {
+              type: "bullets",
+              items: [{ content: [{ text: oldContent.alt || "" }], level: 0 }],
+            };
+          } else {
+            newContent = { type: "bullets", items: [{ content: [{ text: "" }], level: 0 }] };
+          }
+          break;
+        }
+        case "image": {
+          let altText = "";
+          if (oldContent.type === "text") {
+            altText = oldContent.value.map((r) => r.text).join("");
+          } else if (oldContent.type === "bullets") {
+            altText = oldContent.items.map((item) => item.content.map((r) => r.text).join("")).join(", ");
+          }
+          newContent = { type: "image", src: "", alt: altText };
+          break;
+        }
+      }
+
+      const clearEditing =
+        state.editingBlockId === blockId
+          ? { editingBlockId: null as string | null, editingField: null as "header" | "content" | null }
+          : {};
+
+      return {
+        ...state,
+        ...clearEditing,
+        resume: updateBlock(state.resume, blockId, (b) => ({
+          ...b,
+          content: newContent,
+        })),
       };
     }
 

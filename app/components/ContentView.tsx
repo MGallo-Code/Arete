@@ -19,7 +19,12 @@ export default function ContentView({ content, blockId, ancestorPath }: Props) {
   const isEditing = editor?.editingBlockId === blockId && editor?.editingField === "content";
 
   switch (content.type) {
-    case "text":
+    case "text": {
+      const isEmpty =
+        !content.value ||
+        content.value.length === 0 ||
+        (content.value.length === 1 && !content.value[0].text.trim());
+
       if (isEditing) {
         return (
           <EditableRichText
@@ -32,6 +37,26 @@ export default function ContentView({ content, blockId, ancestorPath }: Props) {
           />
         );
       }
+
+      if (isEmpty && editor) {
+        return (
+          <div
+            style={{
+              minHeight: "1.5em",
+              color: "#999",
+              fontStyle: "italic",
+              cursor: "pointer",
+            }}
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              editor.dispatch({ type: "START_EDITING", blockId, field: "content" });
+            }}
+          >
+            Click to edit
+          </div>
+        );
+      }
+
       return (
         <div
           onDoubleClick={
@@ -46,11 +71,33 @@ export default function ContentView({ content, blockId, ancestorPath }: Props) {
           <RichTextView richText={content.value} />
         </div>
       );
+    }
 
     case "bullets":
       return <BulletsView items={content.items} levels={content.levels ?? theme.bullets} blockId={blockId} />;
 
     case "image":
+      if (!content.src || !content.src.trim()) {
+        return (
+          <div
+            style={{
+              minHeight: 60,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#f5f5f5",
+              border: "1px dashed #ccc",
+              borderRadius: 4,
+              color: "#999",
+              fontSize: 12,
+              fontStyle: "italic",
+              ...content.style,
+            }}
+          >
+            Add image URL in sidebar
+          </div>
+        );
+      }
       return <img src={content.src} alt={content.alt} style={content.style} />;
 
     case "blocks":

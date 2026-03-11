@@ -12,7 +12,7 @@ import CollapsibleSection from "./CollapsibleSection";
 import ColorControls from "./ColorControls";
 import ImageControls from "./ImageControls";
 import PropertyRow from "./PropertyRow";
-import { IconHeader, IconColors, IconTypography, IconLayout, IconBoxModel, IconBorders, IconBoxShadow, IconImage, IconBullets } from "./SectionIcons";
+import { IconHeader, IconContent, IconColors, IconTypography, IconLayout, IconBoxModel, IconBorders, IconBoxShadow, IconImage, IconBullets } from "./SectionIcons";
 import SpacingInput from "./SpacingInput";
 import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
@@ -125,6 +125,30 @@ export default function BlockStylePanel() {
           </div>
         )}
       </CollapsibleSection>
+
+      {/* Content type */}
+      {block.content.type !== "blocks" && (
+        <CollapsibleSection panelId="block" title="Content" icon={<IconContent />}>
+          <div className={styles.propRow}>
+            <label className={styles.propLabel}>Type</label>
+            <div className={styles.toggleGroup}>
+              {(["text", "bullets", "image"] as const).map((t) => (
+                <button
+                  key={t}
+                  className={`${styles.toggleBtn} ${block.content.type === t ? styles.toggleActive : ""}`}
+                  onClick={() => {
+                    if (block.content.type !== t) {
+                      dispatch({ type: "CHANGE_CONTENT_TYPE", blockId: selectedBlockId, newType: t });
+                    }
+                  }}
+                >
+                  {t === "text" ? "Text" : t === "bullets" ? "Bullets" : "Image"}
+                </button>
+              ))}
+            </div>
+          </div>
+        </CollapsibleSection>
+      )}
 
       {/* Colors */}
       <CollapsibleSection panelId="block" title="Colors" icon={<IconColors />}>

@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect, lazy, Suspense } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
-import { EditorProvider, useEditorRequired } from "../../contexts/EditorContext";
+import { EditorProvider, useEditorRequired, findBlockRegion, findBlock, getBlockLabel } from "../../contexts/EditorContext";
 import { sampleResume, sampleResume2, sampleResume3, sampleResume4, sampleResume5, sampleResume6, sampleResume7, testResume } from "../../fixtures";
 import type { Resume } from "../../models";
 import ResumePreview from "../ResumePreview";
@@ -39,7 +39,7 @@ function EditorInner({
   insertTarget: { regionId: string; index: number } | null;
   onCloseLibrary: () => void;
 }) {
-  const { resume, selectedBlockId, selectedRegionId, dispatch } = useEditorRequired();
+  const { resume, selectedBlockId, selectedRegionId, selectedPath, dispatch, onRequestInsert } = useEditorRequired();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [manualTab, setManualTab] = useState<SidebarTab | null>(null);
   const [prevHasSelection, setPrevHasSelection] = useState(false);
@@ -110,6 +110,32 @@ function EditorInner({
   }
 
   const activeTab = manualTab ?? (hasSelection ? "selection" : "theme");
+
+  // Build breadcrumb segments
+  const breadcrumbSegments: { label: string; onClick: () => void }[] = [];
+  if (selectedRegionId && !selectedBlockId) {
+    breadcrumbSegments.push({
+      label: `Region: ${selectedRegionId}`,
+      onClick: () => dispatch({ type: "SELECT_REGION", regionId: selectedRegionId }),
+    });
+  }
+  if (selectedBlockId && selectedPath.length > 0) {
+    const regionId = findBlockRegion(resume, selectedPath[0]);
+    if (regionId) {
+      breadcrumbSegments.push({
+        label: regionId,
+        onClick: () => dispatch({ type: "SELECT_REGION", regionId }),
+      });
+    }
+    selectedPath.forEach((bId, idx) => {
+      const block = findBlock(resume.blocks, bId);
+      const label = block ? getBlockLabel(block) : bId;
+      breadcrumbSegments.push({
+        label,
+        onClick: () => dispatch({ type: "SELECT_BLOCK", path: selectedPath.slice(0, idx + 1) }),
+      });
+    });
+  }
 
   const closeSidebar = () => {
     dispatch({ type: "SELECT_BLOCK", path: [] });
@@ -218,6 +244,25 @@ function EditorInner({
                 </Tabs.Trigger>
               </Tabs.List>
 
+              {/* Breadcrumbs */}
+              {breadcrumbSegments.length > 0 && (
+                <div className={styles.breadcrumbs}>
+                  {breadcrumbSegments.map((seg, i) => (
+                    <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 2 }}>
+                      {i > 0 && <span className={styles.breadcrumbSep}>&rsaquo;</span>}
+                      <button
+                        type="button"
+                        className={styles.breadcrumbBtn}
+                        onClick={seg.onClick}
+                        title={seg.label}
+                      >
+                        {seg.label}
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
               <ScrollArea.Root className={styles.sidebarScrollRoot}>
                 <ScrollArea.Viewport
                   className={styles.sidebarBody}
@@ -250,6 +295,36 @@ function EditorInner({
                   }
                 }}
               >
+                {/* Guidance card */}
+                <div className={styles.guidanceCard}>
+                  <div className={styles.guidanceTitle}>No selection</div>
+                  <div className={styles.guidanceDesc}>
+                    Select a block or region in the preview to edit it
+                  </div>
+                  <div className={styles.guidanceActions}>
+                    <button
+                      type="button"
+                      className={styles.propBtn}
+                      onClick={() => {
+                        // Open block library with first region at end
+                        const firstRegion = Object.keys(resume.regionBlockIds)[0];
+                        if (firstRegion && onRequestInsert) {
+                          const count = resume.regionBlockIds[firstRegion]?.length ?? 0;
+                          onRequestInsert(firstRegion, count);
+                        }
+                      }}
+                    >
+                      Insert Block
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.propBtn}
+                      onClick={() => setTemplatePickerOpen(true)}
+                    >
+                      Switch Template
+                    </button>
+                  </div>
+                </div>
                 <ThemePanel />
               </ScrollArea.Viewport>
               <ScrollArea.Scrollbar orientation="vertical" className={styles.scrollbar}>

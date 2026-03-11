@@ -119,9 +119,26 @@ function EditorInner({
   return (
     <div className={styles.shell}>
       <ScreenReaderAnnounce />
-      {/* Preview */}
-      <div className={styles.previewArea}>
-        <div className={styles.previewWrapper}>
+      {/* Preview — click on empty area deselects */}
+      <div
+        className={styles.previewArea}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            dispatch({ type: "SELECT_BLOCK", path: [] });
+          }
+        }}
+      >
+        <div
+          className={styles.previewWrapper}
+          onClick={(e) => {
+            // Clicks on the wrapper shadow/padding (not on the resume page itself)
+            // won't reach here due to stopPropagation in regions/blocks,
+            // but if they do, deselect
+            if (e.target === e.currentTarget) {
+              dispatch({ type: "SELECT_BLOCK", path: [] });
+            }
+          }}
+        >
           <ResumePreview resume={resume} />
         </div>
       </div>

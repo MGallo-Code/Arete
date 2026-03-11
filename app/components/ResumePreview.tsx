@@ -60,6 +60,12 @@ export default function ResumePreview({ resume }: Props) {
           boxSizing: "border-box",
           overflow: "hidden",
         } as React.CSSProperties}
+        onClick={editor ? (e) => {
+          // Click on page margins (not on any region/block) → deselect
+          if (e.target === e.currentTarget) {
+            editor.dispatch({ type: "SELECT_BLOCK", path: [] });
+          }
+        } : undefined}
       >
         <div
           ref={gridRef}
@@ -70,6 +76,11 @@ export default function ResumePreview({ resume }: Props) {
             height: "100%",
             position: "relative",
           }}
+          onClick={editor ? (e) => {
+            if (e.target === e.currentTarget) {
+              editor.dispatch({ type: "SELECT_BLOCK", path: [] });
+            }
+          } : undefined}
         >
           {Object.entries(resume.regionBlockIds).map(([regionId, blockIds]) => {
             const isRegionSelected = editor?.selectedRegionId === regionId;

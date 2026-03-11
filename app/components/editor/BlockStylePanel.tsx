@@ -6,11 +6,12 @@ import type { Style } from "../../models";
 import { parseShorthand } from "../../utils/cssUtils";
 import BorderControls from "./BorderControls";
 import BoxModelEditor from "./BoxModelEditor";
+import BoxShadowControls from "./BoxShadowControls";
 import BulletStyleControls from "./BulletStyleControls";
 import CollapsibleSection from "./CollapsibleSection";
 import ColorControls from "./ColorControls";
 import ImageControls from "./ImageControls";
-import { IconHeader, IconColors, IconTypography, IconBoxModel, IconBorders, IconImage, IconBullets } from "./SectionIcons";
+import { IconHeader, IconColors, IconTypography, IconBoxModel, IconBorders, IconBoxShadow, IconImage, IconBullets } from "./SectionIcons";
 import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
 
@@ -81,7 +82,7 @@ export default function BlockStylePanel() {
       </div>
 
       {/* Header controls */}
-      <CollapsibleSection title="Header" icon={<IconHeader />} defaultOpen>
+      <CollapsibleSection title="Header" icon={<IconHeader />}>
         {block.header ? (
           <div className={styles.propRow}>
             <label className={styles.propLabel}>Tag</label>
@@ -124,7 +125,7 @@ export default function BlockStylePanel() {
       </CollapsibleSection>
 
       {/* Colors */}
-      <CollapsibleSection title="Colors" icon={<IconColors />} defaultOpen>
+      <CollapsibleSection title="Colors" icon={<IconColors />}>
         <ColorControls
           style={style}
           updateStyle={updateStyle}
@@ -134,7 +135,7 @@ export default function BlockStylePanel() {
       </CollapsibleSection>
 
       {/* Typography */}
-      <CollapsibleSection title="Typography" icon={<IconTypography />} defaultOpen>
+      <CollapsibleSection title="Typography" icon={<IconTypography />}>
         <TypographyControls
           style={style}
           updateStyle={updateStyle}
@@ -143,7 +144,7 @@ export default function BlockStylePanel() {
       </CollapsibleSection>
 
       {/* Box Model */}
-      <CollapsibleSection title="Box Model" icon={<IconBoxModel />} defaultOpen={false}>
+      <CollapsibleSection title="Box Model" icon={<IconBoxModel />}>
         <BoxModelEditor
           marginTop={(style.marginTop as string) ?? ""}
           marginRight={(style.marginRight as string) ?? ""}
@@ -173,20 +174,25 @@ export default function BlockStylePanel() {
       </CollapsibleSection>
 
       {/* Borders */}
-      <CollapsibleSection title="Borders" icon={<IconBorders />} defaultOpen={false}>
+      <CollapsibleSection title="Borders" icon={<IconBorders />}>
         <BorderControls style={style} updateStyle={updateStyle} clearStyle={clearStyle} />
+      </CollapsibleSection>
+
+      {/* Box Shadow */}
+      <CollapsibleSection title="Box Shadow" icon={<IconBoxShadow />}>
+        <BoxShadowControls style={style} updateStyle={updateStyle} clearStyle={clearStyle} />
       </CollapsibleSection>
 
       {/* Content-specific — Image */}
       {block.content.type === "image" && (
-        <CollapsibleSection title="Image" icon={<IconImage />} defaultOpen>
+        <CollapsibleSection title="Image" icon={<IconImage />}>
           <ImageControls blockId={selectedBlockId} content={block.content} dispatch={dispatch} />
         </CollapsibleSection>
       )}
 
       {/* Content-specific — Bullet styles */}
       {block.content.type === "bullets" && (
-        <CollapsibleSection title="Bullet Styles" icon={<IconBullets />} defaultOpen={false}>
+        <CollapsibleSection title="Bullet Styles" icon={<IconBullets />}>
           <BulletStyleControls
             blockId={selectedBlockId}
             content={block.content}

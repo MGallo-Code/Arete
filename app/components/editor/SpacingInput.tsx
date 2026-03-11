@@ -74,7 +74,23 @@ export default function SpacingInput({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") (e.target as HTMLElement).blur();
+    if (e.key === "Enter") {
+      (e.target as HTMLElement).blur();
+      return;
+    }
+    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      e.preventDefault();
+      const base = parseFloat(num) || 0;
+      const smallUnit = unit === "em" || unit === "rem";
+      const step = e.shiftKey ? (smallUnit ? 1 : 10) : (smallUnit ? 0.1 : 1);
+      const delta = e.key === "ArrowUp" ? step : -step;
+      const next = smallUnit
+        ? (base + delta).toFixed(1).replace(/\.0$/, "")
+        : String(Math.round(base + delta));
+      setNum(next);
+      setError(false);
+      onChange(toCSS(next, unit));
+    }
   };
 
   const handleUnitChange = (newUnit: Unit) => {

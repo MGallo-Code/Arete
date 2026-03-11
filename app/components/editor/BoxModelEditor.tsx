@@ -25,6 +25,15 @@ interface BoxModelEditorProps {
   hideMargin?: boolean;
 }
 
+/** If all four values match (and at least one is set), return that value. Otherwise return "". */
+function unifiedValue(a: string, b: string, c: string, d: string): { value: string; mixed: boolean } {
+  const nonEmpty = [a, b, c, d].filter(Boolean);
+  if (nonEmpty.length === 0) return { value: "", mixed: false };
+  const allSame = nonEmpty.every((v) => v === nonEmpty[0]);
+  if (allSame && nonEmpty.length === 4) return { value: nonEmpty[0], mixed: false };
+  return { value: "", mixed: true };
+}
+
 export default function BoxModelEditor({
   marginTop, marginRight, marginBottom, marginLeft,
   paddingTop, paddingRight, paddingBottom, paddingLeft,
@@ -33,6 +42,23 @@ export default function BoxModelEditor({
   defaultPaddingTop, defaultPaddingRight, defaultPaddingBottom, defaultPaddingLeft,
   hideMargin,
 }: BoxModelEditorProps) {
+  const unifiedMargin = unifiedValue(marginTop, marginRight, marginBottom, marginLeft);
+  const unifiedPadding = unifiedValue(paddingTop, paddingRight, paddingBottom, paddingLeft);
+
+  const setAllMargins = (v: string) => {
+    onMarginChange("top", v);
+    onMarginChange("right", v);
+    onMarginChange("bottom", v);
+    onMarginChange("left", v);
+  };
+
+  const setAllPadding = (v: string) => {
+    onPaddingChange("top", v);
+    onPaddingChange("right", v);
+    onPaddingChange("bottom", v);
+    onPaddingChange("left", v);
+  };
+
   const paddingLayer = (
     <div className={styles.boxModelPadding}>
       <span className={styles.boxModelLabel}>padding</span>
@@ -59,6 +85,16 @@ export default function BoxModelEditor({
   if (hideMargin) {
     return (
       <div className={styles.boxModel}>
+        {/* All-padding shortcut */}
+        <div className={styles.boxModelAllRow}>
+          <span className={styles.boxModelAllLabel}>All padding</span>
+          <SpacingInput
+            compact
+            value={unifiedPadding.mixed ? "" : unifiedPadding.value}
+            placeholder={unifiedPadding.mixed ? "mixed" : "0"}
+            onChange={setAllPadding}
+          />
+        </div>
         {paddingLayer}
       </div>
     );
@@ -66,6 +102,26 @@ export default function BoxModelEditor({
 
   return (
     <div className={styles.boxModel}>
+      {/* All-sides shortcuts */}
+      <div className={styles.boxModelAllRow}>
+        <span className={styles.boxModelAllLabel}>All margin</span>
+        <SpacingInput
+          compact
+          value={unifiedMargin.mixed ? "" : unifiedMargin.value}
+          placeholder={unifiedMargin.mixed ? "mixed" : "0"}
+          onChange={setAllMargins}
+        />
+      </div>
+      <div className={styles.boxModelAllRow}>
+        <span className={styles.boxModelAllLabel}>All padding</span>
+        <SpacingInput
+          compact
+          value={unifiedPadding.mixed ? "" : unifiedPadding.value}
+          placeholder={unifiedPadding.mixed ? "mixed" : "0"}
+          onChange={setAllPadding}
+        />
+      </div>
+
       {/* Margin layer (outermost) */}
       <div className={styles.boxModelMargin}>
         <span className={styles.boxModelLabel}>margin</span>

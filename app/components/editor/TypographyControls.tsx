@@ -2,6 +2,7 @@
 
 import type { Style } from "../../models";
 import { FONT_PRESETS } from "../../data/constants";
+import { nudgeCSSValue } from "../../utils/cssUtils";
 import PropertyRow from "./PropertyRow";
 import SpacingInput from "./SpacingInput";
 import styles from "./editor.module.css";
@@ -96,6 +97,13 @@ export default function TypographyControls({
               value={(style.lineHeight as string) ?? ""}
               placeholder="Inherit"
               onChange={(e) => updateStyle({ lineHeight: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                  e.preventDefault();
+                  const next = nudgeCSSValue((style.lineHeight as string) ?? "", e.key, e.shiftKey);
+                  updateStyle({ lineHeight: next });
+                }
+              }}
             />
             {style.lineHeight && (
               <button className={styles.clearBtn} onClick={() => clearStyle("lineHeight")} title="Clear">×</button>
@@ -115,6 +123,13 @@ export default function TypographyControls({
               value={(style.letterSpacing as string) ?? ""}
               placeholder="Inherit"
               onChange={(e) => updateStyle({ letterSpacing: e.target.value || undefined })}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                  e.preventDefault();
+                  const next = nudgeCSSValue((style.letterSpacing as string) ?? "", e.key, e.shiftKey);
+                  updateStyle({ letterSpacing: next });
+                }
+              }}
             />
             {style.letterSpacing && (
               <button className={styles.clearBtn} onClick={() => clearStyle("letterSpacing")} title="Clear">×</button>

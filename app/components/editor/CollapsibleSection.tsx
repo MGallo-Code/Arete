@@ -26,7 +26,7 @@ function Chevron() {
 export default function CollapsibleSection({
   title,
   icon,
-  defaultOpen = true,
+  defaultOpen = false,
   badge,
   children,
 }: CollapsibleSectionProps) {

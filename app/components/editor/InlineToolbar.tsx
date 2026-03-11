@@ -17,31 +17,45 @@ interface ToolbarPosition {
 interface FormatState {
   bold: boolean;
   italic: boolean;
+  underline: boolean;
+  strikethrough: boolean;
+  superscript: boolean;
+  subscript: boolean;
 }
 
-/** Walk DOM from selection anchor to determine bold/italic state */
+const EMPTY_FORMAT: FormatState = { bold: false, italic: false, underline: false, strikethrough: false, superscript: false, subscript: false };
+
+/** Walk DOM from selection anchor to determine format state */
 function getFormatStateFromSelection(): FormatState {
   const sel = window.getSelection();
-  if (!sel || sel.rangeCount === 0 || !sel.anchorNode) return { bold: false, italic: false };
+  if (!sel || sel.rangeCount === 0 || !sel.anchorNode) return EMPTY_FORMAT;
 
-  let bold = false;
-  let italic = false;
+  const state = { ...EMPTY_FORMAT };
   let node: Node | null = sel.anchorNode;
 
   while (node && node.nodeType !== Node.DOCUMENT_NODE) {
     if (node.nodeType === Node.ELEMENT_NODE) {
       const el = node as HTMLElement;
       const tag = el.tagName.toLowerCase();
-      if (tag === "b" || tag === "strong") bold = true;
-      if (tag === "i" || tag === "em") italic = true;
+      if (tag === "b" || tag === "strong") state.bold = true;
+      if (tag === "i" || tag === "em") state.italic = true;
+      if (tag === "u") state.underline = true;
+      if (tag === "s" || tag === "strike" || tag === "del") state.strikethrough = true;
+      if (tag === "sup") state.superscript = true;
+      if (tag === "sub") state.subscript = true;
       const computed = window.getComputedStyle(el);
-      if (!bold && (computed.fontWeight === "bold" || parseInt(computed.fontWeight) >= 700)) bold = true;
-      if (!italic && computed.fontStyle === "italic") italic = true;
+      if (!state.bold && (computed.fontWeight === "bold" || parseInt(computed.fontWeight) >= 700)) state.bold = true;
+      if (!state.italic && computed.fontStyle === "italic") state.italic = true;
+      const td = computed.textDecorationLine || computed.textDecoration;
+      if (td.includes("underline")) state.underline = true;
+      if (td.includes("line-through")) state.strikethrough = true;
+      if (computed.verticalAlign === "super") state.superscript = true;
+      if (computed.verticalAlign === "sub") state.subscript = true;
     }
     node = node.parentNode;
   }
 
-  return { bold, italic };
+  return state;
 }
 
 function InlineToolbarButton({
@@ -80,7 +94,7 @@ function InlineToolbarButton({
 
 export default function InlineToolbar({ containerRef, onLinkClick }: Props) {
   const [position, setPosition] = useState<ToolbarPosition | null>(null);
-  const [formatState, setFormatState] = useState<FormatState>({ bold: false, italic: false });
+  const [formatState, setFormatState] = useState<FormatState>(EMPTY_FORMAT);
   const toolbarRef = useRef<HTMLDivElement>(null);
 
   const updateToolbar = useCallback(() => {
@@ -143,6 +157,30 @@ export default function InlineToolbar({ containerRef, onLinkClick }: Props) {
     setFormatState((prev) => ({ ...prev, italic: !prev.italic }));
   }, []);
 
+  const handleUnderline = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    document.execCommand("underline");
+    setFormatState((prev) => ({ ...prev, underline: !prev.underline }));
+  }, []);
+
+  const handleStrikethrough = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    document.execCommand("strikeThrough");
+    setFormatState((prev) => ({ ...prev, strikethrough: !prev.strikethrough }));
+  }, []);
+
+  const handleSuperscript = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    document.execCommand("superscript");
+    setFormatState((prev) => ({ ...prev, superscript: !prev.superscript, subscript: false }));
+  }, []);
+
+  const handleSubscript = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    document.execCommand("subscript");
+    setFormatState((prev) => ({ ...prev, subscript: !prev.subscript, superscript: false }));
+  }, []);
+
   const handleLink = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
@@ -171,6 +209,20 @@ export default function InlineToolbar({ containerRef, onLinkClick }: Props) {
         <InlineToolbarButton label="Italic" shortcut="Cmd+I" active={formatState.italic} onAction={handleItalic}>
           <em>I</em>
         </InlineToolbarButton>
+        <InlineToolbarButton label="Underline" shortcut="Cmd+U" active={formatState.underline} onAction={handleUnderline}>
+          <span style={{ textDecoration: "underline" }}>U</span>
+        </InlineToolbarButton>
+        <InlineToolbarButton label="Strikethrough" active={formatState.strikethrough} onAction={handleStrikethrough}>
+          <span style={{ textDecoration: "line-through" }}>S</span>
+        </InlineToolbarButton>
+        <span className={styles.inlineToolbarSep} />
+        <InlineToolbarButton label="Superscript" active={formatState.superscript} onAction={handleSuperscript}>
+          <span>A<sup style={{ fontSize: "0.65em" }}>²</sup></span>
+        </InlineToolbarButton>
+        <InlineToolbarButton label="Subscript" active={formatState.subscript} onAction={handleSubscript}>
+          <span>A<sub style={{ fontSize: "0.65em" }}>₂</sub></span>
+        </InlineToolbarButton>
+        <span className={styles.inlineToolbarSep} />
         <InlineToolbarButton label="Link" shortcut="Cmd+K" onAction={handleLink}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />

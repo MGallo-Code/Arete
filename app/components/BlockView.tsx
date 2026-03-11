@@ -40,6 +40,7 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
           richText={content}
           as={Tag}
           style={theme[Tag]}
+          linkStyle={theme.link}
           saveOnEnter
           onSave={(rt) => {
             editor!.dispatch({ type: "UPDATE_RICH_TEXT", blockId: block.id, field: "header", richText: rt });

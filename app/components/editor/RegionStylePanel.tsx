@@ -5,10 +5,11 @@ import { useEditorRequired } from "../../contexts/EditorContext";
 import { parseShorthand } from "../../utils/cssUtils";
 import BorderControls from "./BorderControls";
 import BoxModelEditor from "./BoxModelEditor";
+import BoxShadowControls from "./BoxShadowControls";
 import CollapsibleSection from "./CollapsibleSection";
 import ColorControls from "./ColorControls";
 import PropertyRow from "./PropertyRow";
-import { IconColors, IconTypography, IconLayout, IconBoxModel, IconBorders } from "./SectionIcons";
+import { IconColors, IconTypography, IconLayout, IconBoxModel, IconBorders, IconBoxShadow } from "./SectionIcons";
 import SpacingInput from "./SpacingInput";
 import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
@@ -56,7 +57,7 @@ export default function RegionStylePanel() {
       </div>
 
       {/* Colors */}
-      <CollapsibleSection title="Colors" icon={<IconColors />} defaultOpen>
+      <CollapsibleSection title="Colors" icon={<IconColors />}>
         <ColorControls
           style={regionStyle}
           updateStyle={updateStyle}
@@ -66,7 +67,7 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Typography */}
-      <CollapsibleSection title="Typography" icon={<IconTypography />} defaultOpen>
+      <CollapsibleSection title="Typography" icon={<IconTypography />}>
         <TypographyControls
           style={regionStyle}
           updateStyle={updateStyle}
@@ -75,7 +76,7 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Layout */}
-      <CollapsibleSection title="Layout" icon={<IconLayout />} defaultOpen>
+      <CollapsibleSection title="Layout" icon={<IconLayout />}>
         <PropertyRow label="Align items">
           <select
             className={styles.propSelect}
@@ -104,7 +105,7 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Box Model */}
-      <CollapsibleSection title="Box Model" icon={<IconBoxModel />} defaultOpen={false}>
+      <CollapsibleSection title="Box Model" icon={<IconBoxModel />}>
         <BoxModelEditor
           hideMargin
           marginTop=""
@@ -128,8 +129,13 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Borders */}
-      <CollapsibleSection title="Borders" icon={<IconBorders />} defaultOpen={false}>
+      <CollapsibleSection title="Borders" icon={<IconBorders />}>
         <BorderControls style={regionStyle} updateStyle={updateStyle} clearStyle={clearStyle} />
+      </CollapsibleSection>
+
+      {/* Box Shadow */}
+      <CollapsibleSection title="Box Shadow" icon={<IconBoxShadow />}>
+        <BoxShadowControls style={regionStyle} updateStyle={updateStyle} clearStyle={clearStyle} />
       </CollapsibleSection>
     </div>
   );

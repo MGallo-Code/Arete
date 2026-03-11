@@ -137,6 +137,16 @@ export function IconLayout() {
   );
 }
 
+/** Rectangle with shadow — box shadow */
+export function IconBoxShadow() {
+  return (
+    <svg {...props}>
+      <rect x="2" y="2" width="8" height="8" rx="1" />
+      <rect x="4" y="4" width="8" height="8" rx="1" opacity="0.3" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 /** Counter-clockwise arrow — history/undo */
 export function IconHistory() {
   return (

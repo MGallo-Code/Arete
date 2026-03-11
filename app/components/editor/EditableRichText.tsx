@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useCallback, useState } from "react";
 import type { RichText, Style } from "../../models";
-import { richTextToHtml, domToRichText } from "../../utils/richTextUtils";
+import { kebab, richTextToHtml, domToRichText } from "../../utils/richTextUtils";
 import LinkModal from "./LinkModal";
 import InlineToolbar from "./InlineToolbar";
 
@@ -12,6 +12,7 @@ interface Props {
   onCancel: () => void;
   as?: string;
   style?: Style;
+  linkStyle?: Style;
   saveOnEnter?: boolean;
 }
 
@@ -45,6 +46,7 @@ export default function EditableRichText({
   onCancel,
   as: Tag = "div",
   style,
+  linkStyle,
   saveOnEnter = false,
 }: Props) {
   const ref = useRef<HTMLElement>(null);
@@ -57,11 +59,28 @@ export default function EditableRichText({
     savedRange: Range;
   } | null>(null);
 
+  /** Apply theme link styles to all <a> tags in the container */
+  const applyLinkStyles = useCallback(() => {
+    const el = ref.current;
+    if (!el || !linkStyle) return;
+    const cssText = Object.entries(linkStyle)
+      .map(([k, v]) => `${kebab(k)}:${v}`)
+      .join(";");
+    el.querySelectorAll("a").forEach((a) => {
+      // Merge: keep any existing inline styles, layer link style underneath
+      const existing = a.getAttribute("style") || "";
+      // Only add properties not already set
+      const merged = cssText + (existing ? ";" + existing : "");
+      a.setAttribute("style", merged);
+    });
+  }, [linkStyle]);
+
   // Set initial HTML and focus
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     el.innerHTML = richTextToHtml(richText);
+    applyLinkStyles();
     el.focus();
     // Place cursor at end
     const range = document.createRange();
@@ -110,6 +129,10 @@ export default function EditableRichText({
         e.preventDefault();
         document.execCommand("italic");
       }
+      if ((e.metaKey || e.ctrlKey) && e.key === "u") {
+        e.preventDefault();
+        document.execCommand("underline");
+      }
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         openLinkModal();
@@ -153,10 +176,11 @@ export default function EditableRichText({
       // Restore selection, then apply link
       restoreSelection(linkModal.savedRange);
       document.execCommand("createLink", false, url);
+      applyLinkStyles();
       setLinkModal(null);
       ref.current?.focus();
     },
-    [linkModal, restoreSelection],
+    [linkModal, restoreSelection, applyLinkStyles],
   );
 
   const handleLinkRemove = useCallback(() => {

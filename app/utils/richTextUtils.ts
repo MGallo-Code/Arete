@@ -71,6 +71,9 @@ export function domToRichText(container: HTMLElement): RichText {
     if (tag === "b" || tag === "strong") style.fontWeight = "bold";
     if (tag === "i" || tag === "em") style.fontStyle = "italic";
     if (tag === "u") style.textDecoration = "underline";
+    if (tag === "s" || tag === "strike" || tag === "del") style.textDecoration = "line-through";
+    if (tag === "sup") { style.verticalAlign = "super"; style.fontSize = "0.75em"; }
+    if (tag === "sub") { style.verticalAlign = "sub"; style.fontSize = "0.75em"; }
 
     const s = el.style;
     if (s.fontWeight) style.fontWeight = s.fontWeight as string;
@@ -78,6 +81,7 @@ export function domToRichText(container: HTMLElement): RichText {
     if (s.color) style.color = s.color;
     if (s.fontSize) style.fontSize = s.fontSize;
     if (s.textDecoration) style.textDecoration = s.textDecoration as string;
+    if (s.verticalAlign) style.verticalAlign = s.verticalAlign as string;
     if (s.backgroundColor) style.backgroundColor = s.backgroundColor;
     if (s.letterSpacing) style.letterSpacing = s.letterSpacing;
 

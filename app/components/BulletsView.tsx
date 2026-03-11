@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import type { BulletItem, BulletLevel, RichText } from "../models";
+import type { BulletItem, BulletLevel, RichText, Style } from "../models";
 import { useEditor } from "../contexts/EditorContext";
-import { richTextToHtml, domToRichText } from "../utils/richTextUtils";
+import { useTheme } from "../contexts/ThemeContext";
+import { kebab, richTextToHtml, domToRichText } from "../utils/richTextUtils";
 import RichTextView from "./RichTextView";
 import LinkModal from "./editor/LinkModal";
 import InlineToolbar from "./editor/InlineToolbar";
@@ -31,10 +32,23 @@ interface EditingItem {
 // --- Sub-component for editable bullet content ---
 // Manages its own ref, sets innerHTML on mount only (DOM is source of truth during editing)
 
+/** Apply theme link styles to all <a> tags in a container */
+function applyLinkStylesToEl(el: HTMLElement, linkStyle?: Style) {
+  if (!linkStyle) return;
+  const cssText = Object.entries(linkStyle)
+    .map(([k, v]) => `${kebab(k)}:${v}`)
+    .join(";");
+  el.querySelectorAll("a").forEach((a) => {
+    const existing = a.getAttribute("style") || "";
+    a.setAttribute("style", cssText + (existing ? ";" + existing : ""));
+  });
+}
+
 function EditableBulletContent({
   itemKey,
   content,
   index,
+  linkStyle,
   onKeyDown,
   onBlur,
   onPaste,
@@ -43,6 +57,7 @@ function EditableBulletContent({
   itemKey: string;
   content: RichText;
   index: number;
+  linkStyle?: Style;
   onKeyDown: (e: React.KeyboardEvent, index: number) => void;
   onBlur: (e: React.FocusEvent) => void;
   onPaste: (e: React.ClipboardEvent, index: number) => void;
@@ -54,6 +69,7 @@ function EditableBulletContent({
   useEffect(() => {
     if (ref.current) {
       ref.current.innerHTML = richTextToHtml(content);
+      applyLinkStylesToEl(ref.current, linkStyle);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -79,6 +95,7 @@ function EditableBulletContent({
 // --- Main component ---
 
 export default function BulletsView({ items, levels, blockId }: Props) {
+  const theme = useTheme();
   const editor = useEditor();
   const genKey = useKeyGenerator();
   const [editingItems, setEditingItems] = useState<EditingItem[] | null>(null);
@@ -374,9 +391,17 @@ export default function BulletsView({ items, levels, blockId }: Props) {
       sel?.removeAllRanges();
       sel?.addRange(linkModal.savedRange);
       document.execCommand("createLink", false, url);
+      // Apply theme link styles to the newly created <a>
+      const anchor = sel?.anchorNode;
+      if (anchor) {
+        const container = anchor.nodeType === Node.ELEMENT_NODE
+          ? (anchor as HTMLElement)
+          : anchor.parentElement;
+        if (container) applyLinkStylesToEl(container.closest("[contenteditable]") || container, theme.link);
+      }
       setLinkModal(null);
     },
-    [linkModal],
+    [linkModal, theme.link],
   );
 
   const handleLinkRemove = useCallback(() => {
@@ -447,6 +472,7 @@ export default function BulletsView({ items, levels, blockId }: Props) {
                 itemKey={key}
                 content={item.content}
                 index={index}
+                linkStyle={theme.link}
                 onKeyDown={handleKeyDown}
                 onBlur={handleBlur}
                 onPaste={handlePaste}

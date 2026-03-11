@@ -1,3 +1,14 @@
+/**
+ * BlockView renders a single block inside the resume preview.
+ *
+ * RESUME LAYOUT INTEGRITY: This component renders inside the resume page.
+ * Never add visible placeholder elements (text, spacers, backgrounds) that
+ * would alter the layout or differ from PDF export. Selection outlines use
+ * CSS pseudo-elements (::after) which don't affect layout. The FloatingToolbar
+ * uses position:absolute and lives outside document flow. See ContentView.tsx
+ * header comment for the full policy.
+ */
+
 import { JSX } from "react";
 import type { Block } from "../models";
 import { useTheme } from "../contexts/ThemeContext";

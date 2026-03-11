@@ -1,3 +1,14 @@
+/**
+ * ResumePreview renders the resume page — the source of truth for PDF export.
+ *
+ * RESUME LAYOUT INTEGRITY: Everything inside <main> must render identically
+ * in Puppeteer PDF export. Editor-only overlays (selection outlines, toolbars,
+ * overflow indicator) use CSS pseudo-elements or position:absolute to avoid
+ * affecting document flow. Never add placeholder text, spacer divs, or
+ * styled containers that would alter the resume's visual layout.
+ * See ContentView.tsx header comment for the full policy.
+ */
+
 "use client";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { useEditor } from "../contexts/EditorContext";

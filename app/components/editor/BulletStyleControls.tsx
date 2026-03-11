@@ -92,6 +92,18 @@ export default function BulletStyleControls({
                 placeholder="0"
                 onChange={(v) => updateLevel(i, { style: { ...lvl.style, gap: v } })}
               />
+              <SpacingInput
+                compact
+                value={(lvl.style?.fontSize as string) ?? ""}
+                placeholder="Inherit"
+                onChange={(v) => updateLevel(i, { style: { ...lvl.style, fontSize: v } })}
+              />
+              <SpacingInput
+                compact
+                value={(lvl.style?.lineHeight as string) ?? ""}
+                placeholder="Inherit"
+                onChange={(v) => updateLevel(i, { style: { ...lvl.style, lineHeight: v } })}
+              />
               {lvl.style?.color ? (
                 <>
                   <input
@@ -138,6 +150,8 @@ export default function BulletStyleControls({
               <span className={styles.inheritLabel}>{lvl.image ? "image \u2713" : "image"}</span>
               <span className={styles.inheritLabel}>indent</span>
               <span className={styles.inheritLabel}>gap</span>
+              <span className={styles.inheritLabel}>size</span>
+              <span className={styles.inheritLabel}>height</span>
               <span className={styles.inheritLabel}>{lvl.style?.color ? "color" : "Inherit"}</span>
             </div>
           </div>

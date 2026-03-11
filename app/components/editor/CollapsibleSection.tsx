@@ -12,6 +12,7 @@ interface CollapsibleSectionProps {
   icon?: React.ReactNode;
   defaultOpen?: boolean;
   badge?: React.ReactNode;
+  panelId?: string;
   children: React.ReactNode;
 }
 
@@ -28,12 +29,14 @@ export default function CollapsibleSection({
   icon,
   defaultOpen = false,
   badge,
+  panelId,
   children,
 }: CollapsibleSectionProps) {
-  const [open, setOpen] = useState(() => sectionState.get(title) ?? defaultOpen);
+  const key = panelId ? `${panelId}::${title}` : title;
+  const [open, setOpen] = useState(() => sectionState.get(key) ?? defaultOpen);
 
   const handleChange = (value: boolean) => {
-    sectionState.set(title, value);
+    sectionState.set(key, value);
     setOpen(value);
   };
 

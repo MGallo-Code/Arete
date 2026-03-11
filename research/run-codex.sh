@@ -11,26 +11,30 @@ echo "Launching 5 Codex research agents..."
 echo "Results will be written to research/findings/"
 echo ""
 
-# codex exec = non-interactive mode
-# Codex runs sandboxed by default; it can read/write files in the project
+# gpt-5.2-codex works with ChatGPT accounts
 
-codex exec "$(cat research/prompts/agent-1-inputs.md | sed 's/AGENT_SECTION/Codex/g')" \
+codex exec -c model="gpt-5.2-codex" \
+  "$(cat research/prompts/agent-1-inputs.md | sed 's/AGENT_SECTION/Codex/g') Also read research/instructions.md for full context." \
   &
 PID1=$!
 
-codex exec "$(cat research/prompts/agent-2-layout.md | sed 's/AGENT_SECTION/Codex/g')" \
+codex exec -c model="gpt-5.2-codex" \
+  "$(cat research/prompts/agent-2-layout.md | sed 's/AGENT_SECTION/Codex/g') Also read research/instructions.md for full context." \
   &
 PID2=$!
 
-codex exec "$(cat research/prompts/agent-3-properties.md | sed 's/AGENT_SECTION/Codex/g')" \
+codex exec -c model="gpt-5.2-codex" \
+  "$(cat research/prompts/agent-3-properties.md | sed 's/AGENT_SECTION/Codex/g') Also read research/instructions.md for full context." \
   &
 PID3=$!
 
-codex exec "$(cat research/prompts/agent-4-blocks.md | sed 's/AGENT_SECTION/Codex/g')" \
+codex exec -c model="gpt-5.2-codex" \
+  "$(cat research/prompts/agent-4-blocks.md | sed 's/AGENT_SECTION/Codex/g') Also read research/instructions.md for full context." \
   &
 PID4=$!
 
-codex exec "$(cat research/prompts/agent-5-visual.md | sed 's/AGENT_SECTION/Codex/g')" \
+codex exec -c model="gpt-5.2-codex" \
+  "$(cat research/prompts/agent-5-visual.md | sed 's/AGENT_SECTION/Codex/g') Also read research/instructions.md for full context." \
   &
 PID5=$!
 

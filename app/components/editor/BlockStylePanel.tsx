@@ -11,7 +11,9 @@ import BulletStyleControls from "./BulletStyleControls";
 import CollapsibleSection from "./CollapsibleSection";
 import ColorControls from "./ColorControls";
 import ImageControls from "./ImageControls";
-import { IconHeader, IconColors, IconTypography, IconBoxModel, IconBorders, IconBoxShadow, IconImage, IconBullets } from "./SectionIcons";
+import PropertyRow from "./PropertyRow";
+import { IconHeader, IconColors, IconTypography, IconLayout, IconBoxModel, IconBorders, IconBoxShadow, IconImage, IconBullets } from "./SectionIcons";
+import SpacingInput from "./SpacingInput";
 import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
 
@@ -82,7 +84,7 @@ export default function BlockStylePanel() {
       </div>
 
       {/* Header controls */}
-      <CollapsibleSection title="Header" icon={<IconHeader />}>
+      <CollapsibleSection panelId="block" title="Header" icon={<IconHeader />}>
         {block.header ? (
           <div className={styles.propRow}>
             <label className={styles.propLabel}>Tag</label>
@@ -125,7 +127,7 @@ export default function BlockStylePanel() {
       </CollapsibleSection>
 
       {/* Colors */}
-      <CollapsibleSection title="Colors" icon={<IconColors />}>
+      <CollapsibleSection panelId="block" title="Colors" icon={<IconColors />}>
         <ColorControls
           style={style}
           updateStyle={updateStyle}
@@ -135,7 +137,7 @@ export default function BlockStylePanel() {
       </CollapsibleSection>
 
       {/* Typography */}
-      <CollapsibleSection title="Typography" icon={<IconTypography />}>
+      <CollapsibleSection panelId="block" title="Typography" icon={<IconTypography />}>
         <TypographyControls
           style={style}
           updateStyle={updateStyle}
@@ -143,8 +145,88 @@ export default function BlockStylePanel() {
         />
       </CollapsibleSection>
 
+      {/* Layout */}
+      <CollapsibleSection panelId="block" title="Layout" icon={<IconLayout />}>
+        <PropertyRow label="Width">
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div className={styles.toggleGroup}>
+              <button
+                className={`${styles.toggleBtn} ${!style.width || style.width === "100%" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ width: "100%" })}
+              >
+                Fill
+              </button>
+              <button
+                className={`${styles.toggleBtn} ${style.width === "fit-content" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ width: "fit-content" })}
+              >
+                Fit
+              </button>
+              <button
+                className={`${styles.toggleBtn} ${style.width && style.width !== "100%" && style.width !== "fit-content" ? styles.toggleActive : ""}`}
+                onClick={() => {
+                  if (!style.width || style.width === "100%" || style.width === "fit-content") {
+                    updateStyle({ width: "200px" });
+                  }
+                }}
+              >
+                Custom
+              </button>
+            </div>
+          </div>
+        </PropertyRow>
+        {style.width && style.width !== "100%" && style.width !== "fit-content" && (
+          <PropertyRow label="Custom width">
+            <SpacingInput
+              value={(style.width as string) ?? ""}
+              placeholder="200px"
+              onChange={(v) => updateStyle({ width: v })}
+            />
+          </PropertyRow>
+        )}
+        <PropertyRow label="Alignment">
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div className={styles.toggleGroup}>
+              <button
+                className={`${styles.toggleBtn} ${!style.alignSelf || style.alignSelf === "flex-start" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ alignSelf: "flex-start" })}
+                title="Left"
+              >
+                L
+              </button>
+              <button
+                className={`${styles.toggleBtn} ${style.alignSelf === "center" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ alignSelf: "center" })}
+                title="Center"
+              >
+                C
+              </button>
+              <button
+                className={`${styles.toggleBtn} ${style.alignSelf === "flex-end" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ alignSelf: "flex-end" })}
+                title="Right"
+              >
+                R
+              </button>
+            </div>
+            {(style.width || style.alignSelf) && (
+              <button
+                className={styles.clearBtn}
+                onClick={() => {
+                  clearStyle("width");
+                  clearStyle("alignSelf");
+                }}
+                title="Reset layout"
+              >
+                &times;
+              </button>
+            )}
+          </div>
+        </PropertyRow>
+      </CollapsibleSection>
+
       {/* Box Model */}
-      <CollapsibleSection title="Box Model" icon={<IconBoxModel />}>
+      <CollapsibleSection panelId="block" title="Box Model" icon={<IconBoxModel />}>
         <BoxModelEditor
           marginTop={(style.marginTop as string) ?? ""}
           marginRight={(style.marginRight as string) ?? ""}
@@ -174,25 +256,54 @@ export default function BlockStylePanel() {
       </CollapsibleSection>
 
       {/* Borders */}
-      <CollapsibleSection title="Borders" icon={<IconBorders />}>
+      <CollapsibleSection panelId="block" title="Borders" icon={<IconBorders />}>
         <BorderControls style={style} updateStyle={updateStyle} clearStyle={clearStyle} />
       </CollapsibleSection>
 
       {/* Box Shadow */}
-      <CollapsibleSection title="Box Shadow" icon={<IconBoxShadow />}>
+      <CollapsibleSection panelId="block" title="Box Shadow" icon={<IconBoxShadow />}>
         <BoxShadowControls style={style} updateStyle={updateStyle} clearStyle={clearStyle} />
+        {/* Opacity */}
+        <PropertyRow label="Opacity">
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={style.opacity != null ? Math.round(Number(style.opacity) * 100) : 100}
+              onChange={(e) => updateStyle({ opacity: String(Number(e.target.value) / 100) })}
+              style={{ flex: 1 }}
+            />
+            <input
+              type="number"
+              className={styles.propInput}
+              style={{ width: 52 }}
+              min={0}
+              max={100}
+              value={style.opacity != null ? Math.round(Number(style.opacity) * 100) : 100}
+              onChange={(e) => {
+                const v = Math.max(0, Math.min(100, Number(e.target.value)));
+                updateStyle({ opacity: String(v / 100) });
+              }}
+            />
+            <span className={styles.inheritLabel}>%</span>
+            {style.opacity != null && (
+              <button className={styles.clearBtn} onClick={() => clearStyle("opacity")} title="Clear">&times;</button>
+            )}
+          </div>
+        </PropertyRow>
       </CollapsibleSection>
 
       {/* Content-specific — Image */}
       {block.content.type === "image" && (
-        <CollapsibleSection title="Image" icon={<IconImage />}>
+        <CollapsibleSection panelId="block" title="Image" icon={<IconImage />}>
           <ImageControls blockId={selectedBlockId} content={block.content} dispatch={dispatch} />
         </CollapsibleSection>
       )}
 
       {/* Content-specific — Bullet styles */}
       {block.content.type === "bullets" && (
-        <CollapsibleSection title="Bullet Styles" icon={<IconBullets />}>
+        <CollapsibleSection panelId="block" title="Bullet Styles" icon={<IconBullets />}>
           <BulletStyleControls
             blockId={selectedBlockId}
             content={block.content}

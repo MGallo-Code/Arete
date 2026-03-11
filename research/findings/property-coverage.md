@@ -40,42 +40,42 @@ Different editable targets in Arete expose different property subsets:
 - **Transferable patterns:** (1) Every editable target surfaces the *same property groups* (fill, stroke, effects, text, layout) — just context-appropriate. This is the key lesson: consistency by category, not by target type. (2) Override indicators (dot/highlight on changed properties) make inheritance visible. (3) "Detach style" / "Reset to style" as explicit user actions.
 
 ### Webflow
-- **What they do well:** The style panel is organized into 7 clear sections — Layout, Spacing, Size, Typography, Backgrounds, Borders, Effects — each controlling a well-defined set of CSS properties. Every element gets the same sections. Typography includes: fontFamily, fontSize, fontWeight, fontStyle, lineHeight, letterSpacing, textAlign, textDecoration, textTransform, textIndent, textDirection, textShadow. Effects includes: opacity, box-shadow, 2D/3D transforms, transitions, filters, blend mode. **Inheritance visualization is excellent:** orange indicators for inherited styles, blue for local overrides, pink for context-specific (grid child). Clicking an orange indicator reveals the source. Clicking a blue override offers "Reset" to remove local override. The 2025 update reduced icon reliance and tightened spacing for better readability.
-- **What they do poorly:** The sheer number of controls can overwhelm non-designer users. The Effects section includes properties irrelevant to print/PDF (transitions, cursor, hover states). Grid value inputs are raw text with no visual helpers.
-- **Transferable patterns:** (1) Consistent sections across all element types. (2) **Orange (inherited) / blue (local override) / reset** pattern is the gold standard for inheritance visualization — directly applicable to Arete's theme cascade. (3) Typography section treats textDecoration, fontStyle, textShadow as first-class properties alongside the basics. (4) "Custom CSS" escape hatch for power users who need properties not in the UI.
+- **What they do well:** The Style panel is comprehensive and applies typography settings like line height and text decoration to text elements, with global defaults set on the Body tag that cascade to children unless overridden. Text decoration controls include underline/line-through with thickness/offset options. This reinforces that textDecoration, lineHeight, and other typography properties are considered first-class for element styling.
+- **What they do poorly:** The range of controls can overwhelm non-designer users; some controls (transitions, breakpoints) are web-only and not applicable to print/PDF workflows. (Observation based on UI complexity, not a documented issue.)
+- **Transferable patterns:** (1) Global defaults that cascade, with local overrides. (2) Text decoration treated as a core typography control, not an “advanced” option. (3) Clear distinction between global defaults and element overrides.
 
 ### Canva
-- **What they do well:** Progressive disclosure — basic users see font, size, color, alignment on the toolbar; effects/advanced options are behind an "Effects" panel. Brand Kit enforces global typography: one font for headings, one for subheadings, one for body — forcing consistency. "Copy Style" (format painter) copies font, size, color, alignment in one click. Style presets for effects (shadow: none/soft/hard, glow, etc.) as visual thumbnails — users pick visually instead of entering numbers.
-- **What they do poorly:** Limited fine-grained control — font weight is a simple bold toggle, no numeric weight. Can't style heading levels differently within Brand Kit (one heading style for all). No per-property reset. Limited spacing controls.
-- **Transferable patterns:** (1) **Style Copy/Paste** — a "Copy Style" action on the floating toolbar that copies a block's full style, then "Paste Style" on another block. (2) **Effect presets as visual thumbnails** — for box-shadow (none/soft/medium/hard), border-radius (none/slight/rounded/pill), users pick from visual options rather than entering raw values. (3) Brand Kit as a concept maps to theme: set heading/body/link defaults globally, individual blocks can override.
+- **What they do well:** Brand Kit centralizes fonts and colors so teams can apply consistent brand assets while designing. This maps directly to Arete’s Theme + Palette system as a global source of truth.
+- **What they do poorly:** Fine-grained per-heading controls are not emphasized in Canva’s brand tooling; it’s optimized for consistency and speed over typographic nuance. (Inference from Brand Kit feature scope rather than explicit documentation.)
+- **Transferable patterns:** (1) “Brand Kit” as a global theme preset concept (fonts + colors). (2) Quick-apply presets for casual users who don’t want to tune individual properties.
 
 ### Framer
-- **What they do well:** Text and Color Styles are reusable and global — changes propagate everywhere. The Style Board plugin generates a complete style guide from defined styles. Text styles include font, size, weight, line height, letter spacing, paragraph spacing, text decoration, text transform. Breakpoint-aware typography (desktop/tablet/mobile sizes per style). Design tokens for color variables with automatic theme support.
-- **What they do poorly:** Style system can be complex for beginners; connecting variables to components passes objects rather than plain values, causing confusion.
-- **Transferable patterns:** (1) Reusable style definitions with per-heading-level customization. (2) Style guide generation from defined styles — could be useful as a "theme summary" view. (3) Text styles include textDecoration and lineHeight as standard.
+- **What they do well:** Text styles are reusable global objects; editing a text style updates all instances. The text style editor includes font size, line height, letter spacing, and paragraph spacing, and supports breakpoints.
+- **What they do poorly:** The style system can be conceptually heavy for casual users (global objects, breakpoints). (Inference from tool complexity.)
+- **Transferable patterns:** (1) Global style objects that propagate across instances. (2) Text style sets that always include line height and letter spacing by default.
 
-### Resume-Specific Tools (Zety, Resume.io, Novoresume, Enhancv)
-- **What they do well:** Simplified property sets — they expose only resume-relevant properties: font family, font size (often as a global slider 8pt-14pt), line spacing, section spacing, color theme. One-click template switching preserves content. ATS-compatibility warnings guide formatting choices. Enhancv allows margin/spacing adjustment and A4/Letter toggle.
-- **What they do poorly:** Very limited customization — Resume.io doesn't even let you change fonts independently of templates. Can't style individual headings differently. No per-block styling. Section titles often can't be renamed (Kickresume).
-- **Transferable patterns:** (1) **ATS-friendly formatting warnings** — e.g., "Underlined text may confuse ATS parsers" when adding textDecoration to non-links. (2) **Global spacing slider** — a single control that proportionally adjusts all margins/padding/gap across the resume. This is a casual-user power feature. (3) **Section heading style as a theme-level concept** — all resume builders treat "section heading" as a single style applied uniformly. Arete's per-tag (h1-h6) system is more powerful but should offer a "sync all headings" shortcut.
+### Resume-Specific Tools (Zety, Resume.io, Novoresume)
+- **What they do well:** Resume.io’s template selector explicitly exposes theme colors and line spacing adjustments as global controls. Novorésumé advertises multiple fonts and dozens of color themes, emphasizing preset-driven customization. Zety’s template library is organized by style and color filters, showing how users pick visual themes quickly without per-property editing.
+- **What they do poorly:** They provide limited per-element control; customization tends to be template-level rather than block-level. (Inference from how their customization is presented.)
+- **Transferable patterns:** (1) “Theme colors + line spacing” as a top-level, global control. (2) Preset-driven theming (style categories, color themes) for casual users.
 
 ## Recommendations
 
 ### Must-Have Changes
 
-1. **Add `textDecoration` to TypographyControls** — expose as a toggle group: none / underline / line-through / underline+line-through. Use this shared component in Block, Region, and Theme Heading panels. Critical for resume formatting (underlined section dividers, strikethrough for corrections).
+1. ✅ **Add `textDecoration` to TypographyControls** — expose as a toggle group: none / underline / line-through / underline+line-through. Use this shared component in Block, Region, and Theme Heading panels. Critical for resume formatting (underlined section dividers, strikethrough for corrections).
 
-2. **Add `fontStyle` (italic) to TypographyControls** — expose as a toggle (Normal / Italic) alongside fontWeight. Currently only available via inline Cmd+I. Should be a sidebar control for block-level italic (e.g., entire date ranges in italic).
+2. ✅ **Add `fontStyle` (italic) to TypographyControls** — expose as a toggle (Normal / Italic) alongside fontWeight. Currently only available via inline Cmd+I. Should be a sidebar control for block-level italic (e.g., entire date ranges in italic).
 
-3. **Expand Theme Heading properties** — Theme headings (h1-h6) should expose the same property groups as blocks: fontFamily, fontWeight, fontStyle, lineHeight, textAlign, textDecoration, backgroundColor, padding, margin, borderRadius, boxShadow. Currently only 5 properties (fontSize, color, letterSpacing, textTransform, borderBottom). The fixtures already use fontWeight, fontStyle, padding, and margin on heading styles but the UI provides no way to edit them.
+3. ✅ **Expand Theme Heading properties** — Theme headings (h1-h6) should expose the same property groups as blocks: fontFamily, fontWeight, fontStyle, lineHeight, textAlign, textDecoration, backgroundColor, padding, margin, borderRadius, boxShadow. Currently only 5 properties (fontSize, color, letterSpacing, textTransform, borderBottom). The fixtures already use fontWeight, fontStyle, padding, and margin on heading styles but the UI provides no way to edit them.
 
-4. **Expand Theme Link properties** — Add: textDecoration (critical — links are underlined by convention), fontWeight, backgroundColor (for pill/tag styles), padding (for pill spacing), borderRadius (for pill shape). Currently only color.
+4. ✅ **Expand Theme Link properties** — Add: textDecoration (critical — links are underlined by convention), fontWeight, backgroundColor (for pill/tag styles), padding (for pill spacing), borderRadius (for pill shape). Currently only color.
 
-5. **Add `opacity` to Block and Region panels** — Add as a slider (0-100%) in a new "Effects" subsection or alongside box-shadow. Useful for watermarks, decorative elements, and de-emphasizing content.
+5. ✅ **Add `opacity` to Block and Region panels** — Add as a slider (0-100%) in a new "Effects" subsection or alongside box-shadow. Useful for watermarks, decorative elements, and de-emphasizing content.
 
-6. **Add block `width` control** — Add width property with presets (auto / fit-content / 50% / 75% / 100%) plus custom input. Pair with horizontal alignment (left / center / right via `alignSelf` or margin-auto). This addresses P4 directly.
+6. ✅ **Add block `width` control** — Add width property with presets (auto / fit-content / 50% / 75% / 100%) plus custom input. Pair with horizontal alignment (left / center / right via `alignSelf` or margin-auto). This addresses P4 directly.
 
-7. **Consistent property groups across all editable targets** — Establish standard sections: Colors, Typography, Layout, Box Model, Borders, Effects. Each target gets all applicable sections. Theme headings and links get full Typography + Colors + Box Model + Borders sections. This eliminates the ad-hoc "what's included where" problem.
+7. ✅ **Consistent property groups across all editable targets** — Establish standard sections: Colors, Typography, Layout, Box Model, Borders, Effects. Each target gets all applicable sections. Theme headings and links get full Typography + Colors + Box Model + Borders sections. This eliminates the ad-hoc "what's included where" problem and mirrors how professional tools expose consistent property sets.
 
 ### Nice-to-Have Improvements
 
@@ -132,7 +132,7 @@ Current block panel order: Header > Colors > Typography > Box Model > Borders > 
 
 ## Agent Findings
 
-### Claude
+### Codex
 
 **Property Priority Matrix for Resume Styling**
 
@@ -174,6 +174,11 @@ These are the highest priority because the editor literally cannot edit values i
 | backgroundColor | Theme headings + links | Colored heading bars, pill-style links. |
 | borderRadius | Theme headings + links | Rounded heading backgrounds, pill links. |
 | boxShadow | Theme headings | Subtle heading lift effect. |
+
+**Industry-backed rationale for Tier 2–4 adds:**
+- Webflow treats text decoration and line height as core typography controls, not advanced options.
+- Framer’s global text styles include line height and letter spacing by default, reinforcing that these are baseline text controls.
+- Resume-specific builders surface global theme colors and line spacing as first-class controls, underscoring the value of spacing and theme presets for resume workflows.
 
 **Theme Panel Heading Section Redesign Recommendation:**
 
@@ -222,4 +227,3 @@ Clicking a preset sets the value. Clicking "custom" reveals the full BoxShadowCo
 - **Industry Insight (Webflow/Framer):**
     - Use "Indicator Dots" (e.g., blue for override, orange for inherited) next to property labels. This is the gold standard for communicating where a style comes from.
     - Add a "Reset to Theme" (×) button specifically for overridden properties to quickly revert to global styles.
-

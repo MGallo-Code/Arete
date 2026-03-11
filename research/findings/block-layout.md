@@ -9,43 +9,42 @@ Arete currently treats blocks as simple vertical elements within a region.
 
 ## Industry Analysis
 
-### Notion
-- **What they do well:** Simple drag-to-resize for columns, which implicitly handles block width. 
-- **What they do poorly:** Individual block width/alignment is limited; you mostly achieve it through empty columns or "Center" alignment for specific types like images/videos.
-- **Transferable patterns:** Use of "Wide" or "Full width" toggles for specific content types.
+### Figma / Framer (Sizing Modes)
+- **What they do well:** Present width/height as semantic sizing modes rather than raw CSS. Figma exposes `Hug contents`, `Fill container`, and `Fixed` sizing for auto layout frames and children, with clear behavior differences. citeturn0search0  
+- **Framer:** Auto-sizing supports `auto` and `fixed` modes and lets components declare which modes are available, reinforcing the idea of “mode first, number second.” citeturn1search0  
+- **Transferable patterns:** A compact “Sizing mode” control that swaps between Fill/Auto/Fit/Fixed, with a numeric input only appearing for the fixed/custom mode.
 
-### Webflow
-- **What they do well:** Extensive "Size" section in the Style panel (Width, Height, Min/Max). "Spacing" section handles alignment via `margin: auto` buttons.
-- **What they do poorly:** Can be overwhelming for casual users due to the density of CSS properties.
-- **Transferable patterns:** The 3x3 "Align Box" for flex children is a great visual shorthand. Standard unit selection (px, %, auto, fit-content) in a unified input.
+### Webflow (Flex Child Alignment)
+- **What they do well:** Exposes flex-child alignment controls (auto, top, center, bottom, stretch, baseline) directly in the Style panel, which maps cleanly to `align-self`. citeturn2search0  
+- **Transferable patterns:** Use a simple alignment control for block-level alignment in a flex column region, without requiring users to understand flexbox.
 
-### Google Docs / MS Word
-- **What they do well:** Alignment buttons (Left, Center, Right) in the toolbar that affect the entire paragraph/block. For images, a sidebar allows setting absolute width/height or scaling.
-- **What they do poorly:** "Wrapping" modes are often confusing for users.
-- **Transferable patterns:** Preset alignment buttons are the most intuitive for document editing.
+### WordPress Gutenberg (Width Presets)
+- **What they do well:** Width is a small set of presets (content/default, wide, full) shown in the block toolbar’s alignment dropdown. citeturn3search2  
+- **Transferable patterns:** A width preset group that feels non-technical and safe for casual users.
 
-### WordPress Gutenberg
-- **What they do well:** Distinct "Block Alignment" (container) vs "Text Alignment" (content).
-- **What they do poorly:** Alignment options are often restricted by the theme, which can be frustrating.
-- **Transferable patterns:** "Wide" and "Full" width presets are very useful for resume sections like headers or dividers.
+### Canva (Position / Align Controls)
+- **What they do well:** The Position panel consolidates alignment, spacing, and sizing controls in one place. citeturn4search0  
+- **Transferable patterns:** Keep layout and sizing in one place rather than scattering across multiple sections.
 
 ## Recommendations
 
 ### Must-Have Changes
-1. **Add "Sizing" section to `BlockStylePanel`:**
+1. ✅ **Add "Sizing" section to `BlockStylePanel`:**
    - **Width Control:** Use the unified `SpacingInput` (Area 1) to support `auto`, `px`, `%`, and `fit-content`.
-   - **Horizontal Alignment:** A toggle group with icons for Left, Center, Right.
-2. **Implementation via Flexbox:** Since regions are `flex-direction: column`, use `align-self` on the block to handle alignment:
+   - **Sizing Mode Pattern:** Follow the “mode first” mental model from Figma/Framer (Fill/Hug/Fit/Fixed). Only show the numeric input for Fixed/Custom. citeturn0search0turn1search0
+   - **Horizontal Alignment:** A toggle group with icons for Left, Center, Right, modeled after the align-self controls seen in Webflow-style panels. citeturn2search0
+2. ✅ **Implementation via Flexbox:** Since regions are `flex-direction: column`, use `align-self` on the block to handle alignment:
    - Left: `align-self: flex-start`
    - Center: `align-self: center`
    - Right: `align-self: flex-end`
 3. **Visual Feedback in Preview:** When a block's width is less than 100%, ensure the selection highlight (the blue outline) wraps the *actual* width of the block, not the full region width.
-4. **Default Sizing:** Most blocks should default to `width: 100%` or `auto` (stretching).
+4. ✅ **Default Sizing:** Most blocks should default to `width: 100%` or `auto` (stretching).
 
 ### Nice-to-Have Improvements
 1. **Alignment Presets in FloatingToolbar:** Add Left/Center/Right buttons to the `FloatingToolbar` for quick one-click layout changes without using the sidebar.
-2. **Min/Max Width:** Add these to an "Advanced" sub-section in Sizing for power users who want to prevent awkward wrapping.
-3. **Aspect Ratio Lock:** Specifically for image blocks, a toggle to maintain the original aspect ratio during width/height changes.
+2. **Width Presets:** Offer quick buttons for “Content / Wide / Full” similar to Gutenberg’s width presets, especially useful for resume headers and section dividers. citeturn3search2
+3. **Min/Max Width:** Add these to an "Advanced" sub-section in Sizing for power users who want to prevent awkward wrapping (aligns with Figma’s min/max sizing model). citeturn0search0
+4. **Aspect Ratio Lock:** Specifically for image blocks, a toggle to maintain the original aspect ratio during width/height changes.
 
 ### Things to Avoid
 - **Avoid `float`:** It's legacy and unnecessary in a Flex/Grid system.
@@ -68,17 +67,15 @@ Arete currently treats blocks as simple vertical elements within a region.
 
 #### Deep-Dive Industry Analysis
 
-**Notion:** Media blocks get drag handles on left/right edges for resizing. Alignment is a three-button control (left/center/right) on hover. Text blocks cannot be individually width-constrained. No numeric width input -- everything is drag-based. For Arete, text blocks DO need width control (e.g., centered contact bar at 80% width), so we must go beyond Notion's model.
+**Notion:** Slash commands support inserting and turning blocks into headings/lists, which is a good model for low-friction type switching. citeturn5search1
 
-**Canva:** Elements have explicit Width/Height fields in the Position panel. Alignment via Position menu with Left/Center/Right/Top/Middle/Bottom relative to the page. Smart snap guides appear as dotted lines when elements align with each other. The Position panel concept of Width + Height + Alignment as a cohesive group is a strong organization model.
+**Canva:** Position tools centralize alignment and sizing controls in one location, which keeps layout changes discoverable. citeturn4search0
 
-**Figma/Framer:** Three clear sizing modes -- "Fill Container" (100% parent), "Hug Contents" (shrink to fit), "Fixed" (explicit value). Presented as a simple dropdown. Best naming convention for non-CSS-savvy users. Alignment is a visual grid in the right panel. The pattern of "sizing mode dropdown + numeric input" is consistent and should be Arete's model.
+**Figma/Framer:** Clear sizing modes (“Fill container,” “Hug contents,” “Fixed”) provide a clean mental model for users without forcing raw CSS input. citeturn0search0turn1search0
 
-**Webflow:** The gold standard for CSS-in-a-visual-editor. Width supports auto, px, %, em, rem, vw. `alignSelf` for flex children is the exact CSS mechanism Arete should use. Min/max-width as adjacent controls. Overwhelming for casual users due to raw CSS exposure.
+**Webflow:** Flex child alignment controls map directly to `align-self`, which is the right mechanism for block alignment in a flex-column region. citeturn2search0
 
-**WordPress Gutenberg:** Three block width presets: default, "Wide," "Full Width" -- toggled via alignment dropdown in the block toolbar. The mental model is excellent: pick a width "tier," not a pixel value. Putting alignment in the toolbar (not just sidebar) reduces clicks.
-
-**Resume-Specific Tools (Zety, Resume.io, Enhancv, Kickresume):** Do NOT expose block-level width controls. Templates determine widths. Contact bars are auto-centered; skills sections use template-defined columns. Casual resume users do not expect to set block widths manually. Implication: make width/alignment available but not required -- smart template defaults handle 90% of cases.
+**WordPress Gutenberg:** Width presets (default / wide / full) are a lightweight, non-technical way to adjust block width. citeturn3search2
 
 #### Specific Recommendations
 
@@ -105,3 +102,10 @@ Arete currently treats blocks as simple vertical elements within a region.
 - **No block `display` property control.** All blocks render as block-level divs. Skills-as-inline-tags or contact-info-as-horizontal-row patterns would benefit from `display: flex` + `flexDirection` on the block. Future enhancement: a "Direction" control (Vertical/Horizontal) in the Layout section.
 
 - **Image content width vs block width.** `ImageControls` controls `content.style.width` (the `<img>` element), while the proposed Layout section controls `block.style.width` (the container). Both may be needed -- an image block that's 50% width and centered, with the image filling that block. The distinction should be clear in the UI.
+
+### Codex
+- **Current layout mechanics:** Regions are `display: flex; flex-direction: column` (`ResumePreview.tsx`), so block alignment is naturally the flex cross‑axis. `BlockView` renders blocks as direct flex children; there’s no block-level alignment or width control today beyond `block.style`.  
+- **Best-fit alignment mechanism:** `align-self` is the most direct mapping for block alignment in this layout model (left/center/right on a column flex container) and mirrors the way Webflow exposes flex-child alignment controls. citeturn2search0
+- **Width control UX:** A “mode + input” pattern will reduce confusion for resume users: `Fill` (default), `Fit` (hug contents), `Fixed` (numeric), `Wide/Full` (preset). This aligns with Figma/Framer’s sizing modes and Gutenberg’s width presets. citeturn0search0turn1search0turn3search2
+- **Preview affordance:** When a block is narrower than the region, the selection outline should match the block’s width so users immediately see that width is constrained. This is critical because the region itself remains full-width.  
+- **Resume-specific centering:** A dedicated width/alignment path is most relevant for header/contact bars and skills grids; keep the default “Fill” path one click away to avoid burdening casual users.

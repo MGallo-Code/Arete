@@ -57,7 +57,7 @@ export default function RegionStylePanel() {
       </div>
 
       {/* Colors */}
-      <CollapsibleSection title="Colors" icon={<IconColors />}>
+      <CollapsibleSection panelId="region" title="Colors" icon={<IconColors />}>
         <ColorControls
           style={regionStyle}
           updateStyle={updateStyle}
@@ -67,7 +67,7 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Typography */}
-      <CollapsibleSection title="Typography" icon={<IconTypography />}>
+      <CollapsibleSection panelId="region" title="Typography" icon={<IconTypography />}>
         <TypographyControls
           style={regionStyle}
           updateStyle={updateStyle}
@@ -76,7 +76,7 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Layout */}
-      <CollapsibleSection title="Layout" icon={<IconLayout />}>
+      <CollapsibleSection panelId="region" title="Layout" icon={<IconLayout />}>
         <PropertyRow label="Align items">
           <select
             className={styles.propSelect}
@@ -105,7 +105,7 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Box Model */}
-      <CollapsibleSection title="Box Model" icon={<IconBoxModel />}>
+      <CollapsibleSection panelId="region" title="Box Model" icon={<IconBoxModel />}>
         <BoxModelEditor
           hideMargin
           marginTop=""
@@ -129,13 +129,42 @@ export default function RegionStylePanel() {
       </CollapsibleSection>
 
       {/* Borders */}
-      <CollapsibleSection title="Borders" icon={<IconBorders />}>
+      <CollapsibleSection panelId="region" title="Borders" icon={<IconBorders />}>
         <BorderControls style={regionStyle} updateStyle={updateStyle} clearStyle={clearStyle} />
       </CollapsibleSection>
 
       {/* Box Shadow */}
-      <CollapsibleSection title="Box Shadow" icon={<IconBoxShadow />}>
+      <CollapsibleSection panelId="region" title="Box Shadow" icon={<IconBoxShadow />}>
         <BoxShadowControls style={regionStyle} updateStyle={updateStyle} clearStyle={clearStyle} />
+        {/* Opacity */}
+        <PropertyRow label="Opacity">
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={regionStyle.opacity != null ? Math.round(Number(regionStyle.opacity) * 100) : 100}
+              onChange={(e) => updateStyle({ opacity: String(Number(e.target.value) / 100) })}
+              style={{ flex: 1 }}
+            />
+            <input
+              type="number"
+              className={styles.propInput}
+              style={{ width: 52 }}
+              min={0}
+              max={100}
+              value={regionStyle.opacity != null ? Math.round(Number(regionStyle.opacity) * 100) : 100}
+              onChange={(e) => {
+                const v = Math.max(0, Math.min(100, Number(e.target.value)));
+                updateStyle({ opacity: String(v / 100) });
+              }}
+            />
+            <span className={styles.inheritLabel}>%</span>
+            {regionStyle.opacity != null && (
+              <button className={styles.clearBtn} onClick={() => clearStyle("opacity")} title="Clear">&times;</button>
+            )}
+          </div>
+        </PropertyRow>
       </CollapsibleSection>
     </div>
   );

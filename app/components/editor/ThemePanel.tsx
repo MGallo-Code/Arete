@@ -1,19 +1,21 @@
 "use client";
 
 import { useEditorRequired } from "../../contexts/EditorContext";
-import type { ColorPalette } from "../../models";
+import type { ColorPalette, Style } from "../../models";
 import { FONT_PRESETS } from "../../data/constants";
 import { nudgeCSSValue } from "../../utils/cssUtils";
 import { parseGridTemplate, updateColumnWidth, updateRowHeight, getColumnRegions, getRowRegions } from "../../utils/gridUtils";
 import { isPaletteVar, resolvePaletteVar } from "../../utils/paletteUtils";
+import BorderControls from "./BorderControls";
 import BoxModelEditor from "./BoxModelEditor";
+import BoxShadowControls from "./BoxShadowControls";
 import CollapsibleSection from "./CollapsibleSection";
+import ColorControls from "./ColorControls";
 import PropertyRow from "./PropertyRow";
-import { IconColors, IconPalette, IconTypography, IconLinks, IconHeader, IconPage, IconGrid, IconHistory } from "./SectionIcons";
+import { IconColors, IconPalette, IconTypography, IconLinks, IconHeader, IconPage, IconGrid } from "./SectionIcons";
 import SpacingInput from "./SpacingInput";
+import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
-
-const SIZE_PRESETS = ["8pt", "9pt", "10pt", "11pt", "12pt"];
 
 const PALETTE_PRESETS: { name: string; palette: ColorPalette }[] = [
   {
@@ -38,26 +40,8 @@ const PALETTE_KEYS: (keyof ColorPalette)[] = ["primary", "secondary", "accent", 
 
 const TAGS = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
 
-const TEXT_TRANSFORM_OPTIONS = ["none", "uppercase", "lowercase", "capitalize"] as const;
-
-/** Parse a borderBottom shorthand like "2px solid #2563eb" into parts */
-function parseBorder(value: string | undefined, palette?: ColorPalette): { width: string; color: string; rawColor: string } {
-  if (!value) return { width: "", color: "#000000", rawColor: "" };
-  const parts = value.trim().split(/\s+/);
-  const width = parts[0] ?? "";
-  let rawColor = "";
-  const varMatch = value.match(/var\(--palette-[a-z]+\)/);
-  if (varMatch) {
-    rawColor = varMatch[0];
-  } else {
-    rawColor = parts.find((p) => p.startsWith("#") || p.startsWith("rgb")) ?? parts[parts.length - 1] ?? "#000000";
-  }
-  const color = palette && isPaletteVar(rawColor) ? resolvePaletteVar(rawColor, palette) : rawColor;
-  return { width, color: color || "#000000", rawColor };
-}
-
 export default function ThemePanel() {
-  const { resume, dispatch, canUndo, canRedo } = useEditorRequired();
+  const { resume, dispatch } = useEditorRequired();
   const { theme, page } = resume.template;
 
   return (
@@ -67,7 +51,7 @@ export default function ThemePanel() {
       </div>
 
       {/* Colors */}
-      <CollapsibleSection title="Colors" icon={<IconColors />}>
+      <CollapsibleSection panelId="theme" title="Colors" icon={<IconColors />}>
         <PropertyRow label="Text color">
           <input
             type="color"
@@ -111,26 +95,7 @@ export default function ThemePanel() {
       </CollapsibleSection>
 
       {/* Color Palette */}
-      <CollapsibleSection title="Color Palette" icon={<IconPalette />}>
-        <PropertyRow label="Preset">
-          <select
-            className={styles.propSelect}
-            value=""
-            onChange={(e) => {
-              const preset = PALETTE_PRESETS.find((p) => p.name === e.target.value);
-              if (preset) dispatch({ type: "APPLY_PALETTE_PRESET", palette: preset.palette });
-            }}
-          >
-            <option value="" disabled>
-              Choose a preset...
-            </option>
-            {PALETTE_PRESETS.map((p) => (
-              <option key={p.name} value={p.name}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </PropertyRow>
+      <CollapsibleSection panelId="theme" title="Color Palette" icon={<IconPalette />}>
         {PALETTE_PRESETS.map((p) => (
           <button
             key={p.name}
@@ -183,7 +148,7 @@ export default function ThemePanel() {
       </CollapsibleSection>
 
       {/* Typography */}
-      <CollapsibleSection title="Typography" icon={<IconTypography />}>
+      <CollapsibleSection panelId="theme" title="Typography" icon={<IconTypography />}>
         <PropertyRow label="Font family">
           <select
             className={styles.propSelect}
@@ -198,22 +163,71 @@ export default function ThemePanel() {
           </select>
         </PropertyRow>
         <PropertyRow label="Base font size">
-          <select
-            className={styles.propSelect}
-            value={theme.root.fontSize ?? "10pt"}
-            onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { fontSize: e.target.value } })}
-          >
-            {SIZE_PRESETS.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
+          <SpacingInput
+            value={(theme.root.fontSize as string) ?? ""}
+            placeholder="10pt"
+            onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { fontSize: v } })}
+          />
+        </PropertyRow>
+        <PropertyRow label="Line height">
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <input
+              className={styles.propInput}
+              style={{ width: "auto", flex: 1 }}
+              value={(theme.root.lineHeight as string) ?? ""}
+              placeholder="Inherit"
+              onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { lineHeight: e.target.value || undefined } })}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                  e.preventDefault();
+                  const next = nudgeCSSValue((theme.root.lineHeight as string) ?? "", e.key, e.shiftKey);
+                  dispatch({ type: "UPDATE_THEME_ROOT", style: { lineHeight: next } });
+                }
+              }}
+            />
+            {theme.root.lineHeight && (
+              <button
+                className={styles.clearBtn}
+                onClick={() => dispatch({ type: "UPDATE_THEME_ROOT", style: { lineHeight: undefined } })}
+                title="Clear"
+              >
+                &times;
+              </button>
+            )}
+          </div>
+        </PropertyRow>
+        <PropertyRow label="Letter spacing">
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <input
+              type="text"
+              className={styles.propInput}
+              style={{ width: "auto", flex: 1 }}
+              value={(theme.root.letterSpacing as string) ?? ""}
+              placeholder="Inherit"
+              onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { letterSpacing: e.target.value || undefined } })}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                  e.preventDefault();
+                  const next = nudgeCSSValue((theme.root.letterSpacing as string) ?? "", e.key, e.shiftKey);
+                  dispatch({ type: "UPDATE_THEME_ROOT", style: { letterSpacing: next } });
+                }
+              }}
+            />
+            {theme.root.letterSpacing && (
+              <button
+                className={styles.clearBtn}
+                onClick={() => dispatch({ type: "UPDATE_THEME_ROOT", style: { letterSpacing: undefined } })}
+                title="Clear"
+              >
+                &times;
+              </button>
+            )}
+          </div>
         </PropertyRow>
       </CollapsibleSection>
 
       {/* Links */}
-      <CollapsibleSection title="Links" icon={<IconLinks />}>
+      <CollapsibleSection panelId="theme" title="Links" icon={<IconLinks />}>
         <PropertyRow label="Link color">
           <div className={styles.headingRow}>
             <input
@@ -236,139 +250,125 @@ export default function ThemePanel() {
             )}
           </div>
         </PropertyRow>
+        <PropertyRow label="Text decoration">
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div className={styles.toggleGroup}>
+              <button
+                className={`${styles.toggleBtn} ${theme.link.textDecoration === "none" ? styles.toggleActive : ""}`}
+                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { textDecoration: "none" } })}
+              >
+                None
+              </button>
+              <button
+                className={`${styles.toggleBtn} ${!theme.link.textDecoration || theme.link.textDecoration === "underline" ? styles.toggleActive : ""}`}
+                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { textDecoration: "underline" } })}
+              >
+                Underline
+              </button>
+            </div>
+            {theme.link.textDecoration && (
+              <button
+                className={styles.clearBtn}
+                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { textDecoration: undefined } })}
+                title="Clear"
+              >
+                &times;
+              </button>
+            )}
+          </div>
+        </PropertyRow>
+        <PropertyRow label="Font weight">
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div className={styles.toggleGroup}>
+              <button
+                className={`${styles.toggleBtn} ${!theme.link.fontWeight ? styles.toggleActive : ""}`}
+                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { fontWeight: undefined } })}
+              >
+                Inherit
+              </button>
+              <button
+                className={`${styles.toggleBtn} ${theme.link.fontWeight === "bold" ? styles.toggleActive : ""}`}
+                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { fontWeight: "bold" } })}
+              >
+                Bold
+              </button>
+            </div>
+            {theme.link.fontWeight && (
+              <button
+                className={styles.clearBtn}
+                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { fontWeight: undefined } })}
+                title="Clear"
+              >
+                &times;
+              </button>
+            )}
+          </div>
+        </PropertyRow>
       </CollapsibleSection>
 
       {/* Headings */}
-      <CollapsibleSection title="Headings" icon={<IconHeader />}>
+      <CollapsibleSection panelId="theme" title="Headings" icon={<IconHeader />}>
         {TAGS.map((tag) => {
           const headingStyle = theme[tag];
-          const border = parseBorder(headingStyle.borderBottom as string | undefined, theme.palette);
-          const hasBorder = !!headingStyle.borderBottom;
-
+          const updateHeadingStyle = (patch: Record<string, string | undefined>) => {
+            dispatch({ type: "UPDATE_HEADING_STYLE", tag, style: patch as Style });
+          };
+          const clearHeadingStyle = (key: string) => {
+            dispatch({ type: "UPDATE_HEADING_STYLE", tag, style: { [key]: undefined } as Style });
+          };
           return (
-            <div key={tag} className={styles.headingGroup}>
-              <div className={styles.headingRow}>
-                <span className={styles.headingTag}>{tag}</span>
-                <SpacingInput
-                  compact
-                  value={(headingStyle.fontSize as string) ?? ""}
-                  placeholder="0"
-                  onChange={(v) => dispatch({ type: "UPDATE_HEADING_STYLE", tag, style: { fontSize: v } })}
-                />
-                <input
-                  type="color"
-                  className={styles.colorInput}
-                  value={(() => {
-                    const c = (headingStyle.color as string) ?? (theme.root.color as string) ?? "#000000";
-                    return theme.palette && isPaletteVar(c) ? resolvePaletteVar(c, theme.palette) : c;
-                  })()}
-                  onChange={(e) => dispatch({ type: "UPDATE_HEADING_STYLE", tag, style: { color: e.target.value } })}
-                />
-              </div>
-              <div className={styles.headingDetailRow}>
-                <input
-                  type="text"
-                  className={styles.headingSmallInput}
-                  value={(headingStyle.letterSpacing as string) ?? ""}
-                  placeholder="spacing"
-                  title="Letter spacing (e.g. 0.05em)"
-                  onChange={(e) =>
-                    dispatch({
-                      type: "UPDATE_HEADING_STYLE",
-                      tag,
-                      style: { letterSpacing: e.target.value || undefined },
-                    })
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                      e.preventDefault();
-                      const next = nudgeCSSValue((headingStyle.letterSpacing as string) ?? "", e.key, e.shiftKey);
-                      dispatch({ type: "UPDATE_HEADING_STYLE", tag, style: { letterSpacing: next } });
-                    }
-                  }}
-                />
-                <select
-                  className={styles.headingSmallSelect}
-                  value={(headingStyle.textTransform as string) ?? "none"}
-                  title="Text transform"
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    dispatch({
-                      type: "UPDATE_HEADING_STYLE",
-                      tag,
-                      style: { textTransform: val === "none" ? undefined : (val as "uppercase" | "lowercase" | "capitalize") },
-                    });
-                  }}
-                >
-                  {TEXT_TRANSFORM_OPTIONS.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className={styles.headingDetailRow}>
-                <input
-                  type="text"
-                  className={styles.headingSmallInput}
-                  value={border.width}
-                  placeholder="border"
-                  title="Border width (e.g. 2px, 1px)"
-                  onChange={(e) => {
-                    const w = e.target.value;
-                    if (!w) {
-                      dispatch({ type: "UPDATE_HEADING_STYLE", tag, style: { borderBottom: undefined } });
-                    } else {
-                      dispatch({
-                        type: "UPDATE_HEADING_STYLE",
-                        tag,
-                        style: { borderBottom: `${w} solid ${border.color}` },
-                      });
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                      e.preventDefault();
-                      const next = nudgeCSSValue(border.width || "0px", e.key, e.shiftKey);
-                      dispatch({
-                        type: "UPDATE_HEADING_STYLE",
-                        tag,
-                        style: { borderBottom: `${next} solid ${border.color}` },
-                      });
-                    }
-                  }}
-                />
-                <input
-                  type="color"
-                  className={styles.colorInput}
-                  value={border.color}
-                  title="Border color"
-                  onChange={(e) => {
-                    const w = border.width || "1px";
-                    dispatch({
-                      type: "UPDATE_HEADING_STYLE",
-                      tag,
-                      style: { borderBottom: `${w} solid ${e.target.value}` },
-                    });
-                  }}
-                />
-                {hasBorder && (
-                  <button
-                    className={styles.clearBtn}
-                    title="Remove border"
-                    onClick={() => dispatch({ type: "UPDATE_HEADING_STYLE", tag, style: { borderBottom: undefined } })}
-                  >
-                    &times;
-                  </button>
-                )}
-              </div>
-            </div>
+            <CollapsibleSection
+              key={tag}
+              panelId="theme"
+              title={tag}
+              defaultOpen={tag === "h1"}
+            >
+              <TypographyControls
+                style={headingStyle}
+                updateStyle={updateHeadingStyle}
+                clearStyle={clearHeadingStyle}
+              />
+              <ColorControls
+                style={headingStyle}
+                updateStyle={updateHeadingStyle}
+                clearStyle={clearHeadingStyle}
+                palette={theme.palette}
+              />
+              <BoxModelEditor
+                marginTop={(headingStyle.marginTop as string) ?? ""}
+                marginRight={(headingStyle.marginRight as string) ?? ""}
+                marginBottom={(headingStyle.marginBottom as string) ?? ""}
+                marginLeft={(headingStyle.marginLeft as string) ?? ""}
+                paddingTop={(headingStyle.paddingTop as string) ?? ""}
+                paddingRight={(headingStyle.paddingRight as string) ?? ""}
+                paddingBottom={(headingStyle.paddingBottom as string) ?? ""}
+                paddingLeft={(headingStyle.paddingLeft as string) ?? ""}
+                onMarginChange={(side, value) => {
+                  const key = `margin${side[0].toUpperCase()}${side.slice(1)}`;
+                  updateHeadingStyle({ [key]: value });
+                }}
+                onPaddingChange={(side, value) => {
+                  const key = `padding${side[0].toUpperCase()}${side.slice(1)}`;
+                  updateHeadingStyle({ [key]: value });
+                }}
+              />
+              <BorderControls
+                style={headingStyle}
+                updateStyle={updateHeadingStyle}
+                clearStyle={clearHeadingStyle}
+              />
+              <BoxShadowControls
+                style={headingStyle}
+                updateStyle={updateHeadingStyle}
+                clearStyle={clearHeadingStyle}
+              />
+            </CollapsibleSection>
           );
         })}
       </CollapsibleSection>
 
       {/* Page */}
-      <CollapsibleSection title="Page" icon={<IconPage />}>
+      <CollapsibleSection panelId="theme" title="Page" icon={<IconPage />}>
         <PropertyRow label="Size">
           <div className={styles.toggleGroup}>
             <button
@@ -404,7 +404,7 @@ export default function ThemePanel() {
       </CollapsibleSection>
 
       {/* Grid Layout */}
-      <CollapsibleSection title="Grid" icon={<IconGrid />}>
+      <CollapsibleSection panelId="theme" title="Grid" icon={<IconGrid />}>
         {(() => {
           const parsed = parseGridTemplate(resume.template.grid);
           return (
@@ -458,26 +458,6 @@ export default function ThemePanel() {
             </>
           );
         })()}
-      </CollapsibleSection>
-
-      {/* Actions */}
-      <CollapsibleSection title="History" icon={<IconHistory />}>
-        <div className={styles.propBtnRow}>
-          <button
-            className={styles.propBtn}
-            disabled={!canUndo}
-            onClick={() => dispatch({ type: "UNDO" })}
-          >
-            Undo
-          </button>
-          <button
-            className={styles.propBtn}
-            disabled={!canRedo}
-            onClick={() => dispatch({ type: "REDO" })}
-          >
-            Redo
-          </button>
-        </div>
       </CollapsibleSection>
     </div>
   );

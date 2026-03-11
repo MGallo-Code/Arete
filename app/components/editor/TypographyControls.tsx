@@ -17,6 +17,8 @@ interface TypographyControlsProps {
   showTextTransform?: boolean;
   showLineHeight?: boolean;
   showLetterSpacing?: boolean;
+  showFontStyle?: boolean;
+  showTextDecoration?: boolean;
 }
 
 export default function TypographyControls({
@@ -27,6 +29,8 @@ export default function TypographyControls({
   showTextTransform = true,
   showLineHeight = true,
   showLetterSpacing = true,
+  showFontStyle = true,
+  showTextDecoration = true,
 }: TypographyControlsProps) {
   return (
     <>
@@ -86,6 +90,32 @@ export default function TypographyControls({
           {!style.fontWeight && <span className={styles.inheritLabel}>Inherit</span>}
         </div>
       </PropertyRow>
+
+      {/* Font style */}
+      {showFontStyle && (
+        <PropertyRow label="Font style">
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div className={styles.toggleGroup}>
+              <button
+                className={`${styles.toggleBtn} ${!style.fontStyle || style.fontStyle === "normal" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ fontStyle: "normal" })}
+              >
+                Normal
+              </button>
+              <button
+                className={`${styles.toggleBtn} ${style.fontStyle === "italic" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ fontStyle: "italic" })}
+              >
+                Italic
+              </button>
+            </div>
+            {style.fontStyle && (
+              <button className={styles.clearBtn} onClick={() => clearStyle("fontStyle")} title="Clear">&times;</button>
+            )}
+            {!style.fontStyle && <span className={styles.inheritLabel}>Inherit</span>}
+          </div>
+        </PropertyRow>
+      )}
 
       {/* Line height */}
       {showLineHeight && (
@@ -157,6 +187,38 @@ export default function TypographyControls({
             {style.textTransform && (
               <button className={styles.clearBtn} onClick={() => clearStyle("textTransform")} title="Clear">×</button>
             )}
+          </div>
+        </PropertyRow>
+      )}
+
+      {/* Text decoration */}
+      {showTextDecoration && (
+        <PropertyRow label="Text decoration">
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div className={styles.toggleGroup}>
+              <button
+                className={`${styles.toggleBtn} ${style.textDecoration === "none" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ textDecoration: "none" })}
+              >
+                None
+              </button>
+              <button
+                className={`${styles.toggleBtn} ${style.textDecoration === "underline" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ textDecoration: "underline" })}
+              >
+                Underline
+              </button>
+              <button
+                className={`${styles.toggleBtn} ${style.textDecoration === "line-through" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ textDecoration: "line-through" })}
+              >
+                Strike
+              </button>
+            </div>
+            {style.textDecoration && (
+              <button className={styles.clearBtn} onClick={() => clearStyle("textDecoration")} title="Clear">&times;</button>
+            )}
+            {!style.textDecoration && <span className={styles.inheritLabel}>Inherit</span>}
           </div>
         </PropertyRow>
       )}

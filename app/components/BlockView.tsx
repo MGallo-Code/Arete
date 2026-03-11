@@ -118,6 +118,7 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
           totalBlocks={totalBlocks!}
           dispatch={editor!.dispatch}
           onRequestInsert={editor!.onRequestInsert}
+          hasCopiedStyle={!!editor!.copiedStyle}
         />
       )}
       {header}

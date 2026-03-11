@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { Bold, Italic, Underline as UnderlineIcon, Strikethrough, Superscript, Subscript, Link } from "lucide-react";
 import styles from "./editor.module.css";
 
 interface Props {
@@ -204,30 +205,27 @@ export default function InlineToolbar({ containerRef, onLinkClick }: Props) {
         onMouseDown={(e) => e.preventDefault()}
       >
         <InlineToolbarButton label="Bold" shortcut="Cmd+B" active={formatState.bold} onAction={handleBold}>
-          <strong>B</strong>
+          <Bold size={18} />
         </InlineToolbarButton>
         <InlineToolbarButton label="Italic" shortcut="Cmd+I" active={formatState.italic} onAction={handleItalic}>
-          <em>I</em>
+          <Italic size={18} />
         </InlineToolbarButton>
         <InlineToolbarButton label="Underline" shortcut="Cmd+U" active={formatState.underline} onAction={handleUnderline}>
-          <span style={{ textDecoration: "underline" }}>U</span>
+          <UnderlineIcon size={18} />
         </InlineToolbarButton>
         <InlineToolbarButton label="Strikethrough" active={formatState.strikethrough} onAction={handleStrikethrough}>
-          <span style={{ textDecoration: "line-through" }}>S</span>
+          <Strikethrough size={18} />
         </InlineToolbarButton>
         <span className={styles.inlineToolbarSep} />
         <InlineToolbarButton label="Superscript" active={formatState.superscript} onAction={handleSuperscript}>
-          <span>A<sup style={{ fontSize: "0.65em" }}>²</sup></span>
+          <Superscript size={18} />
         </InlineToolbarButton>
         <InlineToolbarButton label="Subscript" active={formatState.subscript} onAction={handleSubscript}>
-          <span>A<sub style={{ fontSize: "0.65em" }}>₂</sub></span>
+          <Subscript size={18} />
         </InlineToolbarButton>
         <span className={styles.inlineToolbarSep} />
         <InlineToolbarButton label="Link" shortcut="Cmd+K" onAction={handleLink}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-          </svg>
+          <Link size={18} />
         </InlineToolbarButton>
       </div>
     </Tooltip.Provider>

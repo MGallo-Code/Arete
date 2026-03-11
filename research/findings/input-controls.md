@@ -68,25 +68,25 @@ Arete currently suffers from fragmented and inconsistent input controls (P1). Th
 ## Recommendations
 
 ### Must-Have Changes
-1. **Unified Dimension Input (`UnitInput`)**:
+1. ✅ **Unified Dimension Input (`UnitInput`)**:
     - Replace `SpacingInput` and all raw numeric inputs with a single `UnitInput` component.
-    - **Features**: 
-        - Integrated +/- stepper buttons (visible on hover or always).
+    - **Features**:
+        - ✅ Integrated +/- stepper buttons (visible on hover or always).
         - Drag-to-scrub on the label or an icon.
-        - Unit picker that feels like part of the input field (using Radix Popover or a styled inline select).
-        - Support for `auto`, `inherit`, `unset`, and **unitless** (for line-height).
+        - ✅ Unit picker that feels like part of the input field (using Radix Popover or a styled inline select).
+        - ✅ Support for `auto`, `inherit`, `unset`, and **unitless** (for line-height).
         - Support for `fr` when used in grid contexts.
-        - Accept inline math (e.g., `+2`, `*1.1`), similar to Figma/Webflow/Sketch/XD.
-2. **Compact Property Rows**:
+        - ✅ Accept inline math (e.g., `+2`, `*1.1`), similar to Figma/Webflow/Sketch/XD.
+2. ✅ **Compact Property Rows**:
     - Modify `PropertyRow` or create a `PropertyGrid` to support 2-column and 3-column layouts.
     - **Pairs to combine**: (Width, Height), (X Offset, Y Offset), (Font Size, Line Height), (Font Weight, Font Style).
 3. **Redesigned Color Control**:
     - Move palette swatches into a compact horizontal strip next to the label or inside the color picker popover.
     - Avoid using a full row for the "link to palette" labels.
     - Add an opacity slider + numeric alpha input for any color control used in shadows or overlays.
-4. **Visual "Inherit" Indicators**:
-    - Adopt the Webflow-style color coding or a subtle "ghost" state for inherited values. If a value is inherited, the input should show the inherited value as a placeholder in a specific color (e.g., orange or muted blue).
-    - Add a consistent “Reset to Theme” affordance (same place in every row).
+4. ✅ (partial) **Visual “Inherit” Indicators**:
+    - Adopt the Webflow-style color coding or a subtle “ghost” state for inherited values. If a value is inherited, the input should show the inherited value as a placeholder in a specific color (e.g., orange or muted blue).
+    - ✅ Add a consistent “Reset to Theme” affordance (same place in every row). *(PropertyRow now supports `isOverridden`/`onReset` props with blue dot + reset button.)*
 
 ### Nice-to-Have Improvements
 - **Inline Math**: Support simple addition/subtraction in dimension inputs (make this consistent everywhere).
@@ -112,14 +112,62 @@ Arete currently suffers from fragmented and inconsistent input controls (P1). Th
 ## Agent Findings
 
 ### Gemini
-- **Inheritance Visualization (Webflow Style):** Every input should visually reflect its source.
-    - **Blue Label/Value:** Locally overridden.
-    - **Neutral/Gray Label/Value:** Inherited from theme.
-    - **Action:** Clicking a blue label should provide a "Reset to Theme" action.
-- **Variable "Pill" UI (Figma Style):** For properties linked to the color palette, the raw hex input should be replaced with a rounded "pill" containing the variable name (e.g., "Primary"). This prevents accidental hex edits and reinforces the design system.
-- **Contextual Help:** Add a subtle hover state to property labels that reveals a small "?" icon or tooltip explaining the property's effect. This is crucial for "Casual Users" who may not know what `letterSpacing` or `lineHeight` means.
-- **Micro-interactions:** Implement "scrubbing" (click and drag) on labels to adjust numeric values. This is a high-polish feature common in Figma and Framer that speeds up fine-tuning.
-- **Error States:** Beyond the red border, use a persistent "!" icon or a tooltip for invalid values (e.g., negative margin if not supported).
+
+#### Industry-Leading Patterns & Insights
+
+Based on research into Figma, Webflow, Framer, and Sketch, the following patterns are recommended for the Arete `UnitInput`:
+
+- **Label Scrubbing (The "Figma" Way):** The most efficient way to adjust values is by dragging the label/icon. Hovering over the label (e.g., "W" or "H") changes the cursor to `ew-resize`. Clicking and dragging left/right increments/decrements the value.
+- **Hidden/Contextual Steppers:** To maintain a clean UI, stepper buttons (+/-) should only be visible on hover or focus of the input field. This prevents visual noise while remaining accessible to mouse users.
+- **Unit Dropdown + Direct Typing (The "Webflow" Way):** The unit should be a clickable suffix inside the input. Clicking it opens a dropdown of available units (px, pt, rem, %, fr, etc.). However, users should also be able to type the unit directly (e.g., "12rem") and have the UI automatically update the selector.
+- **Inline Math Support:** All professional tools support basic arithmetic (`+`, `-`, `*`, `/`) directly in the input field. This is a massive power-user feature for relative adjustments (e.g., "+4" to increase font size).
+- **Inheritance & Source Visualization:** Webflow's use of color (Orange for inherited, Blue for local) is the gold standard. Arete should use a subtle variation: gray italicized text for inherited values (placeholder) and solid black/white for local overrides.
+
+#### Proposed `UnitInput` Design
+
+**Component Interface:**
+```typescript
+interface UnitInputProps {
+  value: string; // The raw CSS value (e.g., "12px", "1.5", "auto")
+  onChange: (value: string) => void;
+  label?: string | ReactNode; // If provided, enables scrubbing
+  units?: string[]; // e.g., ["px", "pt", "rem", "%", "fr", "auto", "inherit"]
+  allowUnitless?: boolean; // For properties like line-height
+  step?: number; // Default 1 (for px/pt) or 0.1 (for em/rem/unitless)
+  min?: number;
+  max?: number;
+  compact?: boolean; // For grid/box model inputs
+  placeholder?: string;
+}
+```
+
+**Visual Structure (CSS Modules):**
+- **Container:** A horizontal flexbox containing the label and the input wrapper.
+- **Label:** A fixed-width or auto-width text/icon that supports `onMouseDown` for scrubbing.
+- **Input Wrapper:** A container with a border that houses:
+    - **Numeric Input:** A borderless text field.
+    - **Steppers (Hidden by default):** Two small absolute-positioned buttons on the right.
+    - **Unit Button:** A small, styled button on the far right that displays the current unit and triggers a Radix Dropdown.
+
+**Key Behaviors:**
+1.  **Parsing:** On blur or Enter, the input evaluates math expressions and validates against the allowed units.
+2.  **Scrubbing:** Dragging the label uses a multiplier (e.g., 1px per 5px of mouse movement). Holding `Shift` increases speed by 10x.
+3.  **Keyboard:** `ArrowUp/Down` nudges by `step`. `Shift + ArrowUp/Down` nudges by `step * 10`.
+4.  **Special Values:** Values like `auto` or `inherit` are selectable from the unit dropdown or by typing the word. When selected, the numeric input might be disabled or hidden.
+5.  **Unitless Support:** If `allowUnitless` is true, a number without a unit is treated as a ratio (perfect for `lineHeight`).
+
+#### Answers to Key Questions
+- **Stepper buttons visibility?** Only on hover/focus. This keeps the sidebar clean but provides the affordance when the user is actually interacting with the field.
+- **Unit selector placement?** As a suffix button *inside* the input border. It feels like one cohesive control.
+- **Mixed-mode handling?** The `units` prop determines what's valid. If `units` is empty, it's a raw numeric/text field.
+- **Step sizes?** Default to `1` for absolute units (px, pt) and `0.1` for relative units (em, rem, unitless).
+- **Presets?** The unit dropdown can include common "presets" as a separate section (e.g., "Small (8pt)", "Normal (10pt)", "Large (14pt)").
+
+#### Migration Path
+1.  **Step 1:** Implement `UnitInput` as a standalone component using Radix Popover for units.
+2.  **Step 2:** Replace `SpacingInput` everywhere. `UnitInput` is backward compatible with `SpacingInput` props but adds the new functionality.
+3.  **Step 3:** Replace raw inputs in `TypographyControls` (line-height, letter-spacing) and `ThemePanel` (grid).
+4.  **Step 4:** Update `cssUtils.ts` to support the more robust parsing and math evaluation required by `UnitInput`.
 
 ### Claude
 
@@ -145,10 +193,97 @@ Arete currently suffers from fragmented and inconsistent input controls (P1). Th
 
 ### Codex
 **Input control audit (with file references):**
-1. **SpacingInput can’t represent unitless or special values, which blocks line-height and `auto` workflows.** The unit list is fixed (`px|pt|in|em|rem|%`) and `toCSS` always appends a unit, so values like `1.4` (unitless line-height), `auto`, or `unset` cannot be entered. (`app/components/editor/SpacingInput.tsx:6-27`)
-2. **Arrow-key nudging is implemented but not surfaced visually.** There are no visible steppers or scrubbing affordances; users must discover ArrowUp/Down + Shift behavior by accident. (`app/components/editor/SpacingInput.tsx:76-94`)
-3. **Line-height and letter-spacing live in a different input system.** `TypographyControls` uses raw text inputs + `nudgeCSSValue`, which does not share parsing or unit control with `SpacingInput`. This multiplies edge cases (e.g., unitless line-height vs unitful letter-spacing). (`app/components/editor/TypographyControls.tsx:90-138`, `app/utils/cssUtils.ts:5-16`)
-4. **BoxModelEditor “All margin/padding” lacks a discoverable link/unlink affordance.** It uses a unified input + placeholder “mixed” but doesn’t show whether sides are linked or not. This is especially confusing because users see four separate inputs inside the diagram. (`app/components/editor/BoxModelEditor.tsx:28-123`)
-5. **Grid track inputs are raw and unvalidated.** Column/row sizing allows any text, but there is no unit guidance or validation feedback even though CSS grid accepts a specialized grammar (`fr`, `minmax`, `auto`). (`app/components/editor/ThemePanel.tsx:412-457`)
-6. **Color inputs are fragmented.** Most places only offer `type="color"` (hex-only), while BoxShadow adds a separate “rgba” toggle. There is no unified color picker with opacity or palette variables. (`app/components/editor/BoxShadowControls.tsx:139-165`, `app/components/editor/ThemePanel.tsx:69-239`)
-7. **Error handling is shallow.** `SpacingInput` marks error state but clears it immediately on any edit and never explains the error. This makes invalid input hard to recover. (`app/components/editor/SpacingInput.tsx:48-74`, `app/components/editor/editor.module.css:1209`)
+1. **SpacingInput can’t represent unitless or special values.** The unit list is fixed (`px|pt|in|em|rem|%`) and `toCSS` always appends a unit, so values like `1.4` (unitless line-height), `auto`, or `unset` cannot be entered. (`app/components/editor/SpacingInput.tsx:6-27`)
+2. **Arrow-key nudging exists but has no visible affordance.** There are no steppers or scrubbing cues, so ArrowUp/Down + Shift is undiscoverable. (`app/components/editor/SpacingInput.tsx:76-94`)
+3. **Line-height and letter-spacing are handled outside SpacingInput.** `TypographyControls` uses raw text inputs + `nudgeCSSValue`, so units, validation, and parsing are inconsistent across typography fields. (`app/components/editor/TypographyControls.tsx:90-138`, `app/utils/cssUtils.ts:5-16`)
+4. **Grid track sizing has no validation or unit guidance.** Column and row sizing allow any string even though CSS grid track sizing expects `fr`, `minmax()`, `auto`, etc. (`app/components/editor/ThemePanel.tsx:412-457`)
+5. **Error handling is shallow.** `SpacingInput` marks error state but clears it immediately on any edit and never explains the error. (`app/components/editor/SpacingInput.tsx:48-74`, `app/components/editor/editor.module.css:1209`)
+
+**Reference app behaviors worth copying (source-backed):**
+1. **Figma scrubbing:** Hover the label to reveal a scrubbing cursor, then drag to change numeric values; scrubbing speed ramps (2x, 1x, 1/2, 1/4) based on vertical cursor position. citeturn0search0
+2. **Webflow numeric fields:** Inline math is allowed in numeric inputs; ArrowUp/Down steps by 1, Shift+Arrow by 10; Option/Alt enables drag-to-adjust and reveals incremental steppers; unit dropdown supports unitless “-” and special values like `auto`/`none`. citeturn0search1
+3. **Sketch inspector:** Any numeric field accepts math expressions with operators like `+`, `-`, `*`, `/`, `^`. citeturn0search2
+4. **Framer numeric controls:** Number controls can expose steppers via `displayStepper`, and can define `step` and `unit` explicitly. citeturn0search3
+5. **CSS rules that should drive validation:** Unitless `line-height` is explicitly supported; grid tracks accept `fr` and `minmax()`; `calc()` is a valid way to express computed numeric values. citeturn1search0turn1search1turn1search2
+
+**UnitInput proposal (concrete design):**
+1. **Props interface (minimal but extensible):**
+```ts
+type UnitInputContext =
+  | "spacing"
+  | "fontSize"
+  | "lineHeight"
+  | "letterSpacing"
+  | "gridTrack"
+  | "shadowOffset"
+  | "borderWidth"
+  | "generic";
+
+type UnitInputProps = {
+  value: string;
+  onChange: (value: string) => void;
+  onCommit?: (value: string) => void;
+  label?: string;
+  placeholder?: string;
+  compact?: boolean;
+  context?: UnitInputContext;
+  allowedUnits?: string[];
+  allowUnitless?: boolean;
+  allowKeywords?: string[]; // e.g. ["auto", "inherit", "unset", "normal"]
+  allowMath?: boolean;
+  allowCalc?: boolean;
+  step?: number;
+  stepByUnit?: Record<string, number>;
+  fineStepByUnit?: Record<string, number>;
+  showSteppers?: "always" | "hover" | "focus" | "never";
+  showUnit?: "always" | "hover" | "never";
+  validate?: (value: string) => { valid: boolean; message?: string };
+  disabled?: boolean;
+};
+```
+2. **HTML/CSS structure (single row, no nested layout):**
+```html
+<div class="unitInput">
+  <div class="unitInputField">
+    <input class="unitInputValue" />
+    <button class="unitInputUnit" type="button">px ▾</button>
+    <div class="unitInputSteppers">
+      <button class="unitInputStepUp" type="button" aria-label="Increase">+</button>
+      <button class="unitInputStepDown" type="button" aria-label="Decrease">−</button>
+    </div>
+  </div>
+  <div class="unitInputMeta">
+    <span class="unitInputError">Enter a number, a unit, or a keyword.</span>
+  </div>
+</div>
+```
+3. **Visual behavior choices (answers to key questions):**
+4. **Stepper visibility:** Default to `showSteppers="hover"` so casual users see buttons on hover/focus, while the UI stays compact. This aligns with Webflow’s “steppers appear when Option/Alt is held” discoverability but makes it visible without modifier keys. citeturn0search1
+5. **Unit selector placement:** Use an inline suffix button inside the input shell, not a separate `<select>`. This keeps the field compact and mirrors Webflow’s integrated unit control. citeturn0search1
+6. **Mixed-mode inputs:** Use `context` + `allowedUnits` + `allowUnitless` to define valid grammar per field rather than a single global list. For example: `lineHeight` allows unitless and `%`, `fontSize` allows `pt|px|em|rem|%`, `gridTrack` allows `fr|px|%|auto|minmax()`. citeturn1search0turn1search1
+
+**Interaction model (concrete):**
+1. **Typing:** Accept raw strings while focused. On blur or Enter, parse in this order.
+2. **Keyword:** If value is in `allowKeywords` (e.g., `auto`, `inherit`, `unset`, `normal`), accept as-is and hide the unit button. This is consistent with CSS global values and avoids forcing fake units.
+3. **Calc:** If input starts with `calc(` and `allowCalc` is true, accept as-is. citeturn1search2
+4. **Math shorthand:** If input starts with `+`, `-`, `*`, or `/` and `allowMath` is true, evaluate relative to the current numeric value (e.g., current `12px` and input `*1.5` → `18px`). This mirrors Webflow and Sketch expectations. citeturn0search1turn0search2
+5. **Unit parsing:** Accept numeric + optional unit suffix. If unit omitted and `allowUnitless` true, treat as unitless. If unit omitted and unitless not allowed, apply the default unit for that context. citeturn1search0
+6. **Arrow keys:** ArrowUp/Down uses `stepByUnit` or `step` with Shift as 10x, matching Webflow. Option/Alt triggers fine steps (0.1x) and shows steppers, mirroring Webflow’s discoverability. citeturn0search1
+7. **Steppers:** Click +/− triggers the same step logic as ArrowUp/Down. For unitless line-height, default step 0.1, Shift 1.0. citeturn1search0
+8. **Scrubbing:** Drag the label (or a small drag-handle icon) to scrub values. Use Figma-style speed ramps by vertical cursor position. citeturn0search0
+9. **Unit change:** When user selects a unit, keep the numeric value and update the suffix. If we support conversions, do it only for `px`↔`%` to mirror Webflow’s “approximate conversion on unit change.” citeturn0search1
+
+**UnitInput replacement plan:**
+1. **Drop-in replacement for SpacingInput:** Add `compact` and `label` props so `BoxModelEditor` can use the compact variant and other panels use full width.
+2. **TypographyControls migration:** Replace raw line-height and letter-spacing inputs with `UnitInput` using `context="lineHeight"` and `context="letterSpacing"` to enable unitless and show units consistently.
+3. **ThemePanel grid migration:** Replace grid row/column raw inputs with `UnitInput` in `context="gridTrack"` and a help tooltip that mentions `fr`, `minmax()`, and `auto`. citeturn1search1
+
+**Validation and error state:**
+1. **Persistent error messaging:** Keep error visible until the value is valid or cleared. Use a short inline message below the field, not just a red border. This fixes the current transient error state. (`app/components/editor/SpacingInput.tsx:48-74`, `app/components/editor/editor.module.css:1209`)
+2. **Contextual validation rules:**
+3. **Line height:** Accept unitless numbers and `%` or length. Flag negative values. citeturn1search0
+4. **Spacing:** Accept lengths and `%`; reject unitless unless explicitly allowed.
+5. **Grid tracks:** Accept `fr`, `auto`, `<length>`, `%`, `minmax(<track>, <track>)`, `calc()` if enabled. citeturn1search1turn1search2
+
+**Presets popover (answer to presets question):**
+1. **Optional, per-context:** Provide a small “⋯” button that opens presets only for contexts where they’re meaningful, such as line-height (1.2, 1.4, 1.6) or spacing (0, 4, 8, 12, 16, 24). Keep it off by default to avoid clutter.

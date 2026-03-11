@@ -1,6 +1,7 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
 import styles from "./editor.module.css";
 
 interface ShortcutHelpProps {
@@ -12,7 +13,7 @@ const SHORTCUTS = [
   { section: "Selection", items: [
     { keys: "Click", desc: "Select block" },
     { keys: "Escape", desc: "Deselect / stop editing" },
-    { keys: "↑ / ↓", desc: "Navigate blocks" },
+    { keys: "\u2191 / \u2193", desc: "Navigate blocks" },
     { keys: "Enter", desc: "Start editing selected block" },
   ]},
   { section: "Editing", items: [
@@ -28,6 +29,8 @@ const SHORTCUTS = [
     { keys: "Cmd+Shift+Z", desc: "Redo" },
     { keys: "Delete / Backspace", desc: "Delete selected block" },
     { keys: "Cmd+C", desc: "Copy block text" },
+    { keys: "Cmd+Shift+C", desc: "Copy block style" },
+    { keys: "Cmd+Shift+V", desc: "Paste block style" },
     { keys: "?", desc: "Show this help" },
   ]},
 ];
@@ -41,7 +44,7 @@ export default function ShortcutHelp({ open, onOpenChange }: ShortcutHelpProps) 
           <div className={styles.modalHeader}>
             <Dialog.Title className={styles.modalTitle}>Keyboard Shortcuts</Dialog.Title>
             <Dialog.Close asChild>
-              <button className={styles.closeBtn} title="Close">×</button>
+              <button className={styles.closeBtn} title="Close"><X size={16} /></button>
             </Dialog.Close>
           </div>
           <div className={styles.modalBody} style={{ padding: "12px 20px" }}>

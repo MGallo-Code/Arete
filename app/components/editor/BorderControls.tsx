@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { X } from "lucide-react";
 import type { Style } from "../../models";
-import SpacingInput from "./SpacingInput";
+import UnitInput from "./UnitInput";
 import styles from "./editor.module.css";
 
 // --- Border parsing helpers ---
@@ -124,7 +125,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
       {/* Unified border row */}
       <div className={styles.propRow}>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <SpacingInput
+          <UnitInput
             value={unified.mixed ? "" : unified.width}
             placeholder={unified.mixed ? "mixed" : "0"}
             onChange={(v) => {
@@ -169,7 +170,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
               title="Clear all borders"
               aria-label="Clear all borders"
             >
-              ×
+              <X size={12} />
             </button>
           ) : (
             <span className={styles.inheritLabel}>none</span>
@@ -197,7 +198,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
             const borderBs = parsed ? parsed.borderStyle : "solid";
             return [
               <span key={`${side}-label`} className={styles.borderSideLabel}>{side}</span>,
-              <SpacingInput
+              <UnitInput
                 key={`${side}-width`}
                 compact
                 value={borderWidth}
@@ -238,7 +239,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
               />,
               style[key] ? (
                 <button key={`${side}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear" aria-label={`Clear ${side.toLowerCase()} border`}>
-                  ×
+                  <X size={12} />
                 </button>
               ) : (
                 <span key={`${side}-none`} className={styles.inheritLabel}>none</span>
@@ -254,7 +255,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
       {/* Unified radius row */}
       <div className={styles.propRow}>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <SpacingInput
+          <UnitInput
             value={unifiedRadius.mixed ? "" : unifiedRadius.value}
             placeholder={unifiedRadius.mixed ? "mixed" : "0"}
             onChange={(v) => setAllRadii(v)}
@@ -268,7 +269,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
               title="Clear all radii"
               aria-label="Clear all border radii"
             >
-              ×
+              <X size={12} />
             </button>
           ) : (
             <span key="radius-none" />
@@ -294,7 +295,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
               <span key={`${corner}-label`} className={styles.borderSideLabel}>
                 {corner.replace(/([A-Z])/g, " $1").trim()}
               </span>,
-              <SpacingInput
+              <UnitInput
                 key={`${corner}-input`}
                 compact
                 value={val}
@@ -304,7 +305,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
               <span key={`${corner}-spacer`} />,
               val ? (
                 <button key={`${corner}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear" aria-label={`Clear ${corner.replace(/([A-Z])/g, " $1").trim().toLowerCase()} radius`}>
-                  ×
+                  <X size={12} />
                 </button>
               ) : (
                 <span key={`${corner}-none`} />

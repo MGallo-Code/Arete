@@ -1,9 +1,10 @@
 "use client";
 
 import { useRef } from "react";
+import { X } from "lucide-react";
 import type { BulletLevel, Content } from "../../models";
 import type { EditorAction } from "../../contexts/EditorContext";
-import SpacingInput from "./SpacingInput";
+import UnitInput from "./UnitInput";
 import styles from "./editor.module.css";
 
 const MARKER_PRESETS = [
@@ -80,25 +81,25 @@ export default function BulletStyleControls({
                 title="Marker image URL (overrides char)"
                 onChange={(e) => updateLevel(i, { image: e.target.value || undefined })}
               />
-              <SpacingInput
+              <UnitInput
                 compact
                 value={(lvl.style?.paddingLeft as string) ?? ""}
                 placeholder="0"
                 onChange={(v) => updateLevel(i, { style: { ...lvl.style, paddingLeft: v } })}
               />
-              <SpacingInput
+              <UnitInput
                 compact
                 value={(lvl.style?.gap as string) ?? ""}
                 placeholder="0"
                 onChange={(v) => updateLevel(i, { style: { ...lvl.style, gap: v } })}
               />
-              <SpacingInput
+              <UnitInput
                 compact
                 value={(lvl.style?.fontSize as string) ?? ""}
                 placeholder="Inherit"
                 onChange={(v) => updateLevel(i, { style: { ...lvl.style, fontSize: v } })}
               />
-              <SpacingInput
+              <UnitInput
                 compact
                 value={(lvl.style?.lineHeight as string) ?? ""}
                 placeholder="Inherit"
@@ -121,7 +122,7 @@ export default function BulletStyleControls({
                     }}
                     title="Clear color"
                   >
-                    ×
+                    <X size={12} />
                   </button>
                 </>
               ) : (

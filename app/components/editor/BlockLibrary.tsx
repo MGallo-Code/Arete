@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
 import { useEditorRequired, findBlockRegion } from "../../contexts/EditorContext";
 import { blockTemplates, categories } from "../../data/blockTemplates";
 import BlockPreview from "./BlockPreview";
@@ -63,7 +64,7 @@ export default function BlockLibrary({ open, onOpenChange, initialRegionId, init
           <div className={styles.modalHeader}>
             <Dialog.Title className={styles.modalTitle}>Insert Block</Dialog.Title>
             <Dialog.Close asChild>
-              <button className={styles.closeBtn} title="Close">×</button>
+              <button className={styles.closeBtn} title="Close"><X size={16} /></button>
             </Dialog.Close>
           </div>
           <div className={styles.modalControls}>

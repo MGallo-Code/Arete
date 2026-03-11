@@ -58,8 +58,8 @@ The editor uses CSS modules (`app/components/editor/editor.module.css`) with des
 ## Recommendations
 
 ### Must-Have Changes
-1. **Adopt a Unified Icon Library:** Replace unicode/emoji with **Lucide** or **Phosphor Icons**. These provide a consistent weight and professional aesthetic.
-2. **Inheritance Color-Coding:** Adopt the Webflow pattern:
+1. ✅ **Adopt a Unified Icon Library:** Replace unicode/emoji with **Lucide** (`lucide-react`). *(All FloatingToolbar, InlineToolbar, SectionIcons, close/clear buttons now use Lucide icons.)*
+2. ✅ (partial) **Inheritance Color-Coding:** Adopt the Webflow pattern:
    - **Blue** label/value = Locally overridden/set property.
    - **Neutral/Gray** label/value = Inherited from theme or default.
    - **Orange (optional)** = Inherited from a parent block (if we ever support nested block inheritance).
@@ -198,6 +198,32 @@ The current overflow indicator (red dashed line, `styles.overflowIndicator`) is 
 
 Recommendation: Add a percentage-based fill indicator showing "87% page used" in a thin bar, color-coded green (<85%), yellow (85-95%), red (>95% or overflow). Implementation: use the existing `ResizeObserver` in `ResumePreview.tsx` (line 34) which already measures `scrollHeight vs clientHeight`. Compute `(scrollHeight / totalPageHeight) * 100`.
 
+### Codex
+
+**Inheritance visualization & reset affordances (focus of this assignment):**
+
+1. **Per-property indicators are the highest value-per-effort.**
+   - Webflow’s Style panel uses colored labels to show whether a property is inherited or locally set, and uses small status dots on collapsed sections to show overrides at a glance.
+   - Translating this to Arete: place a small dot or label tint next to each property label, and optionally show a section-level dot in `CollapsibleSection` when any child property is overridden.
+
+2. **Minimal state model for Arete’s cascade:**
+   - **Inherited from theme** (root or heading style) → neutral/gray label.
+   - **Local override** (block/region style) → accent blue label + visible reset affordance.
+   - **Palette variable** (`var(--palette-*)`) → third state; use a “pill” or chip with the palette name + distinct color (teal/purple) to avoid confusion with inherited vs overridden.
+
+3. **Reset-to-theme should be per-property, not per-section.**
+   - Webflow makes the reset action directly adjacent to the property value, which reduces accidental resets and matches user intent for a single field.
+   - For Arete, the existing `clearBtn` can be re-skinned into a small reset icon with tooltip “Reset to theme”.
+
+4. **Displaying inherited values:**
+   - The least invasive option is a muted placeholder or sublabel (e.g., “Inherited: 12pt”) directly under the input; this retains the current control structure.
+   - Avoid replacing the input value with computed values unless the field is read-only; that would blur “set vs inherited” and reduce confidence.
+
+5. **Section-level badge as optional enhancement:**
+   - When a section is collapsed, show a small accent dot on the right side of the section header if any property inside is overridden.
+   - This mirrors Webflow’s “active style” dots and helps power users scan quickly without opening every section.
+
+
 **10. ATS Compatibility Indicator (Resume-Specific Differentiator)**
 
 Every resume tool (Zety, Novoresume, Enhancv, Kickresume, Jobscan) includes ATS warnings. Arete should surface basic warnings by pattern-matching the data model:
@@ -212,7 +238,7 @@ Implementation: a small badge in the sidebar footer showing "ATS: 3 warnings." N
 
 **11. Zoom Controls**: `Cmd+=/Cmd+-/Cmd+0` zoom shortcuts. Small zoom percentage display in preview area footer. CSS `transform: scale()` on `.previewWrapper`. Standard in Figma/Canva.
 
-**12. Style Copy/Paste**: "Copy style" / "Paste style" buttons on FloatingToolbar. Store copied `Style` in EditorContext state. Huge time saver for formatting multiple similar blocks.
+**12. ✅ Style Copy/Paste**: "Copy style" / "Paste style" buttons on FloatingToolbar. Store copied `Style` in EditorContext state. *(COPY_STYLE/PASTE_STYLE actions, Cmd+Shift+C/V shortcuts, Paintbrush/ClipboardPaste icons.)*
 
 **13. Print Preview Mode**: Toggle that hides all editor chrome (selection outlines, toolbar, sidebar). Shows bare resume at 100% scale as it will appear in PDF.
 
@@ -230,7 +256,7 @@ Implementation: a small badge in the sidebar footer showing "ATS: 3 warnings." N
 
 **ScreenReaderAnnounce is too generic**: `ScreenReaderAnnounce.tsx` announces "Block selected" without the block name or type. Should announce "Block selected: Professional Experience (h2)" for better screen reader UX. The `getBlockLabel()` function already exists in EditorContext.
 
-**Template Switch has no confirmation**: `TemplatePicker.tsx` calls `dispatch({ type: "SWITCH_TEMPLATE" })` immediately on click. No warning that content may be rearranged (orphaned blocks dumped into first region). Add confirmation dialog.
+✅ **Template Switch has no confirmation**: `TemplatePicker.tsx` calls `dispatch({ type: "SWITCH_TEMPLATE" })` immediately on click. *(Now shows Radix Dialog confirmation with preview before switching.)*
 
 **Region label occludes content**: `.regionLabel` positioned at `top: 2px; left: 2px` inside the region. In tight-padding regions, this overlaps resume text. Should only show on hover or be positioned outside the region boundary.
 
@@ -245,10 +271,78 @@ Implementation: a small badge in the sidebar footer showing "ATS: 3 warnings." N
 **Palette preset duplicated in ThemePanel**: `ThemePanel.tsx` shows palette presets in both a `<select>` dropdown AND clickable button rows below it. The dropdown (`Choose a preset...`) and the button list render the same 4 presets. One should be removed to reduce clutter.
 
 ### Gemini
-- **Visual Language:** The current neutrality is a strength, but it needs "functional color." Using blue specifically for "overrides" and "active selection" creates a clear mental model.
-- **Iconography:** The move to SVGs in `SectionIcons.tsx` is a good start, but using a library like Lucide would allow for more semantic icons (e.g., a "Target" icon for selection, "Layout" for regions).
-- **Navigation:** The current path-based selection is powerful but invisible. Breadcrumbs in the sidebar are the "missing link" for user orientation.
-- **Resume Context:** We should lean into "Resume Score" as a primary motivator for visual polish. If a user sees their "Professionalism Score" increase as they fix spacing, they'll engage more with the tool.
+
+#### 1. Lucide Icon Adoption
+The current mix of HTML entities, unicode, and custom SVGs (which are currently hidden by CSS) should be replaced with a unified `lucide-react` implementation for professional consistency and accessibility.
+
+**Exact Icon Mappings:**
+- **FloatingToolbar:**
+  - Move Up: `ArrowUp`
+  - Move Down: `ArrowDown`
+  - Duplicate: `Copy`
+  - Insert Block Below: `Plus`
+  - Delete Block: `Trash2` (more semantic than the current "×" or "Delete?" text)
+- **InlineToolbar:**
+  - Bold: `Bold`
+  - Italic: `Italic`
+  - Underline: `Underline`
+  - Strikethrough: `Strikethrough`
+  - Superscript: `Superscript`
+  - Subscript: `Subscript`
+  - Link: `Link`
+- **SectionIcons (Sidebar):**
+  - IconColors: `Palette`
+  - IconTypography: `Type`
+  - IconBoxModel: `Box`
+  - IconBorders: `Frame`
+  - IconHeader: `Heading`
+  - IconImage: `Image`
+  - IconBullets: `List`
+  - IconPalette: `Palette`
+  - IconLinks: `Link`
+  - IconGrid: `LayoutGrid`
+  - IconPage: `FileText`
+  - IconLayout: `Columns2`
+  - IconBoxShadow: `Layers`
+  - IconHistory: `History`
+  - IconContent: `AlignLeft`
+
+**Size and Style:**
+- **Toolbar Buttons:** Use **18px** for better hit targets and visibility on high-DPI screens.
+- **Section Icons:** Use **14px** (matching current `SectionIcons.tsx`) to maintain the compact, information-dense feel of the sidebar.
+- **Recommendation:** Fully replace `SectionIcons.tsx` with Lucide to reduce maintenance overhead and ensure all icons share the same stroke weight (2px) and design language.
+- **Bundle Size:** `lucide-react` is tree-shakeable. Using individual imports (e.g., `import { Bold } from 'lucide-react'`) ensures only used icons are bundled, adding <5KB to the final payload.
+- **InlineToolbar "B"/"I":** While the current styled text is recognizable, Lucide's `Bold` and `Italic` icons are industry standards (Figma/Canva/Google Docs) and will look more cohesive with the other toolbar icons.
+
+#### 2. Style Copy/Paste (Format Painter)
+Implementing a "Format Painter" will significantly improve the speed of creating consistent resumes.
+
+- **Location:** Add "Copy Style" and "Paste Style" buttons to the **FloatingToolbar**. This keeps the action contextual to the selected block.
+- **What gets copied:** The entire `block.style` object. This includes typography, colors, padding, margins, borders, and shadows.
+- **Handling Headers:** Pasting a style should NOT change the heading level (e.g., h2 remains h2). It only updates the CSS properties in the `style` object.
+- **Workflow:**
+  1. User selects a block.
+  2. Clicks "Copy Style" icon (Paint Roller).
+  3. `EditorContext` stores the `Style` object in a `clipboardStyle` state.
+  4. User selects a different block.
+  5. Clicks "Paste Style" icon (now visible/active on the FloatingToolbar).
+  6. Action `UPDATE_BLOCK_STYLE` is dispatched for the target block.
+- **Keyboard Shortcuts:** `Cmd+Shift+C` (Copy Style) and `Cmd+Shift+V` (Paste Style). These match Figma and Google Docs.
+
+#### 3. Template Switch Confirmation
+Template switching is a "destructive-feeling" operation that needs a safety net.
+
+- **Confirmation Content:**
+  - **Title:** "Switch Template?"
+  - **Message:** "This will reorganize your content to fit the new layout. Blocks will be moved to new regions, and some may be grouped into the first available section. Your text will not be lost."
+- **Preview:** The dialog should include the `TemplateMiniPreview` (currently in `TemplatePicker.tsx`) for the *new* template alongside the message to show the target layout.
+- **Orphaned Blocks:** Explicitly state that "Orphaned blocks from deleted regions will be moved to the [Region Name] section."
+- **Undo:** The existing Undo system (`Cmd+Z`) already captures `SWITCH_TEMPLATE`, so a dedicated "Undo" button in the dialog is not required, but a "Learn more about what happens to my content" link could be helpful.
+
+#### 4. Additional Polish Opportunities
+- **Inheritance Indicators:** Follow the Webflow pattern of using Blue/Neutral color-coding for property labels to show if a value is locally overridden or inherited from the theme.
+- **Selection Breadcrumbs:** Implement a breadcrumb bar at the top of the sidebar. This is critical for nested block editing and region-level styling.
+- **ATS Check:** Add a simple "ATS Compatibility" badge that warns about multi-column layouts or images, which are common pain points for resume submission.
 
 ### Codex
 **Impact-ordered visual design findings (with file references):**
@@ -263,3 +357,16 @@ Implementation: a small badge in the sidebar footer showing "ATS: 3 warnings." N
 9. **Resume‑specific layout cues are absent.** Novoresume exposes a dedicated Layout tool for section order and single vs two‑column layouts, signaling that users expect to manage structure separate from styling. Recommendation: add a “Layout” quick action in the sidebar or top bar that surfaces region order and column mode. citeturn2search2
 10. **ATS readiness should be visible.** Enhancv explicitly markets an ATS‑oriented resume checker with a score and checks. Recommendation: add a lightweight ATS indicator (warnings for multi‑column layouts, images, tiny font sizes) near the overflow indicator to align with user expectations. citeturn2search0
 11. **Micro‑animations should be subtle and respect reduced‑motion.** Add 120–160ms fades on toolbar appearance and collapsible content transitions, but gate with `@media (prefers-reduced-motion: no-preference)` to avoid accessibility regressions. (`app/components/editor/editor.module.css:811-815`, `app/components/editor/editor.module.css:1486-1529`)
+
+**Assignment-specific findings (icons, style copy/paste, template confirmation):**
+1. **Lucide mapping for current toolbars and section icons.** Current icon usage is split across unicode glyphs in `FloatingToolbar.tsx`, styled text in `InlineToolbar.tsx`, and the custom SVG set in `SectionIcons.tsx`. Proposed mapping that preserves intent: FloatingToolbar Move up → `ArrowUp`, Move down → `ArrowDown`, Duplicate → `Copy`, Insert block below → `Plus`, Delete → `Trash2` (`app/components/editor/FloatingToolbar.tsx:105-153`). InlineToolbar Bold → `Bold`, Italic → `Italic`, Underline → `Underline`, Strikethrough → `Strikethrough`, Superscript → `Superscript`, Subscript → `Subscript`, Link → `Link` (`app/components/editor/InlineToolbar.tsx:206-231`). Section icons: Colors → `Droplet`, Typography → `Type`, Box Model → `SquareStack`, Borders → `SquareDashed`, Header → `Heading`, Image → `Image`, Bullets → `List`, Palette → `Palette`, Links → `Link`, Grid → `LayoutGrid`, Page → `File`, Layout → `Columns2`, Box Shadow → `Layers`, Content → `TextAlignStart`, History → `History` (`app/components/editor/SectionIcons.tsx:1-157`). Close buttons and “x” affordances: standardize on `X` to replace `×` in modals and clear buttons for consistency (`app/components/editor/TemplatePicker.tsx:24-49`, `app/components/editor/ShortcutHelp.tsx:39-46`, `app/components/editor/TypographyControls.tsx:50-121`).
+2. **Icon size recommendation (16px vs 18px).** The FloatingToolbar buttons are `22x22` and the InlineToolbar buttons are `28x28` (`editor.module.css:944-1010`, `editor.module.css:1569-1618`). Recommendation:
+   - Use `size={16}` in FloatingToolbar to avoid crowding inside 22px buttons.
+   - Use `size={18}` in InlineToolbar for better legibility at 28px without oversizing.
+   - For section headers (currently 14px), use `size={14}` or `size={16}` based on visual weight; 16px reads better but should be tested alongside the chevron and label spacing.
+3. **Keep or replace `SectionIcons.tsx`.** Prefer full replacement with Lucide to avoid maintaining two icon systems. If 14px legibility is a concern, set Lucide `size={14}` and `strokeWidth={1.8}` to match the existing stroke weight. Keep `SectionIcons.tsx` only if a bespoke “hand‑drawn” look is desired as a deliberate brand choice.
+4. **Bundle size impact of `lucide-react`.** Lucide is tree‑shakable; importing named icons should only include the used glyphs. The delta is small for a handful of icons, but the safest path is to avoid dynamic or namespace imports (which can pull in the full set). Recommendation: verify with a Next bundle analyzer when adding the dependency and keep icon imports explicit.
+5. **InlineToolbar look and recognition.** The current “B/I” glyphs are highly recognizable for text formatting. If visual consistency is the priority, switch to Lucide `Bold` and `Italic` to match the rest of the toolbar; if immediate recognition is the priority, keep text glyphs for Bold/Italic and use Lucide for the remaining buttons (underline/strike/super/sub/link) so the toolbar still reads as a single system.
+6. **Style copy/paste location and flow.** Best placement is the FloatingToolbar (contextual, already used for block actions), with an optional secondary entry in the BlockStylePanel header for discoverability. Proposed flow: (1) Select block A. (2) Click “Copy Style” (paintbrush icon) or use `Cmd+Shift+C`. (3) Editor enters “armed” mode (cursor change + inline toast “Style copied—select a block to apply”). (4) Click block B (or use arrow keys to select) to auto‑paste, or click “Paste Style” in the FloatingToolbar to confirm. (5) Escape cancels the armed state.
+7. **What gets copied.** Start with `block.style` only. Add content‑specific payloads when type matches: if source `content.type === "image"` and target is image, also copy `content.style` (width/height/fit/borderRadius). If source is bullets and target is bullets, optionally copy `content.levels` (marker/indent/gap/font size). Do not change `header.tag`, `content.type`, or the rich text content itself.
+8. **Template switch confirmation.** `TemplatePicker.tsx` immediately dispatches `SWITCH_TEMPLATE`, and `EditorContext` remaps regions + dumps orphaned blocks into the first new region. This is destructive‑feeling. Proposed dialog content: Title “Switch template?”, body text “This will rearrange your blocks to fit the new layout. Regions that don’t exist in the new template will be moved into {First Region Name}. Your text won’t be deleted.” Include a mini preview of the target template (reuse `TemplateMiniPreview`) plus a short diff summary “Regions removed: X; Regions added: Y; Orphaned blocks moved: N.” Buttons: `Cancel` (default) and `Switch Template` (destructive‑style primary). Optional line: “You can undo with Cmd+Z.”

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { ArrowUp, ArrowDown, Copy, Plus, Trash2, Paintbrush, ClipboardPaste } from "lucide-react";
 import type { EditorAction } from "../../contexts/EditorContext";
 import styles from "./editor.module.css";
 
@@ -12,6 +13,7 @@ interface Props {
   totalBlocks: number;
   dispatch: (action: EditorAction) => void;
   onRequestInsert?: (regionId: string, index: number) => void;
+  hasCopiedStyle?: boolean;
 }
 
 function ToolbarButton({
@@ -63,6 +65,7 @@ export default function FloatingToolbar({
   totalBlocks,
   dispatch,
   onRequestInsert,
+  hasCopiedStyle,
 }: Props) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const confirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -114,7 +117,7 @@ export default function FloatingToolbar({
             })
           }
         >
-          &#8593;
+          <ArrowUp size={16} />
         </ToolbarButton>
         <ToolbarButton
           label="Move down"
@@ -128,19 +131,34 @@ export default function FloatingToolbar({
             })
           }
         >
-          &#8595;
+          <ArrowDown size={16} />
         </ToolbarButton>
         <ToolbarButton
           label="Duplicate"
           onClick={() => dispatch({ type: "DUPLICATE_BLOCK", regionId, blockId })}
         >
-          &#10697;
+          <Copy size={16} />
         </ToolbarButton>
         <ToolbarButton
           label="Insert block below"
           onClick={handleInsert}
         >
-          +
+          <Plus size={16} />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Copy style"
+          shortcut="Cmd+Shift+C"
+          onClick={() => dispatch({ type: "COPY_STYLE" })}
+        >
+          <Paintbrush size={16} />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Paste style"
+          shortcut="Cmd+Shift+V"
+          disabled={!hasCopiedStyle}
+          onClick={() => dispatch({ type: "PASTE_STYLE" })}
+        >
+          <ClipboardPaste size={16} />
         </ToolbarButton>
         <ToolbarButton
           label={confirmingDelete ? "Click again to confirm" : "Delete block"}
@@ -149,7 +167,7 @@ export default function FloatingToolbar({
           confirmDelete={confirmingDelete}
           onClick={handleDelete}
         >
-          {confirmingDelete ? "Delete?" : "\u00D7"}
+          {confirmingDelete ? "Delete?" : <Trash2 size={16} />}
         </ToolbarButton>
       </div>
     </Tooltip.Provider>

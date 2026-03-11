@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { Style } from "../../models";
 import PropertyRow from "./PropertyRow";
-import SpacingInput from "./SpacingInput";
+import UnitInput from "./UnitInput";
 import styles from "./editor.module.css";
 
 interface ParsedShadow {
@@ -107,34 +107,42 @@ export default function BoxShadowControls({ style, updateStyle, clearStyle }: Bo
         </div>
       ) : (
         <>
-          <PropertyRow label="X offset">
-            <SpacingInput
-              value={parsed?.offsetX ?? "0px"}
-              placeholder="0"
-              onChange={(v) => update({ offsetX: v })}
-            />
-          </PropertyRow>
-          <PropertyRow label="Y offset">
-            <SpacingInput
-              value={parsed?.offsetY ?? "0px"}
-              placeholder="0"
-              onChange={(v) => update({ offsetY: v })}
-            />
-          </PropertyRow>
-          <PropertyRow label="Blur">
-            <SpacingInput
-              value={parsed?.blur ?? "0px"}
-              placeholder="0"
-              onChange={(v) => update({ blur: v })}
-            />
-          </PropertyRow>
-          <PropertyRow label="Spread">
-            <SpacingInput
-              value={parsed?.spread ?? "0px"}
-              placeholder="0"
-              onChange={(v) => update({ spread: v })}
-            />
-          </PropertyRow>
+          <div className={styles.propertyPair}>
+            <div>
+              <div className={styles.propertyPairLabel}>X offset</div>
+              <UnitInput
+                value={parsed?.offsetX ?? "0px"}
+                placeholder="0"
+                onChange={(v) => update({ offsetX: v })}
+              />
+            </div>
+            <div>
+              <div className={styles.propertyPairLabel}>Y offset</div>
+              <UnitInput
+                value={parsed?.offsetY ?? "0px"}
+                placeholder="0"
+                onChange={(v) => update({ offsetY: v })}
+              />
+            </div>
+          </div>
+          <div className={styles.propertyPair}>
+            <div>
+              <div className={styles.propertyPairLabel}>Blur</div>
+              <UnitInput
+                value={parsed?.blur ?? "0px"}
+                placeholder="0"
+                onChange={(v) => update({ blur: v })}
+              />
+            </div>
+            <div>
+              <div className={styles.propertyPairLabel}>Spread</div>
+              <UnitInput
+                value={parsed?.spread ?? "0px"}
+                placeholder="0"
+                onChange={(v) => update({ spread: v })}
+              />
+            </div>
+          </div>
           <PropertyRow label="Color">
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               {useRgba ? (

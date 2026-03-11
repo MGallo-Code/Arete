@@ -11,6 +11,7 @@ interface EditorState {
   selectedRegionId: string | null;
   editingBlockId: string | null;
   editingField: "header" | "content" | null;
+  copiedStyle: Style | null;
   past: Resume[];
   future: Resume[];
   lastActionTime: number;
@@ -63,7 +64,9 @@ export type EditorAction =
   | { type: "APPLY_PALETTE_PRESET"; palette: ColorPalette }
   | { type: "UPDATE_IMAGE_CONTENT"; blockId: string; src?: string; alt?: string; style?: Style }
   | { type: "SWITCH_TEMPLATE"; template: import("../models").Template }
-  | { type: "CHANGE_CONTENT_TYPE"; blockId: string; newType: "text" | "bullets" | "image" };
+  | { type: "CHANGE_CONTENT_TYPE"; blockId: string; newType: "text" | "bullets" | "image" }
+  | { type: "COPY_STYLE" }
+  | { type: "PASTE_STYLE" };
 
 // Actions that mutate the resume (push to undo stack)
 const MUTATING = new Set([
@@ -97,6 +100,7 @@ const MUTATING = new Set([
   "UPDATE_IMAGE_CONTENT",
   "SWITCH_TEMPLATE",
   "CHANGE_CONTENT_TYPE",
+  "PASTE_STYLE",
 ]);
 
 // --- Helpers ---
@@ -268,7 +272,7 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       return { ...state, selectedPath: action.path, selectedRegionId: null, editingBlockId: null, editingField: null };
 
     case "SET_RESUME":
-      return { ...state, resume: action.resume, selectedPath: [], selectedRegionId: null, editingBlockId: null, editingField: null, past: [], future: [], lastActionTime: 0, lastActionType: null };
+      return { ...state, resume: action.resume, selectedPath: [], selectedRegionId: null, editingBlockId: null, editingField: null, copiedStyle: null, past: [], future: [], lastActionTime: 0, lastActionType: null };
 
     case "START_EDITING":
       return { ...state, selectedPath: state.selectedPath.length > 0 ? state.selectedPath : [action.blockId], selectedRegionId: null, editingBlockId: action.blockId, editingField: action.field };
@@ -662,6 +666,26 @@ function coreReducer(state: EditorState, action: EditorAction): EditorState {
       };
     }
 
+    case "COPY_STYLE": {
+      const selectedId = state.selectedPath.length > 0 ? state.selectedPath[state.selectedPath.length - 1] : null;
+      if (!selectedId) return state;
+      const block = findBlock(state.resume.blocks, selectedId);
+      if (!block) return state;
+      return { ...state, copiedStyle: block.style ? { ...block.style } : {} };
+    }
+
+    case "PASTE_STYLE": {
+      const selectedId = state.selectedPath.length > 0 ? state.selectedPath[state.selectedPath.length - 1] : null;
+      if (!selectedId || !state.copiedStyle) return state;
+      return {
+        ...state,
+        resume: updateBlock(state.resume, selectedId, (b) => ({
+          ...b,
+          style: { ...state.copiedStyle },
+        })),
+      };
+    }
+
     case "CHANGE_CONTENT_TYPE": {
       const { blockId, newType } = action;
       const block = findBlock(state.resume.blocks, blockId);
@@ -816,6 +840,7 @@ interface EditorContextValue {
   selectedRegionId: string | null;
   editingBlockId: string | null;
   editingField: "header" | "content" | null;
+  copiedStyle: Style | null;
   canUndo: boolean;
   canRedo: boolean;
   dispatch: React.Dispatch<EditorAction>;
@@ -839,6 +864,7 @@ export function EditorProvider({
     selectedRegionId: null,
     editingBlockId: null,
     editingField: null,
+    copiedStyle: null,
     past: [],
     future: [],
     lastActionTime: 0,
@@ -864,6 +890,20 @@ export function EditorProvider({
       if ((e.metaKey || e.ctrlKey) && e.key === "z") {
         e.preventDefault();
         dispatch({ type: e.shiftKey ? "REDO" : "UNDO" });
+        return;
+      }
+
+      // Copy style of selected block (Cmd+Shift+C)
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "c" && selectedBlockId) {
+        e.preventDefault();
+        dispatch({ type: "COPY_STYLE" });
+        return;
+      }
+
+      // Paste style to selected block (Cmd+Shift+V)
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "v" && selectedBlockId) {
+        e.preventDefault();
+        dispatch({ type: "PASTE_STYLE" });
         return;
       }
 
@@ -987,12 +1027,13 @@ export function EditorProvider({
       selectedRegionId: state.selectedRegionId,
       editingBlockId: state.editingBlockId,
       editingField: state.editingField,
+      copiedStyle: state.copiedStyle,
       canUndo,
       canRedo,
       dispatch,
       onRequestInsert,
     }),
-    [state.resume, selectedBlockId, state.selectedPath, state.selectedRegionId, state.editingBlockId, state.editingField, canUndo, canRedo, dispatch, onRequestInsert],
+    [state.resume, selectedBlockId, state.selectedPath, state.selectedRegionId, state.editingBlockId, state.editingField, state.copiedStyle, canUndo, canRedo, dispatch, onRequestInsert],
   );
 
   return (

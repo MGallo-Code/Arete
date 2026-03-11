@@ -1838,3 +1838,265 @@
   border-radius: var(--editor-radius-sm);
   white-space: nowrap;
 }
+
+/* --- UnitInput --- */
+
+.unitInput {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.unitInputCompact {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 56px;
+  justify-self: center;
+}
+
+.unitInputField {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px 0 0 5px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.unitInputField:focus {
+  outline: none;
+  border-color: var(--editor-accent);
+  box-shadow: 0 0 0 2px var(--editor-accent-focus-shadow);
+}
+
+.unitInputFieldError {
+  border-color: var(--editor-danger) !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15) !important;
+}
+
+.unitInputUnitBtnFull {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 6px;
+  font-size: 11px;
+  border: 1px solid var(--color-border);
+  border-left: none;
+  border-radius: 0 5px 5px 0;
+  background: var(--color-bg-subtle);
+  color: var(--color-fg);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: 28px;
+}
+
+.unitInputUnitBtnFull:hover {
+  background: var(--color-bg);
+  color: var(--editor-accent);
+}
+
+.unitInputUnitBtnFull:focus {
+  outline: none;
+  border-color: var(--editor-accent);
+}
+
+.unitInputUnitBtn {
+  padding: 1px 2px;
+  font-size: 8px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  border: 1px solid transparent;
+  border-left: none;
+  border-radius: 0 2px 2px 0;
+  background: transparent;
+  color: var(--editor-muted-text-lighter);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: center;
+  white-space: nowrap;
+  min-width: 20px;
+}
+
+.unitInputUnitBtn:hover,
+.unitInputUnitBtn:focus {
+  border-color: var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
+.unitInputUnitBtn:focus {
+  outline: none;
+}
+
+.unitInputSteppers {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity 0.1s;
+  pointer-events: none;
+}
+
+.unitInput:hover .unitInputSteppers,
+.unitInputCompact:hover .unitInputSteppers,
+.unitInputSteppers:focus-within,
+.unitInputSteppersVisible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.unitInputSteppersAlways .unitInputSteppers {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.unitInputStepUp,
+.unitInputStepDown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  border: none;
+  background: var(--color-bg-subtle);
+  color: var(--editor-muted-text);
+  cursor: pointer;
+  padding: 0 3px;
+  font-size: 8px;
+  line-height: 1;
+}
+
+.unitInputStepUp {
+  border-radius: 0 4px 0 0;
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.unitInputStepDown {
+  border-radius: 0 0 4px 0;
+}
+
+.unitInputStepUp:hover,
+.unitInputStepDown:hover {
+  background: var(--color-border);
+  color: var(--color-fg);
+}
+
+.unitInputDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 10;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  padding: 2px;
+  margin-top: 2px;
+  min-width: 44px;
+}
+
+.unitInputDropdownItem {
+  display: block;
+  width: 100%;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-family: var(--font-geist-mono), monospace;
+  border: none;
+  background: transparent;
+  color: var(--color-fg);
+  cursor: pointer;
+  border-radius: 3px;
+  text-align: left;
+}
+
+.unitInputDropdownItem:hover {
+  background: var(--color-bg-subtle);
+}
+
+.unitInputDropdownItemActive {
+  background: var(--editor-accent);
+  color: var(--color-bg-inverse);
+}
+
+.unitInputDropdownItemActive:hover {
+  background: var(--editor-accent-hover);
+}
+
+.unitInputError {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  font-size: 10px;
+  color: var(--editor-danger);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+/* --- PropertyPair --- */
+
+.propertyPair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.propertyPairLabel {
+  font-size: 10px;
+  color: var(--editor-muted-text);
+  margin-bottom: 2px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* --- Inheritance Visualization --- */
+
+.propLabelOverridden {
+  color: var(--editor-accent);
+}
+
+.propLabelDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--editor-accent);
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.propLabelReset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: none;
+  background: transparent;
+  color: var(--editor-muted-text-lighter);
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 10px;
+  line-height: 1;
+  padding: 0;
+  margin-left: 4px;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.propRow:hover .propLabelReset {
+  opacity: 1;
+}
+
+.propLabelReset:hover {
+  background: var(--editor-danger-light);
+  color: var(--editor-danger);
+}

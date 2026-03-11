@@ -3,7 +3,7 @@
 import type { Content, Style } from "../../models";
 import type { EditorAction } from "../../contexts/EditorContext";
 import PropertyRow from "./PropertyRow";
-import SpacingInput from "./SpacingInput";
+import UnitInput from "./UnitInput";
 import styles from "./editor.module.css";
 
 interface ImageControlsProps {
@@ -39,7 +39,7 @@ export default function ImageControls({ blockId, content, dispatch }: ImageContr
       </PropertyRow>
       <PropertyRow label="Width">
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <SpacingInput
+          <UnitInput
             value={(content.style?.width as string) ?? ""}
             placeholder="auto"
             onChange={(v) =>
@@ -50,7 +50,7 @@ export default function ImageControls({ blockId, content, dispatch }: ImageContr
       </PropertyRow>
       <PropertyRow label="Height">
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <SpacingInput
+          <UnitInput
             value={(content.style?.height as string) ?? ""}
             placeholder="auto"
             onChange={(v) =>

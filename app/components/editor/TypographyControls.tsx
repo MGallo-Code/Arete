@@ -2,9 +2,9 @@
 
 import type { Style } from "../../models";
 import { FONT_PRESETS } from "../../data/constants";
-import { nudgeCSSValue } from "../../utils/cssUtils";
+import { X } from "lucide-react";
 import PropertyRow from "./PropertyRow";
-import SpacingInput from "./SpacingInput";
+import UnitInput from "./UnitInput";
 import styles from "./editor.module.css";
 
 const TEXT_TRANSFORM_OPTIONS = ["none", "uppercase", "lowercase", "capitalize"] as const;
@@ -48,125 +48,141 @@ export default function TypographyControls({
             ))}
           </select>
           {style.fontFamily && (
-            <button className={styles.clearBtn} onClick={() => clearStyle("fontFamily")} title="Clear">×</button>
+            <button className={styles.clearBtn} onClick={() => clearStyle("fontFamily")} title="Clear"><X size={12} /></button>
           )}
         </div>
       </PropertyRow>
 
-      {/* Font size */}
-      <PropertyRow label="Font size">
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <SpacingInput
-            value={(style.fontSize as string) ?? ""}
-            placeholder="0"
-            onChange={(v) => updateStyle({ fontSize: v })}
-          />
-          {style.fontSize && (
-            <button className={styles.clearBtn} onClick={() => clearStyle("fontSize")} title="Clear">×</button>
-          )}
-        </div>
-      </PropertyRow>
-
-      {/* Font weight */}
-      <PropertyRow label="Font weight">
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div className={styles.toggleGroup}>
-            <button
-              className={`${styles.toggleBtn} ${!style.fontWeight || style.fontWeight === "normal" ? styles.toggleActive : ""}`}
-              onClick={() => updateStyle({ fontWeight: "normal" })}
-            >
-              Normal
-            </button>
-            <button
-              className={`${styles.toggleBtn} ${style.fontWeight === "bold" ? styles.toggleActive : ""}`}
-              onClick={() => updateStyle({ fontWeight: "bold" })}
-            >
-              Bold
-            </button>
+      {/* Font size + Line height paired */}
+      <div className={styles.propertyPair}>
+        <div>
+          <div className={styles.propertyPairLabel}>Font size</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <UnitInput
+              value={(style.fontSize as string) ?? ""}
+              placeholder="0"
+              onChange={(v) => updateStyle({ fontSize: v })}
+            />
+            {style.fontSize && (
+              <button className={styles.clearBtn} onClick={() => clearStyle("fontSize")} title="Clear"><X size={12} /></button>
+            )}
           </div>
-          {style.fontWeight && (
-            <button className={styles.clearBtn} onClick={() => clearStyle("fontWeight")} title="Clear">×</button>
-          )}
-          {!style.fontWeight && <span className={styles.inheritLabel}>Inherit</span>}
         </div>
-      </PropertyRow>
+        {showLineHeight && (
+          <div>
+            <div className={styles.propertyPairLabel}>Line height</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <UnitInput
+                value={(style.lineHeight as string) ?? ""}
+                placeholder="Inherit"
+                allowUnitless
+                allowKeywords={["inherit", "normal"]}
+                onChange={(v) => updateStyle({ lineHeight: v || undefined })}
+              />
+              {style.lineHeight && (
+                <button className={styles.clearBtn} onClick={() => clearStyle("lineHeight")} title="Clear"><X size={12} /></button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
-      {/* Font style */}
-      {showFontStyle && (
-        <PropertyRow label="Font style">
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      {/* Font weight + Font style paired */}
+      <div className={styles.propertyPair}>
+        <div>
+          <div className={styles.propertyPairLabel}>Font weight</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <div className={styles.toggleGroup}>
               <button
-                className={`${styles.toggleBtn} ${!style.fontStyle || style.fontStyle === "normal" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ fontStyle: "normal" })}
+                className={`${styles.toggleBtn} ${!style.fontWeight || style.fontWeight === "normal" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ fontWeight: "normal" })}
               >
-                Normal
+                N
               </button>
               <button
-                className={`${styles.toggleBtn} ${style.fontStyle === "italic" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ fontStyle: "italic" })}
+                className={`${styles.toggleBtn} ${style.fontWeight === "bold" ? styles.toggleActive : ""}`}
+                onClick={() => updateStyle({ fontWeight: "bold" })}
               >
-                Italic
+                B
               </button>
             </div>
-            {style.fontStyle && (
-              <button className={styles.clearBtn} onClick={() => clearStyle("fontStyle")} title="Clear">&times;</button>
+            {style.fontWeight ? (
+              <button className={styles.clearBtn} onClick={() => clearStyle("fontWeight")} title="Clear"><X size={12} /></button>
+            ) : (
+              <span className={styles.inheritLabel}>Inherit</span>
             )}
-            {!style.fontStyle && <span className={styles.inheritLabel}>Inherit</span>}
           </div>
-        </PropertyRow>
-      )}
+        </div>
+        {showFontStyle && (
+          <div>
+            <div className={styles.propertyPairLabel}>Font style</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div className={styles.toggleGroup}>
+                <button
+                  className={`${styles.toggleBtn} ${!style.fontStyle || style.fontStyle === "normal" ? styles.toggleActive : ""}`}
+                  onClick={() => updateStyle({ fontStyle: "normal" })}
+                >
+                  N
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${style.fontStyle === "italic" ? styles.toggleActive : ""}`}
+                  onClick={() => updateStyle({ fontStyle: "italic" })}
+                >
+                  I
+                </button>
+              </div>
+              {style.fontStyle ? (
+                <button className={styles.clearBtn} onClick={() => clearStyle("fontStyle")} title="Clear"><X size={12} /></button>
+              ) : (
+                <span className={styles.inheritLabel}>Inherit</span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
-      {/* Line height */}
-      {showLineHeight && (
-        <PropertyRow label="Line height">
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <input
-              className={styles.propInput}
-              style={{ width: "auto", flex: 1 }}
-              value={(style.lineHeight as string) ?? ""}
-              placeholder="Inherit"
-              onChange={(e) => updateStyle({ lineHeight: e.target.value })}
-              onKeyDown={(e) => {
-                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                  e.preventDefault();
-                  const next = nudgeCSSValue((style.lineHeight as string) ?? "", e.key, e.shiftKey);
-                  updateStyle({ lineHeight: next });
-                }
-              }}
-            />
-            {style.lineHeight && (
-              <button className={styles.clearBtn} onClick={() => clearStyle("lineHeight")} title="Clear">×</button>
-            )}
+      {/* Letter spacing + Text align paired */}
+      <div className={styles.propertyPair}>
+        {showLetterSpacing && (
+          <div>
+            <div className={styles.propertyPairLabel}>Letter spacing</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <UnitInput
+                value={(style.letterSpacing as string) ?? ""}
+                placeholder="Inherit"
+                allowUnitless
+                allowKeywords={["inherit", "normal"]}
+                onChange={(v) => updateStyle({ letterSpacing: v || undefined })}
+              />
+              {style.letterSpacing && (
+                <button className={styles.clearBtn} onClick={() => clearStyle("letterSpacing")} title="Clear"><X size={12} /></button>
+              )}
+            </div>
           </div>
-        </PropertyRow>
-      )}
-
-      {/* Letter spacing */}
-      {showLetterSpacing && (
-        <PropertyRow label="Letter spacing">
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <input
-              type="text"
-              className={styles.propInput}
-              style={{ width: "auto", flex: 1 }}
-              value={(style.letterSpacing as string) ?? ""}
-              placeholder="Inherit"
-              onChange={(e) => updateStyle({ letterSpacing: e.target.value || undefined })}
-              onKeyDown={(e) => {
-                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                  e.preventDefault();
-                  const next = nudgeCSSValue((style.letterSpacing as string) ?? "", e.key, e.shiftKey);
-                  updateStyle({ letterSpacing: next });
-                }
-              }}
-            />
-            {style.letterSpacing && (
-              <button className={styles.clearBtn} onClick={() => clearStyle("letterSpacing")} title="Clear">×</button>
-            )}
+        )}
+        {showTextAlign && (
+          <div>
+            <div className={styles.propertyPairLabel}>Text align</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div className={styles.toggleGroup}>
+                {(["left", "center", "right", "justify"] as const).map((align) => (
+                  <button
+                    key={align}
+                    className={`${styles.toggleBtn} ${style.textAlign === align ? styles.toggleActive : ""}`}
+                    onClick={() => updateStyle({ textAlign: align })}
+                    title={align}
+                  >
+                    {align[0].toUpperCase()}
+                  </button>
+                ))}
+              </div>
+              {style.textAlign && (
+                <button className={styles.clearBtn} onClick={() => clearStyle("textAlign")} title="Clear"><X size={12} /></button>
+              )}
+            </div>
           </div>
-        </PropertyRow>
-      )}
+        )}
+      </div>
 
       {/* Text transform */}
       {showTextTransform && (
@@ -185,7 +201,7 @@ export default function TypographyControls({
               ))}
             </select>
             {style.textTransform && (
-              <button className={styles.clearBtn} onClick={() => clearStyle("textTransform")} title="Clear">×</button>
+              <button className={styles.clearBtn} onClick={() => clearStyle("textTransform")} title="Clear"><X size={12} /></button>
             )}
           </div>
         </PropertyRow>
@@ -215,32 +231,10 @@ export default function TypographyControls({
                 Strike
               </button>
             </div>
-            {style.textDecoration && (
-              <button className={styles.clearBtn} onClick={() => clearStyle("textDecoration")} title="Clear">&times;</button>
-            )}
-            {!style.textDecoration && <span className={styles.inheritLabel}>Inherit</span>}
-          </div>
-        </PropertyRow>
-      )}
-
-      {/* Text align */}
-      {showTextAlign && (
-        <PropertyRow label="Text align">
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div className={styles.toggleGroup}>
-              {(["left", "center", "right", "justify"] as const).map((align) => (
-                <button
-                  key={align}
-                  className={`${styles.toggleBtn} ${style.textAlign === align ? styles.toggleActive : ""}`}
-                  onClick={() => updateStyle({ textAlign: align })}
-                  title={align}
-                >
-                  {align[0].toUpperCase()}
-                </button>
-              ))}
-            </div>
-            {style.textAlign && (
-              <button className={styles.clearBtn} onClick={() => clearStyle("textAlign")} title="Clear">×</button>
+            {style.textDecoration ? (
+              <button className={styles.clearBtn} onClick={() => clearStyle("textDecoration")} title="Clear"><X size={12} /></button>
+            ) : (
+              <span className={styles.inheritLabel}>Inherit</span>
             )}
           </div>
         </PropertyRow>

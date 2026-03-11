@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { X } from "lucide-react";
 import { useEditorRequired, findBlock, getBlockLabel } from "../../contexts/EditorContext";
 import type { Style } from "../../models";
 import { parseShorthand } from "../../utils/cssUtils";
@@ -13,7 +14,7 @@ import ColorControls from "./ColorControls";
 import ImageControls from "./ImageControls";
 import PropertyRow from "./PropertyRow";
 import { IconHeader, IconContent, IconColors, IconTypography, IconLayout, IconBoxModel, IconBorders, IconBoxShadow, IconImage, IconBullets } from "./SectionIcons";
-import SpacingInput from "./SpacingInput";
+import UnitInput from "./UnitInput";
 import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
 
@@ -171,7 +172,7 @@ export default function BlockStylePanel() {
 
       {/* Layout */}
       <CollapsibleSection panelId="block" title="Layout" icon={<IconLayout />}>
-        <PropertyRow label="Width">
+        <PropertyRow label="Width" isOverridden={!!style.width} onReset={() => clearStyle("width")}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div className={styles.toggleGroup}>
               <button
@@ -201,14 +202,14 @@ export default function BlockStylePanel() {
         </PropertyRow>
         {style.width && style.width !== "100%" && style.width !== "fit-content" && (
           <PropertyRow label="Custom width">
-            <SpacingInput
+            <UnitInput
               value={(style.width as string) ?? ""}
               placeholder="200px"
               onChange={(v) => updateStyle({ width: v })}
             />
           </PropertyRow>
         )}
-        <PropertyRow label="Alignment">
+        <PropertyRow label="Alignment" isOverridden={!!style.alignSelf} onReset={() => clearStyle("alignSelf")}>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div className={styles.toggleGroup}>
               <button
@@ -242,7 +243,7 @@ export default function BlockStylePanel() {
                 }}
                 title="Reset layout"
               >
-                &times;
+                <X size={12} />
               </button>
             )}
           </div>
@@ -312,7 +313,7 @@ export default function BlockStylePanel() {
             />
             <span className={styles.inheritLabel}>%</span>
             {style.opacity != null && (
-              <button className={styles.clearBtn} onClick={() => clearStyle("opacity")} title="Clear">&times;</button>
+              <button className={styles.clearBtn} onClick={() => clearStyle("opacity")} title="Clear"><X size={12} /></button>
             )}
           </div>
         </PropertyRow>

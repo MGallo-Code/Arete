@@ -1,6 +1,6 @@
 "use client";
 
-import SpacingInput from "./SpacingInput";
+import UnitInput from "./UnitInput";
 import styles from "./editor.module.css";
 
 interface BoxModelEditorProps {
@@ -63,16 +63,16 @@ export default function BoxModelEditor({
     <div className={styles.boxModelPadding}>
       <span className={styles.boxModelLabel}>padding</span>
       <div className={styles.boxModelTop}>
-        <SpacingInput compact value={paddingTop} placeholder={defaultPaddingTop || "0"} onChange={(v) => onPaddingChange("top", v)} />
+        <UnitInput compact value={paddingTop} placeholder={defaultPaddingTop || "0"} onChange={(v) => onPaddingChange("top", v)} />
       </div>
       <div className={styles.boxModelRight}>
-        <SpacingInput compact value={paddingRight} placeholder={defaultPaddingRight || "0"} onChange={(v) => onPaddingChange("right", v)} />
+        <UnitInput compact value={paddingRight} placeholder={defaultPaddingRight || "0"} onChange={(v) => onPaddingChange("right", v)} />
       </div>
       <div className={styles.boxModelBottom}>
-        <SpacingInput compact value={paddingBottom} placeholder={defaultPaddingBottom || "0"} onChange={(v) => onPaddingChange("bottom", v)} />
+        <UnitInput compact value={paddingBottom} placeholder={defaultPaddingBottom || "0"} onChange={(v) => onPaddingChange("bottom", v)} />
       </div>
       <div className={styles.boxModelLeft}>
-        <SpacingInput compact value={paddingLeft} placeholder={defaultPaddingLeft || "0"} onChange={(v) => onPaddingChange("left", v)} />
+        <UnitInput compact value={paddingLeft} placeholder={defaultPaddingLeft || "0"} onChange={(v) => onPaddingChange("left", v)} />
       </div>
 
       {/* Content area (innermost) */}
@@ -88,7 +88,7 @@ export default function BoxModelEditor({
         {/* All-padding shortcut */}
         <div className={styles.boxModelAllRow}>
           <span className={styles.boxModelAllLabel}>All padding</span>
-          <SpacingInput
+          <UnitInput
             compact
             value={unifiedPadding.mixed ? "" : unifiedPadding.value}
             placeholder={unifiedPadding.mixed ? "mixed" : "0"}
@@ -105,7 +105,7 @@ export default function BoxModelEditor({
       {/* All-sides shortcuts */}
       <div className={styles.boxModelAllRow}>
         <span className={styles.boxModelAllLabel}>All margin</span>
-        <SpacingInput
+        <UnitInput
           compact
           value={unifiedMargin.mixed ? "" : unifiedMargin.value}
           placeholder={unifiedMargin.mixed ? "mixed" : "0"}
@@ -114,7 +114,7 @@ export default function BoxModelEditor({
       </div>
       <div className={styles.boxModelAllRow}>
         <span className={styles.boxModelAllLabel}>All padding</span>
-        <SpacingInput
+        <UnitInput
           compact
           value={unifiedPadding.mixed ? "" : unifiedPadding.value}
           placeholder={unifiedPadding.mixed ? "mixed" : "0"}
@@ -126,16 +126,16 @@ export default function BoxModelEditor({
       <div className={styles.boxModelMargin}>
         <span className={styles.boxModelLabel}>margin</span>
         <div className={styles.boxModelTop}>
-          <SpacingInput compact value={marginTop} placeholder={defaultMarginTop || "0"} onChange={(v) => onMarginChange("top", v)} />
+          <UnitInput compact value={marginTop} placeholder={defaultMarginTop || "0"} onChange={(v) => onMarginChange("top", v)} />
         </div>
         <div className={styles.boxModelRight}>
-          <SpacingInput compact value={marginRight} placeholder={defaultMarginRight || "0"} onChange={(v) => onMarginChange("right", v)} />
+          <UnitInput compact value={marginRight} placeholder={defaultMarginRight || "0"} onChange={(v) => onMarginChange("right", v)} />
         </div>
         <div className={styles.boxModelBottom}>
-          <SpacingInput compact value={marginBottom} placeholder={defaultMarginBottom || "0"} onChange={(v) => onMarginChange("bottom", v)} />
+          <UnitInput compact value={marginBottom} placeholder={defaultMarginBottom || "0"} onChange={(v) => onMarginChange("bottom", v)} />
         </div>
         <div className={styles.boxModelLeft}>
-          <SpacingInput compact value={marginLeft} placeholder={defaultMarginLeft || "0"} onChange={(v) => onMarginChange("left", v)} />
+          <UnitInput compact value={marginLeft} placeholder={defaultMarginLeft || "0"} onChange={(v) => onMarginChange("left", v)} />
         </div>
 
         {paddingLayer}

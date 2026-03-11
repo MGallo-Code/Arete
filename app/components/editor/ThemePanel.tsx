@@ -1,9 +1,9 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useEditorRequired } from "../../contexts/EditorContext";
 import type { ColorPalette, Style } from "../../models";
 import { FONT_PRESETS } from "../../data/constants";
-import { nudgeCSSValue } from "../../utils/cssUtils";
 import { parseGridTemplate, updateColumnWidth, updateRowHeight, getColumnRegions, getRowRegions } from "../../utils/gridUtils";
 import { isPaletteVar, resolvePaletteVar } from "../../utils/paletteUtils";
 import BorderControls from "./BorderControls";
@@ -13,7 +13,7 @@ import CollapsibleSection from "./CollapsibleSection";
 import ColorControls from "./ColorControls";
 import PropertyRow from "./PropertyRow";
 import { IconColors, IconPalette, IconTypography, IconLinks, IconHeader, IconPage, IconGrid } from "./SectionIcons";
-import SpacingInput from "./SpacingInput";
+import UnitInput from "./UnitInput";
 import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
 
@@ -87,7 +87,7 @@ export default function ThemePanel() {
                   })
                 }
               >
-                &times;
+                <X size={12} />
               </button>
             )}
           </div>
@@ -163,7 +163,7 @@ export default function ThemePanel() {
           </select>
         </PropertyRow>
         <PropertyRow label="Base font size">
-          <SpacingInput
+          <UnitInput
             value={(theme.root.fontSize as string) ?? ""}
             placeholder="10pt"
             onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { fontSize: v } })}
@@ -171,19 +171,12 @@ export default function ThemePanel() {
         </PropertyRow>
         <PropertyRow label="Line height">
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <input
-              className={styles.propInput}
-              style={{ width: "auto", flex: 1 }}
+            <UnitInput
               value={(theme.root.lineHeight as string) ?? ""}
               placeholder="Inherit"
-              onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { lineHeight: e.target.value || undefined } })}
-              onKeyDown={(e) => {
-                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                  e.preventDefault();
-                  const next = nudgeCSSValue((theme.root.lineHeight as string) ?? "", e.key, e.shiftKey);
-                  dispatch({ type: "UPDATE_THEME_ROOT", style: { lineHeight: next } });
-                }
-              }}
+              allowUnitless
+              allowKeywords={["inherit", "normal"]}
+              onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { lineHeight: v || undefined } })}
             />
             {theme.root.lineHeight && (
               <button
@@ -191,27 +184,19 @@ export default function ThemePanel() {
                 onClick={() => dispatch({ type: "UPDATE_THEME_ROOT", style: { lineHeight: undefined } })}
                 title="Clear"
               >
-                &times;
+                <X size={12} />
               </button>
             )}
           </div>
         </PropertyRow>
         <PropertyRow label="Letter spacing">
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <input
-              type="text"
-              className={styles.propInput}
-              style={{ width: "auto", flex: 1 }}
+            <UnitInput
               value={(theme.root.letterSpacing as string) ?? ""}
               placeholder="Inherit"
-              onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { letterSpacing: e.target.value || undefined } })}
-              onKeyDown={(e) => {
-                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                  e.preventDefault();
-                  const next = nudgeCSSValue((theme.root.letterSpacing as string) ?? "", e.key, e.shiftKey);
-                  dispatch({ type: "UPDATE_THEME_ROOT", style: { letterSpacing: next } });
-                }
-              }}
+              allowUnitless
+              allowKeywords={["inherit", "normal"]}
+              onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { letterSpacing: v || undefined } })}
             />
             {theme.root.letterSpacing && (
               <button
@@ -219,7 +204,7 @@ export default function ThemePanel() {
                 onClick={() => dispatch({ type: "UPDATE_THEME_ROOT", style: { letterSpacing: undefined } })}
                 title="Clear"
               >
-                &times;
+                <X size={12} />
               </button>
             )}
           </div>
@@ -245,7 +230,7 @@ export default function ThemePanel() {
                 title="Remove link color"
                 onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { color: undefined } })}
               >
-                &times;
+                <X size={12} />
               </button>
             )}
           </div>
@@ -272,7 +257,7 @@ export default function ThemePanel() {
                 onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { textDecoration: undefined } })}
                 title="Clear"
               >
-                &times;
+                <X size={12} />
               </button>
             )}
           </div>
@@ -299,7 +284,7 @@ export default function ThemePanel() {
                 onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { fontWeight: undefined } })}
                 title="Clear"
               >
-                &times;
+                <X size={12} />
               </button>
             )}
           </div>

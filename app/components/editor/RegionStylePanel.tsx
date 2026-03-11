@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { X } from "lucide-react";
 import { useEditorRequired } from "../../contexts/EditorContext";
 import { parseShorthand } from "../../utils/cssUtils";
 import BorderControls from "./BorderControls";
@@ -10,7 +11,7 @@ import CollapsibleSection from "./CollapsibleSection";
 import ColorControls from "./ColorControls";
 import PropertyRow from "./PropertyRow";
 import { IconColors, IconTypography, IconLayout, IconBoxModel, IconBorders, IconBoxShadow } from "./SectionIcons";
-import SpacingInput from "./SpacingInput";
+import UnitInput from "./UnitInput";
 import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
 
@@ -92,13 +93,13 @@ export default function RegionStylePanel() {
         </PropertyRow>
         <PropertyRow label="Gap">
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <SpacingInput
+            <UnitInput
               value={(regionStyle.gap as string) ?? ""}
               placeholder="0"
               onChange={(v) => updateStyle({ gap: v })}
             />
             {regionStyle.gap && (
-              <button className={styles.clearBtn} onClick={() => clearStyle("gap")} title="Clear">×</button>
+              <button className={styles.clearBtn} onClick={() => clearStyle("gap")} title="Clear"><X size={12} /></button>
             )}
           </div>
         </PropertyRow>
@@ -161,7 +162,7 @@ export default function RegionStylePanel() {
             />
             <span className={styles.inheritLabel}>%</span>
             {regionStyle.opacity != null && (
-              <button className={styles.clearBtn} onClick={() => clearStyle("opacity")} title="Clear">&times;</button>
+              <button className={styles.clearBtn} onClick={() => clearStyle("opacity")} title="Clear"><X size={12} /></button>
             )}
           </div>
         </PropertyRow>

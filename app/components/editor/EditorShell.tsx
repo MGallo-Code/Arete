@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect, lazy, Suspense } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
+import { X } from "lucide-react";
 import { EditorProvider, useEditorRequired, findBlockRegion, findBlock, getBlockLabel } from "../../contexts/EditorContext";
 import { sampleResume, sampleResume2, sampleResume3, sampleResume4, sampleResume5, sampleResume6, sampleResume7, testResume } from "../../fixtures";
 import type { Resume } from "../../models";
@@ -197,7 +198,7 @@ function EditorInner({
                 title="Close editor"
                 onClick={closeSidebar}
               >
-                ×
+                <X size={16} />
               </button>
             </div>
             <select

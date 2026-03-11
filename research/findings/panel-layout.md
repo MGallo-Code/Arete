@@ -79,9 +79,9 @@ The Arete property panels are built using Radix UI `Collapsible` components (`Co
 ## Recommendations
 
 ### Must-Have Changes
-1.  **Unified Property Grid:** Replace the single-child `PropertyRow` with a grid-based system that supports 1, 2, or 3 columns.
-    - **Typography Pairing:** Pair Font Size + Line Height; Font Weight + Text Transform.
-    - **Box Shadow Pairing:** Pair X Offset + Y Offset; Blur + Spread.
+1.  ✅ **Unified Property Grid:** Created `PropertyPair` component for 2-column layouts.
+    - ✅ **Typography Pairing:** Pair Font Size + Line Height; Font Weight + Font Style; Letter Spacing + Text Align.
+    - ✅ **Box Shadow Pairing:** Pair X Offset + Y Offset; Blur + Spread.
     - **Layout Pairing:** Pair Align Items + Gap.
 2.  **Section Header Redesign:** Use all-caps, bold, 9px/10px font for `CollapsibleSection` triggers to create a stronger visual hierarchy. Add a subtle 1px divider between sections.
 3.  **Selection Breadcrumbs:** Add a "Selection Path" at the top of the sidebar (e.g., `Template > Main Region > Text Block`) to give users context of where they are in the hierarchy.
@@ -104,24 +104,19 @@ The Arete property panels are built using Radix UI `Collapsible` components (`Co
 ## Agent Findings
 
 ### Gemini
-- **Current Layout Waste:** I've identified that `BoxShadowControls` and `TypographyControls` are the primary culprits for vertical waste. `BoxShadowControls` uses 6 full rows for a single shadow definition. This can be reduced to 3 rows.
-- **ThemePanel Inconsistency:** The `ThemePanel` headings section is a "UI outlier." It uses a very dense, custom layout that doesn't match the `PropertyRow` pattern used elsewhere. We should standardize this into a "Compact Heading Row" component.
-- **Sidebar Width:** The default width of 300px is appropriate, but the internal "gutters" and label widths need to be fixed to prevent text truncation when doubling up properties.
-- **Breadcrumb Opportunity:** Users currently have no way to see the parent of a selected block (e.g., which region it belongs to) without clicking around. A breadcrumb at the top of the "Selection" tab would solve this.
-- **Proposed Pairings Detail:**
-    - **Typography:**
-        - Row 1: Font Family (Full)
-        - Row 2: Size (50%) | Line Height (50%)
-        - Row 3: Weight (50%) | Transform (50%)
-        - Row 4: Align (Full)
-    - **Box Shadow:**
-        - Row 1: X (50%) | Y (50%)
-        - Row 2: Blur (50%) | Spread (50%)
-        - Row 3: Color (50%) | Inset (50%)
-    - **Border:**
-        - Row 1: Width (40%) | Style (60%)
-        - Row 2: Color (Full)
-- **Discovered Issue:** `BoxModelEditor` is a great visual component, but it's used inconsistently. In `ThemePanel`, it's used for Page Margins, but in `BlockStylePanel`, it's a dedicated section. We should ensure the "Box Model" visual is the standard way to edit all spacing.
+- **Property Pairing for Density:** I recommend introducing a `PropertyGrid` component (or adding a `columns` prop to a new `PropertyPair` wrapper) to support side-by-side controls. 
+    - **Implementation:** Use `display: grid; grid-template-columns: 1fr 1fr; gap: 8px;`.
+    - **Labeling:** In 2-up mode, labels should be placed **above each input** but using a smaller font size (10px) than standard full-row labels to maintain vertical savings.
+    - **Recommended Pairings:**
+        - **Typography:** Font Size + Line Height; Font Weight + Font Style; Letter Spacing + Text Align.
+        - **Box Shadow:** X Offset + Y Offset; Blur + Spread.
+        - **Borders:** Border Width + Border Style.
+- **Sidebar Width Optimization:** The current 300px width is slightly narrow for 2-up controls with descriptive labels. 
+    - **Finding:** Truncation occurs on labels longer than 12-14 characters in a 50% column.
+    - **Recommendation:** Increase default sidebar width to **320px** or **340px**. This provides enough "breathing room" for 2-up `SpacingInput` components and `select` dropdowns without feeling overly bulky on standard 13-15" laptop screens.
+- **Structural Standardization:** `ThemePanel` headings currently use a custom 3-row layout that wastes space. These should be refactored to use the new `PropertyGrid` pattern, pairing Font Size + Line Height and Font Weight + Color in two rows instead of four.
+- **CollapsibleSection Badges:** Add a "count" badge to collapsed section headers (e.g., "Typography (3)") to indicate how many properties in that section have been modified from the theme default. This helps users quickly find overrides without expanding every section.
+- **Breadcrumb Orientation:** Add a navigation breadcrumb at the top of the "Selection" tab (e.g., `Region > Block > Content`). This clarifies the hierarchy and provides a quick way to select parent elements (Region) when a block is selected.
 
 ### Claude
 
@@ -172,6 +167,34 @@ The Arete property panels are built using Radix UI `Collapsible` components (`Co
 **Grid (Theme)**
 - Row: Column width | Column regions (label)
 - Row: Row height | Row regions (label)
+
+**Property pairing & 2-up layout (focus of this assignment):**
+
+1. **Component structure: prefer a new `PropertyPair`/`PropertyGrid` over `PropertyRow columns`.**
+   - `PropertyRow` is currently a strict label-above-input pattern (`PropertyRow.tsx`). Expanding it to multiple columns means changing both semantics and spacing for every row.
+   - A dedicated `PropertyPair`/`PropertyGrid` allows explicit usage only where it’s safe (Font Size + Line Height, etc.) and makes fallback-to-single-column behavior easy without touching existing rows.
+   - This also keeps per-control `label` elements intact for accessibility, rather than trying to share a single label across two inputs.
+
+2. **Label placement: keep labels *above* each input for paired rows.**
+   - Existing visual pattern is label-above-control (`.propLabel`). Mirroring this with small per-control labels keeps scanning consistent.
+   - Left-of-input labels compress the already narrow columns and are likely to truncate “Line height”, “Letter spacing”, etc. at the current sidebar width.
+   - Use reduced label styling (e.g., 10px text, 2px bottom margin) to reduce height while retaining clarity.
+
+3. **Minimum sidebar width for 2-up controls:**
+   - `CollapsibleContent` adds 12px side padding, leaving ~276px of content width at the current 300px sidebar.
+   - Two `SpacingInput` fields plus gap can fit at ~130–135px per column without truncation (input + unit selector).
+   - **Practical threshold:** allow 2-up at **≥280–300px** content width; below that, auto-stack to one column. This aligns with the current 240px minimum being too narrow for 2-up.
+
+4. **Pairing should be optional, not global.**
+   - Apply 2-up only where values are conceptually paired *and* typically edited together (Font Size + Line Height, X + Y offsets).
+   - Maintain single-column rows for longer controls (Font family, Text transform with 4 options, color pickers with RGBA toggle).
+   - For conditional controls (e.g., `showFontStyle`, `showTextAlign`), the pairing should gracefully collapse to a single column when the sibling isn’t rendered.
+
+5. **Concrete pairings for Arete (prioritized):**
+   - Typography: Font Size + Line Height; Font Weight + Font Style; Letter Spacing + Text Align.
+   - Box Shadow: X Offset + Y Offset; Blur + Spread.
+   - Borders: Border Width + Border Style (Color stays full width).
+   - When Section-specific controls get added later (Region layout): Align Items + Gap.
 
 ## Discovered Issues & Opportunities
 - **Empty State:** When no block or region is selected, the sidebar defaults to the Theme panel. While functional, it could benefit from a more welcoming "Welcome/Get Started" state or a quick-links section to common tasks.

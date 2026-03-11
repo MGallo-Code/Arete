@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { X } from "lucide-react";
 import type { ColorPalette } from "../../models";
 import { isPaletteVar, paletteKeyFromVar, resolvePaletteVar, PALETTE_VAR_MAP } from "../../utils/paletteUtils";
 import styles from "./editor.module.css";
@@ -69,7 +70,7 @@ export default function ColorPropRow({
               <span className={styles.inheritLabel}>{linkedKey}</span>
             )}
             <button className={styles.clearBtn} onClick={onClear} title="Clear" aria-label={`Clear ${label.toLowerCase()}`}>
-              ×
+              <X size={12} />
             </button>
           </>
         ) : (

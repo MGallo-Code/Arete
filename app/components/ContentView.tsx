@@ -38,22 +38,19 @@ export default function ContentView({ content, blockId, ancestorPath }: Props) {
         );
       }
 
-      if (isEmpty && editor) {
+      if (isEmpty) {
         return (
           <div
-            style={{
-              minHeight: "1.5em",
-              color: "#999",
-              fontStyle: "italic",
-              cursor: "pointer",
-            }}
-            onDoubleClick={(e) => {
-              e.stopPropagation();
-              editor.dispatch({ type: "START_EDITING", blockId, field: "content" });
-            }}
-          >
-            Click to edit
-          </div>
+            style={{ minHeight: "1em" }}
+            onDoubleClick={
+              editor
+                ? (e) => {
+                    e.stopPropagation();
+                    editor.dispatch({ type: "START_EDITING", blockId, field: "content" });
+                  }
+                : undefined
+            }
+          />
         );
       }
 
@@ -78,25 +75,7 @@ export default function ContentView({ content, blockId, ancestorPath }: Props) {
 
     case "image":
       if (!content.src || !content.src.trim()) {
-        return (
-          <div
-            style={{
-              minHeight: 60,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "#f5f5f5",
-              border: "1px dashed #ccc",
-              borderRadius: 4,
-              color: "#999",
-              fontSize: 12,
-              fontStyle: "italic",
-              ...content.style,
-            }}
-          >
-            Add image URL in sidebar
-          </div>
-        );
+        return <div style={{ minHeight: 20, ...content.style }} />;
       }
       return <img src={content.src} alt={content.alt} style={content.style} />;
 

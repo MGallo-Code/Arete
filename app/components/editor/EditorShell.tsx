@@ -46,14 +46,16 @@ function EditorInner({
   const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
   const [shortcutHelpOpen, setShortcutHelpOpen] = useState(false);
 
-  // Resizable sidebar
-  const [sidebarWidth, setSidebarWidth] = useState(() => {
-    if (typeof window !== "undefined") {
+  // Resizable sidebar — defer localStorage read to avoid hydration mismatch
+  const [sidebarWidth, setSidebarWidth] = useState(300);
+  const hydratedRef = useRef(false);
+  useEffect(() => {
+    if (!hydratedRef.current) {
+      hydratedRef.current = true;
       const saved = localStorage.getItem("arete-sidebar-width");
-      return saved ? parseInt(saved, 10) : 300;
+      if (saved) setSidebarWidth(parseInt(saved, 10));
     }
-    return 300;
-  });
+  }, []);
   const resizingRef = useRef(false);
   const startXRef = useRef(0);
   const startWidthRef = useRef(300);

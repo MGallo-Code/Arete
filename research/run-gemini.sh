@@ -1,40 +1,40 @@
 #!/bin/bash
-# Launch 5 Gemini CLI research agents in parallel
-# Run from project root: ./research/run-gemini.sh
+# Launch Gemini CLI research agents in parallel
+# Usage: ./research/run-gemini.sh prompt1.md prompt2.md ...
+#        ./research/run-gemini.sh research/prompts/wave3-*.md
+#
+# Each prompt file gets its own agent. AGENT_SECTION is auto-replaced with "Gemini".
+# If no args, runs the original 5 research prompts.
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT="$(dirname "$DIR")"
-
 cd "$PROJECT"
 
-echo "Launching 5 Gemini research agents..."
-echo "Results will be written to research/findings/"
+AGENT="Gemini"
+
+# Default to original prompts if no args
+if [ $# -eq 0 ]; then
+  set -- research/prompts/agent-*.md
+fi
+
+echo "Launching $# Gemini agent(s)..."
 echo ""
 
-# --yolo auto-approves file reads/writes so agents can work unattended
+PIDS=()
+for PROMPT_FILE in "$@"; do
+  if [ ! -f "$PROMPT_FILE" ]; then
+    echo "  SKIP: $PROMPT_FILE (not found)"
+    continue
+  fi
+  echo "  → $PROMPT_FILE"
+  gemini --yolo -p "$(sed "s/AGENT_SECTION/$AGENT/g" < "$PROMPT_FILE")" \
+    &
+  PIDS+=($!)
+done
 
-gemini --yolo -p "$(cat research/prompts/agent-1-inputs.md | sed 's/AGENT_SECTION/Gemini/g')" \
-  &
-PID1=$!
-
-gemini --yolo -p "$(cat research/prompts/agent-2-layout.md | sed 's/AGENT_SECTION/Gemini/g')" \
-  &
-PID2=$!
-
-gemini --yolo -p "$(cat research/prompts/agent-3-properties.md | sed 's/AGENT_SECTION/Gemini/g')" \
-  &
-PID3=$!
-
-gemini --yolo -p "$(cat research/prompts/agent-4-blocks.md | sed 's/AGENT_SECTION/Gemini/g')" \
-  &
-PID4=$!
-
-gemini --yolo -p "$(cat research/prompts/agent-5-visual.md | sed 's/AGENT_SECTION/Gemini/g')" \
-  &
-PID5=$!
-
-echo "Agent PIDs: $PID1 $PID2 $PID3 $PID4 $PID5"
+echo ""
+echo "Agent PIDs: ${PIDS[*]}"
 echo "Waiting for all agents to finish..."
-wait $PID1 $PID2 $PID3 $PID4 $PID5
+wait "${PIDS[@]}"
 echo ""
-echo "All Gemini agents complete. Check research/findings/ for results."
+echo "All Gemini agents complete."

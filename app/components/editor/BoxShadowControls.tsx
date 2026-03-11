@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { Style } from "../../models";
-import PropertyRow from "./PropertyRow";
 import UnitInput from "./UnitInput";
 import styles from "./editor.module.css";
 
@@ -143,44 +142,48 @@ export default function BoxShadowControls({ style, updateStyle, clearStyle }: Bo
               />
             </div>
           </div>
-          <PropertyRow label="Color">
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              {useRgba ? (
-                <input
-                  type="text"
-                  className={styles.propInput}
-                  style={{ width: "auto", flex: 1 }}
-                  value={parsed?.color ?? "rgba(0,0,0,0.15)"}
-                  placeholder="rgba(0,0,0,0.15)"
-                  onChange={(e) => update({ color: e.target.value })}
-                />
-              ) : (
-                <input
-                  type="color"
-                  className={styles.colorInput}
-                  value={colorToHex(parsed?.color ?? "#000000")}
-                  onChange={(e) => update({ color: e.target.value })}
-                />
-              )}
-              <button
-                className={styles.advancedToggle}
-                onClick={() => setUseRgba((p) => !p)}
-                title={useRgba ? "Switch to color picker" : "Switch to text input (for rgba/hsla)"}
-              >
-                {useRgba ? "picker" : "rgba"}
-              </button>
+          <div className={styles.propertyPair}>
+            <div>
+              <div className={styles.propertyPairLabel}>Color</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                {useRgba ? (
+                  <input
+                    type="text"
+                    className={styles.propInput}
+                    style={{ width: "auto", flex: 1 }}
+                    value={parsed?.color ?? "rgba(0,0,0,0.15)"}
+                    placeholder="rgba(0,0,0,0.15)"
+                    onChange={(e) => update({ color: e.target.value })}
+                  />
+                ) : (
+                  <input
+                    type="color"
+                    className={styles.colorInput}
+                    value={colorToHex(parsed?.color ?? "#000000")}
+                    onChange={(e) => update({ color: e.target.value })}
+                  />
+                )}
+                <button
+                  className={styles.advancedToggle}
+                  onClick={() => setUseRgba((p) => !p)}
+                  title={useRgba ? "Switch to color picker" : "Switch to text input (for rgba/hsla)"}
+                >
+                  {useRgba ? "picker" : "rgba"}
+                </button>
+              </div>
             </div>
-          </PropertyRow>
-          <PropertyRow label="Inset">
-            <label style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer" }}>
-              <input
-                type="checkbox"
-                checked={parsed?.inset ?? false}
-                onChange={(e) => update({ inset: e.target.checked })}
-              />
-              <span className={styles.inheritLabel}>Inset shadow</span>
-            </label>
-          </PropertyRow>
+            <div>
+              <div className={styles.propertyPairLabel}>Inset</div>
+              <label style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer", paddingTop: 4 }}>
+                <input
+                  type="checkbox"
+                  checked={parsed?.inset ?? false}
+                  onChange={(e) => update({ inset: e.target.checked })}
+                />
+                <span className={styles.inheritLabel}>Inset shadow</span>
+              </label>
+            </div>
+          </div>
           <div className={styles.propBtnRow}>
             <button
               className={styles.propBtn}

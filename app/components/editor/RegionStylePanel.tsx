@@ -78,31 +78,35 @@ export default function RegionStylePanel() {
 
       {/* Layout */}
       <CollapsibleSection panelId="region" title="Layout" icon={<IconLayout />}>
-        <PropertyRow label="Align items">
-          <select
-            className={styles.propSelect}
-            value={(regionStyle.alignItems as string) ?? ""}
-            onChange={(e) => updateStyle({ alignItems: e.target.value || undefined })}
-          >
-            <option value="">Default</option>
-            <option value="flex-start">Top</option>
-            <option value="center">Center</option>
-            <option value="flex-end">Bottom</option>
-            <option value="stretch">Stretch</option>
-          </select>
-        </PropertyRow>
-        <PropertyRow label="Gap">
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <UnitInput
-              value={(regionStyle.gap as string) ?? ""}
-              placeholder="0"
-              onChange={(v) => updateStyle({ gap: v })}
-            />
-            {regionStyle.gap && (
-              <button className={styles.clearBtn} onClick={() => clearStyle("gap")} title="Clear"><X size={12} /></button>
-            )}
+        <div className={styles.propertyPair}>
+          <div>
+            <div className={styles.propertyPairLabel}>Align items</div>
+            <select
+              className={styles.propSelect}
+              value={(regionStyle.alignItems as string) ?? ""}
+              onChange={(e) => updateStyle({ alignItems: e.target.value || undefined })}
+            >
+              <option value="">Default</option>
+              <option value="flex-start">Top</option>
+              <option value="center">Center</option>
+              <option value="flex-end">Bottom</option>
+              <option value="stretch">Stretch</option>
+            </select>
           </div>
-        </PropertyRow>
+          <div>
+            <div className={styles.propertyPairLabel}>Gap</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <UnitInput
+                value={(regionStyle.gap as string) ?? ""}
+                placeholder="0"
+                onChange={(v) => updateStyle({ gap: v })}
+              />
+              {regionStyle.gap && (
+                <button className={styles.clearBtn} onClick={() => clearStyle("gap")} title="Clear"><X size={12} /></button>
+              )}
+            </div>
+          </div>
+        </div>
       </CollapsibleSection>
 
       {/* Box Model */}

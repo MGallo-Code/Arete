@@ -123,8 +123,8 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
   return (
     <>
       {/* Unified border row */}
-      <div className={styles.propRow}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      <div className={styles.propRow} style={{ marginBottom: 0 }}>
+        <div className={styles.borderUnifiedRow}>
           <UnitInput
             value={unified.mixed ? "" : unified.width}
             placeholder={unified.mixed ? "mixed" : "0"}
@@ -250,11 +250,11 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
       )}
 
       {/* Border Radius */}
-      <div className={styles.themeSectionTitle} style={{ marginTop: 8 }}>Radius</div>
+      <div className={styles.themeSectionTitle} style={{ marginTop: 14 }}>Radius</div>
 
       {/* Unified radius row */}
-      <div className={styles.propRow}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      <div className={styles.propRow} style={{ marginBottom: 4 }}>
+        <div className={styles.radiusUnifiedRow}>
           <UnitInput
             value={unifiedRadius.mixed ? "" : unifiedRadius.value}
             placeholder={unifiedRadius.mixed ? "mixed" : "0"}
@@ -285,34 +285,54 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
         Per corner {showPerCorner ? "\u25BE" : "\u25B8"}
       </button>
 
-      {/* Per-corner grid */}
+      {/* Per-corner paired rows */}
       {showPerCorner && (
-        <div className={styles.bordersGrid}>
-          {BORDER_CORNERS.map((corner) => {
-            const key = `border${corner}Radius` as keyof typeof style;
-            const val = (style[key] as string) ?? "";
-            return [
-              <span key={`${corner}-label`} className={styles.borderSideLabel}>
-                {corner.replace(/([A-Z])/g, " $1").trim()}
-              </span>,
-              <UnitInput
-                key={`${corner}-input`}
-                compact
-                value={val}
-                placeholder="0"
-                onChange={(v) => updateStyle({ [key]: v })}
-              />,
-              <span key={`${corner}-spacer`} />,
-              val ? (
-                <button key={`${corner}-clear`} className={styles.clearBtn} onClick={() => clearStyle(key)} title="Clear" aria-label={`Clear ${corner.replace(/([A-Z])/g, " $1").trim().toLowerCase()} radius`}>
-                  <X size={12} />
-                </button>
-              ) : (
-                <span key={`${corner}-none`} />
-              ),
-            ];
+        <>
+          {([["TopLeft", "TopRight"], ["BottomLeft", "BottomRight"]] as const).map(([left, right]) => {
+            const leftKey = `border${left}Radius` as keyof typeof style;
+            const rightKey = `border${right}Radius` as keyof typeof style;
+            const leftVal = (style[leftKey] as string) ?? "";
+            const rightVal = (style[rightKey] as string) ?? "";
+            return (
+              <div key={`${left}-${right}`} className={styles.propertyPair}>
+                <div>
+                  <div className={styles.propertyPairLabel}>
+                    {left.replace(/([A-Z])/g, " $1").trim()}
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <UnitInput
+                      value={leftVal}
+                      placeholder="0"
+                      onChange={(v) => updateStyle({ [leftKey]: v })}
+                    />
+                    {leftVal && (
+                      <button className={styles.clearBtn} onClick={() => clearStyle(leftKey)} title="Clear" aria-label={`Clear ${left.replace(/([A-Z])/g, " $1").trim().toLowerCase()} radius`}>
+                        <X size={12} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <div className={styles.propertyPairLabel}>
+                    {right.replace(/([A-Z])/g, " $1").trim()}
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <UnitInput
+                      value={rightVal}
+                      placeholder="0"
+                      onChange={(v) => updateStyle({ [rightKey]: v })}
+                    />
+                    {rightVal && (
+                      <button className={styles.clearBtn} onClick={() => clearStyle(rightKey)} title="Clear" aria-label={`Clear ${right.replace(/([A-Z])/g, " $1").trim().toLowerCase()} radius`}>
+                        <X size={12} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
           })}
-        </div>
+        </>
       )}
     </>
   );

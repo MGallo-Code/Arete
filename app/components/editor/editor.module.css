@@ -1371,13 +1371,27 @@
 .advancedToggle {
   display: inline-block;
   padding: 0;
-  margin: 2px 0 6px;
+  margin: 0;
   border: none;
   background: transparent;
   font-size: 10px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   color: var(--editor-muted-text-lighter);
   cursor: pointer;
+}
+
+.borderUnifiedRow {
+  display: grid;
+  grid-template-columns: 80px min-content min-content min-content;
+  gap: 6px;
+  align-items: center;
+}
+
+.radiusUnifiedRow {
+  display: grid;
+  grid-template-columns: 80px min-content;
+  gap: 6px;
+  align-items: center;
 }
 
 .advancedToggle:hover {
@@ -1844,14 +1858,14 @@
 .unitInput {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   flex: 1;
 }
 
 .unitInputCompact {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   max-width: 56px;
   justify-self: center;
 }
@@ -1935,26 +1949,30 @@
 }
 
 .unitInputSteppers {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
   display: flex;
   flex-direction: column;
+  width: 0;
+  flex-shrink: 0;
+  border-left: none;
   opacity: 0;
-  transition: opacity 0.1s;
+  transition: width 0.1s, opacity 0.1s;
   pointer-events: none;
+  overflow: hidden;
 }
 
 .unitInput:hover .unitInputSteppers,
 .unitInputCompact:hover .unitInputSteppers,
 .unitInputSteppers:focus-within,
 .unitInputSteppersVisible {
+  width: 16px;
+  border-left: 1px solid var(--color-border);
   opacity: 1;
   pointer-events: auto;
 }
 
 .unitInputSteppersAlways .unitInputSteppers {
+  width: 16px;
+  border-left: 1px solid var(--color-border);
   opacity: 1;
   pointer-events: auto;
 }
@@ -1969,18 +1987,19 @@
   background: var(--color-bg-subtle);
   color: var(--editor-muted-text);
   cursor: pointer;
-  padding: 0 3px;
+  padding: 0;
   font-size: 8px;
   line-height: 1;
+  width: 100%;
 }
 
 .unitInputStepUp {
-  border-radius: 0 4px 0 0;
+  border-radius: 0;
   border-bottom: 0.5px solid var(--color-border);
 }
 
 .unitInputStepDown {
-  border-radius: 0 0 4px 0;
+  border-radius: 0;
 }
 
 .unitInputStepUp:hover,
@@ -1988,6 +2007,7 @@
   background: var(--color-border);
   color: var(--color-fg);
 }
+
 
 .unitInputDropdown {
   position: absolute;

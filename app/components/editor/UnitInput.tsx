@@ -249,18 +249,6 @@ export default function UnitInput({
           onKeyDown={handleKeyDown}
           {...(label ? { "aria-label": label } : {})}
         />
-        {!isKeyword && (
-          <button
-            type="button"
-            className={styles.unitInputUnitBtn}
-            onClick={() => setUnitMenuOpen(!unitMenuOpen)}
-            onBlur={handleUnitMenuBlur}
-            tabIndex={-1}
-            aria-label="Change unit"
-          >
-            {displayUnit}
-          </button>
-        )}
         {showSteppers !== "never" && !isKeyword && (
           <div className={`${styles.unitInputSteppers} ${showSteppers === "always" ? styles.unitInputSteppersVisible : ""}`}>
             <button
@@ -284,6 +272,18 @@ export default function UnitInput({
               <ChevronDown size={10} />
             </button>
           </div>
+        )}
+        {!isKeyword && (
+          <button
+            type="button"
+            className={styles.unitInputUnitBtn}
+            onClick={() => setUnitMenuOpen(!unitMenuOpen)}
+            onBlur={handleUnitMenuBlur}
+            tabIndex={-1}
+            aria-label="Change unit"
+          >
+            {displayUnit}
+          </button>
         )}
         {unitMenuOpen && (
           <div className={styles.unitInputDropdown}>
@@ -324,18 +324,6 @@ export default function UnitInput({
         onKeyDown={handleKeyDown}
         {...(label ? { "aria-label": label } : {})}
       />
-      {!isKeyword && (
-        <button
-          type="button"
-          className={styles.unitInputUnitBtnFull}
-          onClick={() => setUnitMenuOpen(!unitMenuOpen)}
-          onBlur={handleUnitMenuBlur}
-          tabIndex={-1}
-          aria-label="Change unit"
-        >
-          {displayUnit}
-        </button>
-      )}
       {showSteppers !== "never" && !isKeyword && (
         <div className={`${styles.unitInputSteppers} ${showSteppers === "always" ? styles.unitInputSteppersVisible : ""}`}>
           <button
@@ -359,6 +347,18 @@ export default function UnitInput({
             <ChevronDown size={10} />
           </button>
         </div>
+      )}
+      {!isKeyword && (
+        <button
+          type="button"
+          className={styles.unitInputUnitBtnFull}
+          onClick={() => setUnitMenuOpen(!unitMenuOpen)}
+          onBlur={handleUnitMenuBlur}
+          tabIndex={-1}
+          aria-label="Change unit"
+        >
+          {displayUnit}
+        </button>
       )}
       {unitMenuOpen && (
         <div className={styles.unitInputDropdown}>

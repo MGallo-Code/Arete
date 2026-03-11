@@ -184,60 +184,68 @@ export default function TypographyControls({
         )}
       </div>
 
-      {/* Text transform */}
-      {showTextTransform && (
-        <PropertyRow label="Text transform">
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <select
-              className={styles.propSelect}
-              value={(style.textTransform as string) ?? "none"}
-              onChange={(e) => {
-                const val = e.target.value;
-                updateStyle({ textTransform: val === "none" ? undefined : val });
-              }}
-            >
-              {TEXT_TRANSFORM_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-            {style.textTransform && (
-              <button className={styles.clearBtn} onClick={() => clearStyle("textTransform")} title="Clear"><X size={12} /></button>
-            )}
-          </div>
-        </PropertyRow>
-      )}
-
-      {/* Text decoration */}
-      {showTextDecoration && (
-        <PropertyRow label="Text decoration">
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div className={styles.toggleGroup}>
-              <button
-                className={`${styles.toggleBtn} ${style.textDecoration === "none" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ textDecoration: "none" })}
-              >
-                None
-              </button>
-              <button
-                className={`${styles.toggleBtn} ${style.textDecoration === "underline" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ textDecoration: "underline" })}
-              >
-                Underline
-              </button>
-              <button
-                className={`${styles.toggleBtn} ${style.textDecoration === "line-through" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ textDecoration: "line-through" })}
-              >
-                Strike
-              </button>
+      {/* Text transform + Text decoration paired */}
+      {(showTextTransform || showTextDecoration) && (
+        <div className={styles.propertyPair}>
+          {showTextTransform && (
+            <div>
+              <div className={styles.propertyPairLabel}>Transform</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <select
+                  className={styles.propSelect}
+                  style={{ flex: 1 }}
+                  value={(style.textTransform as string) ?? "none"}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    updateStyle({ textTransform: val === "none" ? undefined : val });
+                  }}
+                >
+                  {TEXT_TRANSFORM_OPTIONS.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+                {style.textTransform && (
+                  <button className={styles.clearBtn} onClick={() => clearStyle("textTransform")} title="Clear"><X size={12} /></button>
+                )}
+              </div>
             </div>
-            {style.textDecoration ? (
-              <button className={styles.clearBtn} onClick={() => clearStyle("textDecoration")} title="Clear"><X size={12} /></button>
-            ) : (
-              <span className={styles.inheritLabel}>Inherit</span>
-            )}
-          </div>
-        </PropertyRow>
+          )}
+          {showTextDecoration && (
+            <div>
+              <div className={styles.propertyPairLabel}>Decoration</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <div className={styles.toggleGroup}>
+                  <button
+                    className={`${styles.toggleBtn} ${style.textDecoration === "none" ? styles.toggleActive : ""}`}
+                    onClick={() => updateStyle({ textDecoration: "none" })}
+                    title="None"
+                  >
+                    N
+                  </button>
+                  <button
+                    className={`${styles.toggleBtn} ${style.textDecoration === "underline" ? styles.toggleActive : ""}`}
+                    onClick={() => updateStyle({ textDecoration: "underline" })}
+                    title="Underline"
+                  >
+                    U
+                  </button>
+                  <button
+                    className={`${styles.toggleBtn} ${style.textDecoration === "line-through" ? styles.toggleActive : ""}`}
+                    onClick={() => updateStyle({ textDecoration: "line-through" })}
+                    title="Strikethrough"
+                  >
+                    S
+                  </button>
+                </div>
+                {style.textDecoration ? (
+                  <button className={styles.clearBtn} onClick={() => clearStyle("textDecoration")} title="Clear"><X size={12} /></button>
+                ) : (
+                  <span className={styles.inheritLabel}>Inherit</span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       )}
     </>
   );

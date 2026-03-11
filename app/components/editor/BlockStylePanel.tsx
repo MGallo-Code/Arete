@@ -172,34 +172,77 @@ export default function BlockStylePanel() {
 
       {/* Layout */}
       <CollapsibleSection panelId="block" title="Layout" icon={<IconLayout />}>
-        <PropertyRow label="Width" isOverridden={!!style.width} onReset={() => clearStyle("width")}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div className={styles.toggleGroup}>
-              <button
-                className={`${styles.toggleBtn} ${!style.width || style.width === "100%" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ width: "100%" })}
-              >
-                Fill
-              </button>
-              <button
-                className={`${styles.toggleBtn} ${style.width === "fit-content" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ width: "fit-content" })}
-              >
-                Fit
-              </button>
-              <button
-                className={`${styles.toggleBtn} ${style.width && style.width !== "100%" && style.width !== "fit-content" ? styles.toggleActive : ""}`}
-                onClick={() => {
-                  if (!style.width || style.width === "100%" || style.width === "fit-content") {
-                    updateStyle({ width: "200px" });
-                  }
-                }}
-              >
-                Custom
-              </button>
+        <div className={styles.propertyPair}>
+          <div>
+            <div className={styles.propertyPairLabel}>Width</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div className={styles.toggleGroup}>
+                <button
+                  className={`${styles.toggleBtn} ${!style.width || style.width === "100%" ? styles.toggleActive : ""}`}
+                  onClick={() => updateStyle({ width: "100%" })}
+                >
+                  Fill
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${style.width === "fit-content" ? styles.toggleActive : ""}`}
+                  onClick={() => updateStyle({ width: "fit-content" })}
+                >
+                  Fit
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${style.width && style.width !== "100%" && style.width !== "fit-content" ? styles.toggleActive : ""}`}
+                  onClick={() => {
+                    if (!style.width || style.width === "100%" || style.width === "fit-content") {
+                      updateStyle({ width: "200px" });
+                    }
+                  }}
+                >
+                  Custom
+                </button>
+              </div>
             </div>
           </div>
-        </PropertyRow>
+          <div>
+            <div className={styles.propertyPairLabel}>Alignment</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div className={styles.toggleGroup}>
+                <button
+                  className={`${styles.toggleBtn} ${!style.alignSelf || style.alignSelf === "flex-start" ? styles.toggleActive : ""}`}
+                  onClick={() => updateStyle({ alignSelf: "flex-start" })}
+                  title="Left"
+                >
+                  L
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${style.alignSelf === "center" ? styles.toggleActive : ""}`}
+                  onClick={() => updateStyle({ alignSelf: "center" })}
+                  title="Center"
+                >
+                  C
+                </button>
+                <button
+                  className={`${styles.toggleBtn} ${style.alignSelf === "flex-end" ? styles.toggleActive : ""}`}
+                  onClick={() => updateStyle({ alignSelf: "flex-end" })}
+                  title="Right"
+                >
+                  R
+                </button>
+              </div>
+              {(style.width || style.alignSelf) && (
+                <button
+                  className={styles.clearBtn}
+                  onClick={() => {
+                    clearStyle("width");
+                    clearStyle("alignSelf");
+                  }}
+                  title="Reset layout"
+                >
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
         {style.width && style.width !== "100%" && style.width !== "fit-content" && (
           <PropertyRow label="Custom width">
             <UnitInput
@@ -209,45 +252,6 @@ export default function BlockStylePanel() {
             />
           </PropertyRow>
         )}
-        <PropertyRow label="Alignment" isOverridden={!!style.alignSelf} onReset={() => clearStyle("alignSelf")}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div className={styles.toggleGroup}>
-              <button
-                className={`${styles.toggleBtn} ${!style.alignSelf || style.alignSelf === "flex-start" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ alignSelf: "flex-start" })}
-                title="Left"
-              >
-                L
-              </button>
-              <button
-                className={`${styles.toggleBtn} ${style.alignSelf === "center" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ alignSelf: "center" })}
-                title="Center"
-              >
-                C
-              </button>
-              <button
-                className={`${styles.toggleBtn} ${style.alignSelf === "flex-end" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ alignSelf: "flex-end" })}
-                title="Right"
-              >
-                R
-              </button>
-            </div>
-            {(style.width || style.alignSelf) && (
-              <button
-                className={styles.clearBtn}
-                onClick={() => {
-                  clearStyle("width");
-                  clearStyle("alignSelf");
-                }}
-                title="Reset layout"
-              >
-                <X size={12} />
-              </button>
-            )}
-          </div>
-        </PropertyRow>
       </CollapsibleSection>
 
       {/* Box Model */}

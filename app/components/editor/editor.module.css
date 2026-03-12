@@ -1065,7 +1065,7 @@
     "left middle right" 1fr
     ".    bottom ." 24px
     / minmax(28px, 40px) 1fr minmax(28px, 40px);
-  gap: 0;
+  gap: 0 4px;
   padding: 4px;
   background: var(--editor-box-margin-bg);
   border: 1.5px solid var(--editor-box-margin-border);
@@ -1082,7 +1082,7 @@
     "left middle right" 1fr
     ".    bottom ." 24px
     / minmax(28px, 40px) 1fr minmax(28px, 40px);
-  gap: 0;
+  gap: 0 4px;
   padding: 4px;
   background: var(--editor-box-padding-bg);
   border: 1.5px solid var(--editor-box-padding-border);
@@ -1917,16 +1917,8 @@
   overflow: hidden;
 }
 
-.unitInputCompact .unitInputSteppers {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 1;
-  border-left: 1px solid var(--color-border);
-  background: var(--color-bg-subtle);
-  border-radius: 0 2px 2px 0;
-}
+/* Compact steppers stay in flow — the container's overflow:hidden
+   clips them and the input field shrinks via flex to absorb the width. */
 
 .unitInput:hover .unitInputSteppers,
 .unitInputCompact:hover .unitInputSteppers,

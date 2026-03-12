@@ -114,6 +114,14 @@
   padding: 0 0 8px;
 }
 
+/* Radix ScrollArea injects an inner div with display:table which
+   expands to content width instead of constraining to parent.
+   Override to prevent sidebar content from overflowing. */
+.sidebarBody > div {
+  display: block !important;
+  min-width: 0 !important;
+}
+
 .scrollbar {
   display: flex;
   user-select: none;
@@ -528,6 +536,7 @@
 
 .propSelect {
   width: 100%;
+  min-width: 0;
   padding: 5px 8px;
   font-size: var(--editor-font-base);
   border: 1px solid var(--color-border);
@@ -807,13 +816,15 @@
   border: 1px solid var(--color-border);
   border-radius: 5px;
   overflow: hidden;
+  min-width: 0;
 }
 
 .toggleBtn {
-  padding: 4px 10px;
+  padding: 4px 8px;
   font-size: var(--editor-font-sm);
   border: none;
   background: var(--color-bg);
+  min-width: 0;
   color: var(--color-fg);
   cursor: pointer;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -1019,29 +1030,31 @@
 .boxModel {
   margin: 4px auto 8px;
   max-width: 320px;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .boxModelAllRows {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 12px;
-  margin-bottom: 6px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .boxModelAllRow {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-  min-width: 100px;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .boxModelAllLabel {
-  font-size: var(--editor-font-xs);
+  font-size: var(--editor-font-sm);
   color: var(--editor-muted-text);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
   white-space: nowrap;
-  width: 70px;
-  flex-shrink: 0;
 }
 
 .boxModelMargin {
@@ -1586,7 +1599,7 @@
   margin: 0;
   border: none;
   border-radius: 0;
-  background: var(--editor-section-bg);
+  background: var(--color-bg);
   font-size: var(--editor-font-base);
   font-weight: 600;
   color: var(--color-fg);
@@ -1601,7 +1614,7 @@
 }
 
 .collapsibleTrigger:hover {
-  background: var(--editor-section-bg-hover);
+  background: var(--color-bg-subtle);
   color: var(--editor-accent);
 }
 
@@ -1612,6 +1625,7 @@
 
 [data-state="open"] > .collapsibleTrigger {
   border-bottom: 1px solid var(--color-border);
+  margin-bottom: -1px;
 }
 
 .collapsibleChevron {
@@ -1652,6 +1666,7 @@
 .collapsibleContent {
   overflow: hidden;
   padding: 8px 12px;
+  min-width: 0;
 }
 
 .collapsibleContent[data-state="closed"] {
@@ -1796,6 +1811,7 @@
   display: flex;
   align-items: stretch;
   flex: 1;
+  min-width: 0;
 }
 
 .unitInputCompact {
@@ -1804,6 +1820,7 @@
   align-items: stretch;
   max-width: 56px;
   justify-self: center;
+  overflow: hidden;
 }
 
 .unitInputField {
@@ -1894,6 +1911,14 @@
   transition: width 0.1s, opacity 0.1s;
   pointer-events: none;
   overflow: hidden;
+}
+
+.unitInputCompact .unitInputSteppers {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
 }
 
 .unitInput:hover .unitInputSteppers,
@@ -2001,9 +2026,14 @@
 
 .propertyPair {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 8px;
   margin-bottom: 10px;
+}
+
+.propertyPair > * {
+  min-width: 0;
+  overflow: hidden;
 }
 
 .propertyPairLabel {

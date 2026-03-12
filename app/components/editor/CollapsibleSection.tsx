@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import styles from "./editor.module.css";
 
@@ -33,7 +33,16 @@ export default function CollapsibleSection({
   children,
 }: CollapsibleSectionProps) {
   const key = panelId ? `${panelId}::${title}` : title;
-  const [open, setOpen] = useState(() => sectionState.get(key) ?? defaultOpen);
+  // Always use defaultOpen for SSR/initial render to avoid hydration mismatch.
+  // Restore persisted state after mount.
+  const [open, setOpen] = useState(defaultOpen);
+
+  useEffect(() => {
+    const saved = sectionState.get(key);
+    if (saved != null && saved !== defaultOpen) {
+      setOpen(saved);
+    }
+  }, [key, defaultOpen]);
 
   const handleChange = (value: boolean) => {
     sectionState.set(key, value);

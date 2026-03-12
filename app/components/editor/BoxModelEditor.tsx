@@ -90,7 +90,6 @@ export default function BoxModelEditor({
           <div className={styles.boxModelAllRow}>
             <span className={styles.boxModelAllLabel}>All padding</span>
             <UnitInput
-              compact
               value={unifiedPadding.mixed ? "" : unifiedPadding.value}
               placeholder={unifiedPadding.mixed ? "mixed" : "0"}
               onChange={setAllPadding}
@@ -109,7 +108,6 @@ export default function BoxModelEditor({
         <div className={styles.boxModelAllRow}>
           <span className={styles.boxModelAllLabel}>All margin</span>
           <UnitInput
-            compact
             value={unifiedMargin.mixed ? "" : unifiedMargin.value}
             placeholder={unifiedMargin.mixed ? "mixed" : "0"}
             onChange={setAllMargins}
@@ -118,7 +116,6 @@ export default function BoxModelEditor({
         <div className={styles.boxModelAllRow}>
           <span className={styles.boxModelAllLabel}>All padding</span>
           <UnitInput
-            compact
             value={unifiedPadding.mixed ? "" : unifiedPadding.value}
             placeholder={unifiedPadding.mixed ? "mixed" : "0"}
             onChange={setAllPadding}

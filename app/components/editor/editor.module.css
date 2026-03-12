@@ -1064,7 +1064,7 @@
     ".    top    ." 24px
     "left middle right" 1fr
     ".    bottom ." 24px
-    / 40px 1fr 40px;
+    / minmax(28px, 40px) 1fr minmax(28px, 40px);
   gap: 0;
   padding: 4px;
   background: var(--editor-box-margin-bg);
@@ -1081,7 +1081,7 @@
     ".    top    ." 24px
     "left middle right" 1fr
     ".    bottom ." 24px
-    / 40px 1fr 40px;
+    / minmax(28px, 40px) 1fr minmax(28px, 40px);
   gap: 0;
   padding: 4px;
   background: var(--editor-box-padding-bg);
@@ -1227,6 +1227,8 @@
 
 .spacingCompactNum {
   width: 28px;
+  min-width: 0;
+  flex: 1;
   padding: 2px;
   font-size: var(--editor-font-xs);
   font-family: var(--font-geist-mono), monospace;
@@ -1819,6 +1821,7 @@
   display: flex;
   align-items: stretch;
   max-width: 56px;
+  min-width: 0;
   justify-self: center;
   overflow: hidden;
 }
@@ -1887,7 +1890,8 @@
   -webkit-appearance: none;
   text-align: center;
   white-space: nowrap;
-  min-width: 20px;
+  min-width: 14px;
+  flex-shrink: 1;
 }
 
 .unitInputUnitBtn:hover,
@@ -1919,6 +1923,9 @@
   top: 0;
   bottom: 0;
   z-index: 1;
+  border-left: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+  border-radius: 0 2px 2px 0;
 }
 
 .unitInput:hover .unitInputSteppers,

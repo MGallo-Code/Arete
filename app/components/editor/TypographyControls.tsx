@@ -95,13 +95,17 @@ export default function TypographyControls({
             <div className={styles.toggleGroup}>
               <button
                 className={`${styles.toggleBtn} ${!style.fontWeight || style.fontWeight === "normal" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ fontWeight: "normal" })}
+                onClick={() => {
+                  if (style.fontWeight && style.fontWeight !== "normal") updateStyle({ fontWeight: "normal" });
+                }}
               >
                 N
               </button>
               <button
                 className={`${styles.toggleBtn} ${style.fontWeight === "bold" ? styles.toggleActive : ""}`}
-                onClick={() => updateStyle({ fontWeight: "bold" })}
+                onClick={() => {
+                  if (style.fontWeight !== "bold") updateStyle({ fontWeight: "bold" });
+                }}
               >
                 B
               </button>
@@ -120,13 +124,17 @@ export default function TypographyControls({
               <div className={styles.toggleGroup}>
                 <button
                   className={`${styles.toggleBtn} ${!style.fontStyle || style.fontStyle === "normal" ? styles.toggleActive : ""}`}
-                  onClick={() => updateStyle({ fontStyle: "normal" })}
+                  onClick={() => {
+                    if (style.fontStyle && style.fontStyle !== "normal") updateStyle({ fontStyle: "normal" });
+                  }}
                 >
                   N
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${style.fontStyle === "italic" ? styles.toggleActive : ""}`}
-                  onClick={() => updateStyle({ fontStyle: "italic" })}
+                  onClick={() => {
+                    if (style.fontStyle !== "italic") updateStyle({ fontStyle: "italic" });
+                  }}
                 >
                   I
                 </button>
@@ -169,7 +177,9 @@ export default function TypographyControls({
                   <button
                     key={align}
                     className={`${styles.toggleBtn} ${style.textAlign === align ? styles.toggleActive : ""}`}
-                    onClick={() => updateStyle({ textAlign: align })}
+                    onClick={() => {
+                      if (style.textAlign !== align) updateStyle({ textAlign: align });
+                    }}
                     title={align}
                   >
                     {align[0].toUpperCase()}
@@ -217,21 +227,27 @@ export default function TypographyControls({
                 <div className={styles.toggleGroup}>
                   <button
                     className={`${styles.toggleBtn} ${style.textDecoration === "none" ? styles.toggleActive : ""}`}
-                    onClick={() => updateStyle({ textDecoration: "none" })}
+                    onClick={() => {
+                      if (style.textDecoration !== "none") updateStyle({ textDecoration: "none" });
+                    }}
                     title="None"
                   >
                     N
                   </button>
                   <button
                     className={`${styles.toggleBtn} ${style.textDecoration === "underline" ? styles.toggleActive : ""}`}
-                    onClick={() => updateStyle({ textDecoration: "underline" })}
+                    onClick={() => {
+                      if (style.textDecoration !== "underline") updateStyle({ textDecoration: "underline" });
+                    }}
                     title="Underline"
                   >
                     U
                   </button>
                   <button
                     className={`${styles.toggleBtn} ${style.textDecoration === "line-through" ? styles.toggleActive : ""}`}
-                    onClick={() => updateStyle({ textDecoration: "line-through" })}
+                    onClick={() => {
+                      if (style.textDecoration !== "line-through") updateStyle({ textDecoration: "line-through" });
+                    }}
                     title="Strikethrough"
                   >
                     S

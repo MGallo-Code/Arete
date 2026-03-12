@@ -141,7 +141,10 @@ export default function RegionStylePanel() {
       {/* Box Shadow */}
       <CollapsibleSection panelId="region" title="Box Shadow" icon={<IconBoxShadow />}>
         <BoxShadowControls style={regionStyle} updateStyle={updateStyle} clearStyle={clearStyle} />
-        {/* Opacity */}
+      </CollapsibleSection>
+
+      {/* Opacity */}
+      <CollapsibleSection panelId="region" title="Opacity" icon={<IconColors />}>
         <PropertyRow label="Opacity">
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <input

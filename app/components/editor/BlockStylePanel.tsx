@@ -179,13 +179,17 @@ export default function BlockStylePanel() {
               <div className={styles.toggleGroup}>
                 <button
                   className={`${styles.toggleBtn} ${!style.width || style.width === "100%" ? styles.toggleActive : ""}`}
-                  onClick={() => updateStyle({ width: "100%" })}
+                  onClick={() => {
+                    if (style.width && style.width !== "100%") updateStyle({ width: "100%" });
+                  }}
                 >
                   Fill
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${style.width === "fit-content" ? styles.toggleActive : ""}`}
-                  onClick={() => updateStyle({ width: "fit-content" })}
+                  onClick={() => {
+                    if (style.width !== "fit-content") updateStyle({ width: "fit-content" });
+                  }}
                 >
                   Fit
                 </button>
@@ -208,21 +212,27 @@ export default function BlockStylePanel() {
               <div className={styles.toggleGroup}>
                 <button
                   className={`${styles.toggleBtn} ${!style.alignSelf || style.alignSelf === "flex-start" ? styles.toggleActive : ""}`}
-                  onClick={() => updateStyle({ alignSelf: "flex-start" })}
+                  onClick={() => {
+                    if (style.alignSelf && style.alignSelf !== "flex-start") updateStyle({ alignSelf: "flex-start" });
+                  }}
                   title="Left"
                 >
                   L
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${style.alignSelf === "center" ? styles.toggleActive : ""}`}
-                  onClick={() => updateStyle({ alignSelf: "center" })}
+                  onClick={() => {
+                    if (style.alignSelf !== "center") updateStyle({ alignSelf: "center" });
+                  }}
                   title="Center"
                 >
                   C
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${style.alignSelf === "flex-end" ? styles.toggleActive : ""}`}
-                  onClick={() => updateStyle({ alignSelf: "flex-end" })}
+                  onClick={() => {
+                    if (style.alignSelf !== "flex-end") updateStyle({ alignSelf: "flex-end" });
+                  }}
                   title="Right"
                 >
                   R
@@ -232,8 +242,15 @@ export default function BlockStylePanel() {
                 <button
                   className={styles.clearBtn}
                   onClick={() => {
-                    clearStyle("width");
-                    clearStyle("alignSelf");
+                    // Clear both in a single dispatch to create one undo entry
+                    const newStyle = { ...style };
+                    delete (newStyle as Record<string, unknown>).width;
+                    delete (newStyle as Record<string, unknown>).alignSelf;
+                    dispatch({
+                      type: "SET_BLOCK_STYLE",
+                      blockId: selectedBlockId,
+                      style: Object.keys(newStyle).length > 0 ? newStyle : undefined,
+                    });
                   }}
                   title="Reset layout"
                 >
@@ -292,7 +309,10 @@ export default function BlockStylePanel() {
       {/* Box Shadow */}
       <CollapsibleSection panelId="block" title="Box Shadow" icon={<IconBoxShadow />}>
         <BoxShadowControls style={style} updateStyle={updateStyle} clearStyle={clearStyle} />
-        {/* Opacity */}
+      </CollapsibleSection>
+
+      {/* Opacity */}
+      <CollapsibleSection panelId="block" title="Opacity" icon={<IconColors />}>
         <PropertyRow label="Opacity">
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <input

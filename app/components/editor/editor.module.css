@@ -53,13 +53,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border: none;
   background: transparent;
   color: var(--editor-muted-text);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--editor-radius-sm);
   font-size: 16px;
   line-height: 1;
   padding: 0;
@@ -77,7 +77,7 @@
 }
 
 .sidebarTitle {
-  font-size: 13px;
+  font-size: var(--editor-font-md);
   font-weight: 600;
   color: var(--color-fg);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -86,7 +86,7 @@
 .resumeSelect {
   width: 100%;
   padding: 6px 8px;
-  font-size: 12px;
+  font-size: var(--editor-font-base);
   border: 1px solid var(--color-border);
   border-radius: 6px;
   background: var(--color-bg);
@@ -111,7 +111,7 @@
 
 .sidebarBody {
   height: 100%;
-  padding: 8px 0;
+  padding: 0 0 8px;
 }
 
 .scrollbar {
@@ -143,8 +143,8 @@
 
 .sidebarTab {
   flex: 1;
-  padding: 8px 12px;
-  font-size: 11px;
+  padding: 9px 12px;
+  font-size: var(--editor-font-base);
   font-weight: 600;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   border: none;
@@ -181,16 +181,16 @@
 .breadcrumbBtn {
   display: inline-block;
   padding: 2px 6px;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   font-weight: 500;
   color: var(--editor-muted-text);
   background: transparent;
   border: none;
-  border-radius: 3px;
+  border-radius: var(--editor-radius-sm);
   cursor: pointer;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   white-space: nowrap;
-  max-width: 120px;
+  max-width: 140px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -206,7 +206,7 @@
 }
 
 .breadcrumbSep {
-  font-size: 10px;
+  font-size: var(--editor-font-sm);
   color: var(--color-border);
   user-select: none;
   flex-shrink: 0;
@@ -224,14 +224,14 @@
 }
 
 .guidanceTitle {
-  font-size: 12px;
+  font-size: var(--editor-font-md);
   font-weight: 600;
   color: var(--color-fg);
   margin-bottom: 4px;
 }
 
 .guidanceDesc {
-  font-size: 11px;
+  font-size: var(--editor-font-base);
   color: var(--editor-muted-text);
   margin-bottom: 10px;
   line-height: 1.4;
@@ -247,8 +247,8 @@
 
 .insertBlockBtn {
   width: 100%;
-  padding: 6px 8px;
-  font-size: 12px;
+  padding: 7px 10px;
+  font-size: var(--editor-font-base);
   font-weight: 500;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   border: 1px dashed var(--color-border);
@@ -310,7 +310,7 @@
 }
 
 .modalTitle {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--color-fg);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -344,7 +344,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 4px 16px;
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -363,7 +363,7 @@
   color: var(--editor-muted-text);
   cursor: pointer;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: var(--editor-font-lg);
   line-height: 1;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
@@ -382,9 +382,9 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 12px 3px 16px;
+  padding: 4px 12px 4px 16px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: var(--editor-font-base);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   color: var(--color-fg);
   border-left: 2px solid transparent;
@@ -407,7 +407,7 @@
 
 .nodeIcon {
   flex-shrink: 0;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   width: 16px;
   text-align: center;
   opacity: 0.5;
@@ -443,7 +443,7 @@
   color: var(--editor-muted-text);
   cursor: pointer;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: var(--editor-font-base);
   line-height: 1;
   padding: 0;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -483,7 +483,7 @@
 }
 
 .propertiesTitle {
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -498,19 +498,19 @@
 
 .propLabel {
   display: block;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   font-weight: 500;
   color: var(--editor-muted-text);
-  margin-bottom: 3px;
+  margin-bottom: 4px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .propInput {
   width: 100%;
   padding: 5px 8px;
-  font-size: 12px;
+  font-size: var(--editor-font-base);
   border: 1px solid var(--color-border);
-  border-radius: 5px;
+  border-radius: var(--editor-radius-md);
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -525,9 +525,9 @@
 .propSelect {
   width: 100%;
   padding: 5px 8px;
-  font-size: 12px;
+  font-size: var(--editor-font-base);
   border: 1px solid var(--color-border);
-  border-radius: 5px;
+  border-radius: var(--editor-radius-md);
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -536,9 +536,9 @@
 .propTextarea {
   width: 100%;
   padding: 5px 8px;
-  font-size: 12px;
+  font-size: var(--editor-font-base);
   border: 1px solid var(--color-border);
-  border-radius: 5px;
+  border-radius: var(--editor-radius-md);
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-geist-mono), monospace;
@@ -555,7 +555,7 @@
 .propBadge {
   display: inline-block;
   padding: 2px 8px;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   border-radius: 4px;
   background: var(--color-bg-subtle);
   color: var(--editor-muted-text);
@@ -568,10 +568,10 @@
 }
 
 .propBtn {
-  padding: 4px 10px;
-  font-size: 11px;
+  padding: 5px 12px;
+  font-size: var(--editor-font-sm);
   border: 1px solid var(--color-border);
-  border-radius: 5px;
+  border-radius: var(--editor-radius-md);
   background: var(--color-bg);
   color: var(--color-fg);
   cursor: pointer;
@@ -608,7 +608,7 @@
 }
 
 .categoryTitle {
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -651,7 +651,7 @@
 }
 
 .templateName {
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   font-weight: 600;
   color: var(--color-fg);
 }
@@ -679,14 +679,14 @@
 }
 
 .panelTitle {
-  font-size: 11px;
+  font-size: var(--editor-font-base);
   font-weight: 700;
   color: var(--color-fg);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .panelSubtitle {
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   color: var(--editor-muted-text-lighter);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
@@ -697,7 +697,7 @@
 }
 
 .selectionPanelTitle {
-  font-size: 11px;
+  font-size: var(--editor-font-base);
   font-weight: 700;
   color: var(--editor-accent);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -705,7 +705,7 @@
 }
 
 .themeSectionTitle {
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -737,7 +737,7 @@
 }
 
 .headingTag {
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   font-weight: 600;
   color: var(--editor-muted-text);
   width: 20px;
@@ -765,11 +765,11 @@
 }
 
 .headingSmallInput {
-  width: 64px;
+  width: 70px;
   padding: 3px 6px;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--editor-radius-sm);
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-geist-mono), monospace;
@@ -789,7 +789,7 @@
 
 .headingSmallSelect {
   padding: 3px 4px;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   border: 1px solid var(--color-border);
   border-radius: 4px;
   background: var(--color-bg);
@@ -806,8 +806,8 @@
 }
 
 .toggleBtn {
-  padding: 4px 12px;
-  font-size: 11px;
+  padding: 4px 10px;
+  font-size: var(--editor-font-sm);
   border: none;
   background: var(--color-bg);
   color: var(--color-fg);
@@ -835,8 +835,8 @@
   position: fixed;
   top: 16px;
   right: 16px;
-  padding: 6px 14px;
-  font-size: 12px;
+  padding: 7px 16px;
+  font-size: var(--editor-font-md);
   font-weight: 600;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   border: 1px solid var(--color-border);
@@ -920,7 +920,7 @@
   position: absolute;
   top: 2px;
   left: 2px;
-  font-size: 9px;
+  font-size: var(--editor-font-xs);
   font-weight: 600;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   background: var(--editor-accent);
@@ -970,7 +970,7 @@
   color: var(--editor-toolbar-text);
   cursor: pointer;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: var(--editor-font-md);
   line-height: 1;
   padding: 0;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -999,7 +999,7 @@
 .toolbarBtnConfirmDelete {
   background: var(--editor-danger);
   color: var(--color-bg-inverse);
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   font-weight: 600;
   padding: 2px 6px;
   white-space: nowrap;
@@ -1071,7 +1071,7 @@
   background: var(--editor-box-content-bg);
   border: 1.5px solid var(--editor-box-content-border);
   border-radius: 2px;
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   color: var(--editor-box-content-text);
   font-weight: 500;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -1082,7 +1082,7 @@
   position: absolute;
   top: 2px;
   left: 6px;
-  font-size: 9px;
+  font-size: var(--editor-font-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1135,7 +1135,7 @@
   color: var(--editor-muted-text-lighter);
   cursor: pointer;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: var(--editor-font-lg);
   line-height: 1;
   padding: 0;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -1152,7 +1152,7 @@
 }
 
 .inheritLabel {
-  font-size: 10px;
+  font-size: var(--editor-font-sm);
   color: var(--editor-muted-text-lighter);
   font-style: italic;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -1168,7 +1168,7 @@
   border-radius: 4px;
   background: var(--color-bg);
   cursor: pointer;
-  font-size: 13px;
+  font-size: var(--editor-font-md);
   line-height: 1;
   color: var(--editor-muted-text-lighter);
   padding: 0;
@@ -1195,19 +1195,12 @@
   pointer-events: none;
 }
 
-/* --- Spacing Input --- */
-
-.spacingCompact {
-  display: flex;
-  align-items: center;
-  max-width: 56px;
-  justify-self: center;
-}
+/* --- Compact Numeric Input (used by UnitInput compact mode) --- */
 
 .spacingCompactNum {
   width: 28px;
   padding: 2px;
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   font-family: var(--font-geist-mono), monospace;
   text-align: center;
   border: 1px solid transparent;
@@ -1230,82 +1223,7 @@
 }
 
 .spacingCompactNum::placeholder {
-  color: #ccc;
-}
-
-.spacingCompactUnit {
-  width: 28px;
-  padding: 1px 0;
-  font-size: 8px;
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
-  border: 1px solid transparent;
-  border-left: none;
-  border-radius: 0 2px 2px 0;
-  background: transparent;
-  color: var(--editor-muted-text-lighter);
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  text-align: center;
-}
-
-.spacingCompactUnit:hover,
-.spacingCompactUnit:focus {
-  border-color: var(--color-border);
-  background: var(--color-bg);
-  color: var(--color-fg);
-}
-
-.spacingCompactUnit:focus {
-  outline: none;
-}
-
-.spacingFull {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  flex: 1;
-}
-
-.spacingFullNum {
-  flex: 1;
-  min-width: 0;
-  padding: 5px 8px;
-  font-size: 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 5px 0 0 5px;
-  background: var(--color-bg);
-  color: var(--color-fg);
-  font-family: var(--font-geist-mono), monospace;
-}
-
-.spacingFullNum:focus {
-  outline: none;
-  border-color: var(--editor-accent);
-  box-shadow: 0 0 0 2px var(--editor-accent-focus-shadow);
-}
-
-.spacingInputError {
-  outline: 2px solid var(--editor-danger);
-  outline-offset: -1px;
-  border-color: var(--editor-danger);
-}
-
-.spacingFullUnit {
-  padding: 5px 4px;
-  font-size: 11px;
-  border: 1px solid var(--color-border);
-  border-left: none;
-  border-radius: 0 5px 5px 0;
-  background: var(--color-bg-subtle);
-  color: var(--color-fg);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
-  cursor: pointer;
-}
-
-.spacingFullUnit:focus {
-  outline: none;
-  border-color: var(--editor-accent);
+  color: var(--editor-placeholder-text);
 }
 
 /* --- Borders Section --- */
@@ -1326,7 +1244,7 @@
 
 .borderStyleSelect {
   padding: 4px 2px;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   border: 1px solid var(--color-border);
   border-radius: 4px;
   background: var(--color-bg);
@@ -1344,7 +1262,7 @@
 
 .borderStyleSelectCompact {
   padding: 2px 1px;
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   border: 1px solid var(--color-border);
   border-radius: 3px;
   background: var(--color-bg);
@@ -1361,7 +1279,7 @@
 }
 
 .borderSideLabel {
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   font-weight: 500;
   color: var(--editor-muted-text);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -1374,7 +1292,7 @@
   margin: 0;
   border: none;
   background: transparent;
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   color: var(--editor-muted-text-lighter);
   cursor: pointer;
@@ -1456,7 +1374,7 @@
 }
 
 .palettePresetLabel {
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   color: var(--color-fg);
   white-space: nowrap;
 }
@@ -1490,7 +1408,7 @@
 
 .linkModalLabel {
   display: block;
-  font-size: 11px;
+  font-size: var(--editor-font-base);
   font-weight: 600;
   color: var(--editor-muted-text);
   margin-bottom: 4px;
@@ -1499,9 +1417,9 @@
 .linkModalInput {
   width: 100%;
   padding: 6px 8px;
-  font-size: 12px;
+  font-size: var(--editor-font-base);
   border: 1px solid var(--color-border);
-  border-radius: 5px;
+  border-radius: var(--editor-radius-md);
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -1522,7 +1440,7 @@
 
 .linkModalApplyBtn {
   padding: 4px 12px;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   font-weight: 600;
   border: none;
   border-radius: 5px;
@@ -1543,7 +1461,7 @@
 
 .linkModalRemoveBtn {
   padding: 4px 12px;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   font-weight: 500;
   border: 1px solid var(--editor-danger-border);
   border-radius: 5px;
@@ -1559,7 +1477,7 @@
 
 .linkModalCancelBtn {
   padding: 4px 12px;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   font-weight: 500;
   border: 1px solid var(--color-border);
   border-radius: 5px;
@@ -1598,17 +1516,17 @@
   height: 28px;
   border: none;
   background: transparent;
-  color: #374151;
+  color: var(--editor-toolbar-text);
   cursor: pointer;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: var(--editor-font-md);
   line-height: 1;
   padding: 0;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .inlineToolbarBtn:hover {
-  background: #f3f4f6;
+  background: var(--editor-toolbar-hover-bg);
 }
 
 .inlineToolbarBtn:focus-visible {
@@ -1662,6 +1580,9 @@
   text-align: left;
   transition: background 0.1s, color 0.1s;
   user-select: none;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .collapsibleTrigger:hover {
@@ -1726,7 +1647,7 @@
 
 .tooltipContent {
   padding: 4px 8px;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   background: var(--editor-tooltip-bg);
   color: var(--editor-tooltip-text);
@@ -1874,9 +1795,9 @@
   flex: 1;
   min-width: 0;
   padding: 5px 8px;
-  font-size: 12px;
+  font-size: var(--editor-font-base);
   border: 1px solid var(--color-border);
-  border-radius: 5px 0 0 5px;
+  border-radius: var(--editor-radius-md) 0 0 var(--editor-radius-md);
   background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-geist-mono), monospace;
@@ -1898,16 +1819,16 @@
   align-items: center;
   justify-content: center;
   padding: 5px 6px;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   border: 1px solid var(--color-border);
   border-left: none;
-  border-radius: 0 5px 5px 0;
+  border-radius: 0 var(--editor-radius-md) var(--editor-radius-md) 0;
   background: var(--color-bg-subtle);
   color: var(--color-fg);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   cursor: pointer;
   white-space: nowrap;
-  min-width: 28px;
+  min-width: 30px;
 }
 
 .unitInputUnitBtnFull:hover {
@@ -1922,7 +1843,7 @@
 
 .unitInputUnitBtn {
   padding: 1px 2px;
-  font-size: 8px;
+  font-size: 9px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   border: 1px solid transparent;
   border-left: none;
@@ -1988,7 +1909,7 @@
   color: var(--editor-muted-text);
   cursor: pointer;
   padding: 0;
-  font-size: 8px;
+  font-size: 9px;
   line-height: 1;
   width: 100%;
 }
@@ -2027,7 +1948,7 @@
   display: block;
   width: 100%;
   padding: 3px 8px;
-  font-size: 11px;
+  font-size: var(--editor-font-sm);
   font-family: var(--font-geist-mono), monospace;
   border: none;
   background: transparent;
@@ -2054,7 +1975,7 @@
   position: absolute;
   top: 100%;
   left: 0;
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   color: var(--editor-danger);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   white-space: nowrap;
@@ -2071,9 +1992,9 @@
 }
 
 .propertyPairLabel {
-  font-size: 10px;
+  font-size: var(--editor-font-sm);
   color: var(--editor-muted-text);
-  margin-bottom: 2px;
+  margin-bottom: 3px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
@@ -2104,7 +2025,7 @@
   color: var(--editor-muted-text-lighter);
   cursor: pointer;
   border-radius: 3px;
-  font-size: 10px;
+  font-size: var(--editor-font-xs);
   line-height: 1;
   padding: 0;
   margin-left: 4px;

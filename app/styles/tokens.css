@@ -66,9 +66,19 @@
 
   /* Sizing */
   --editor-sidebar-width: 300px;
-  --editor-font-xs: 9px;
-  --editor-font-sm: 10px;
-  --editor-font-base: 11px;
+  --editor-font-xs: 10px;
+  --editor-font-sm: 11px;
+  --editor-font-base: 12px;
+  --editor-font-md: 13px;
+  --editor-font-lg: 14px;
   --editor-radius-sm: 3px;
   --editor-radius-md: 5px;
+  --editor-radius-lg: 8px;
+
+  /* Spacing scale */
+  --editor-space-xs: 2px;
+  --editor-space-sm: 4px;
+  --editor-space-md: 8px;
+  --editor-space-lg: 12px;
+  --editor-space-xl: 16px;
 }

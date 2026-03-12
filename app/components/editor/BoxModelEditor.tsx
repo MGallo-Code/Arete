@@ -86,14 +86,16 @@ export default function BoxModelEditor({
     return (
       <div className={styles.boxModel}>
         {/* All-padding shortcut */}
-        <div className={styles.boxModelAllRow}>
-          <span className={styles.boxModelAllLabel}>All padding</span>
-          <UnitInput
-            compact
-            value={unifiedPadding.mixed ? "" : unifiedPadding.value}
-            placeholder={unifiedPadding.mixed ? "mixed" : "0"}
-            onChange={setAllPadding}
-          />
+        <div className={styles.boxModelAllRows}>
+          <div className={styles.boxModelAllRow}>
+            <span className={styles.boxModelAllLabel}>All padding</span>
+            <UnitInput
+              compact
+              value={unifiedPadding.mixed ? "" : unifiedPadding.value}
+              placeholder={unifiedPadding.mixed ? "mixed" : "0"}
+              onChange={setAllPadding}
+            />
+          </div>
         </div>
         {paddingLayer}
       </div>
@@ -103,23 +105,25 @@ export default function BoxModelEditor({
   return (
     <div className={styles.boxModel}>
       {/* All-sides shortcuts */}
-      <div className={styles.boxModelAllRow}>
-        <span className={styles.boxModelAllLabel}>All margin</span>
-        <UnitInput
-          compact
-          value={unifiedMargin.mixed ? "" : unifiedMargin.value}
-          placeholder={unifiedMargin.mixed ? "mixed" : "0"}
-          onChange={setAllMargins}
-        />
-      </div>
-      <div className={styles.boxModelAllRow}>
-        <span className={styles.boxModelAllLabel}>All padding</span>
-        <UnitInput
-          compact
-          value={unifiedPadding.mixed ? "" : unifiedPadding.value}
-          placeholder={unifiedPadding.mixed ? "mixed" : "0"}
-          onChange={setAllPadding}
-        />
+      <div className={styles.boxModelAllRows}>
+        <div className={styles.boxModelAllRow}>
+          <span className={styles.boxModelAllLabel}>All margin</span>
+          <UnitInput
+            compact
+            value={unifiedMargin.mixed ? "" : unifiedMargin.value}
+            placeholder={unifiedMargin.mixed ? "mixed" : "0"}
+            onChange={setAllMargins}
+          />
+        </div>
+        <div className={styles.boxModelAllRow}>
+          <span className={styles.boxModelAllLabel}>All padding</span>
+          <UnitInput
+            compact
+            value={unifiedPadding.mixed ? "" : unifiedPadding.value}
+            placeholder={unifiedPadding.mixed ? "mixed" : "0"}
+            onChange={setAllPadding}
+          />
+        </div>
       </div>
 
       {/* Margin layer (outermost) */}

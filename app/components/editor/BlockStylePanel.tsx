@@ -13,7 +13,7 @@ import CollapsibleSection from "./CollapsibleSection";
 import ColorControls from "./ColorControls";
 import ImageControls from "./ImageControls";
 import PropertyRow from "./PropertyRow";
-import { IconHeader, IconContent, IconColors, IconTypography, IconLayout, IconBoxModel, IconBorders, IconBoxShadow, IconImage, IconBullets } from "./SectionIcons";
+import { IconHeader, IconContent, IconColors, IconTypography, IconLayout, IconBorders, IconBoxShadow, IconImage, IconBullets } from "./SectionIcons";
 import UnitInput from "./UnitInput";
 import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
@@ -269,10 +269,8 @@ export default function BlockStylePanel() {
             />
           </PropertyRow>
         )}
-      </CollapsibleSection>
 
-      {/* Box Model */}
-      <CollapsibleSection panelId="block" title="Box Model" icon={<IconBoxModel />}>
+        <div className={styles.themeSectionTitle}>Spacing</div>
         <BoxModelEditor
           marginTop={(style.marginTop as string) ?? ""}
           marginRight={(style.marginRight as string) ?? ""}

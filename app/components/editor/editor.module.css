@@ -139,6 +139,8 @@
   display: flex;
   border-bottom: 1px solid var(--color-border);
   background: var(--color-bg);
+  position: relative;
+  z-index: 2;
 }
 
 .sidebarTab {
@@ -176,6 +178,8 @@
   overflow-x: auto;
   white-space: nowrap;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+  position: relative;
+  z-index: 2;
 }
 
 .breadcrumbBtn {
@@ -1013,14 +1017,23 @@
 /* --- Box Model Diagram --- */
 
 .boxModel {
-  margin: 4px 0 8px;
+  margin: 4px auto 8px;
+  max-width: 320px;
+}
+
+.boxModelAllRows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-bottom: 6px;
 }
 
 .boxModelAllRow {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 6px;
+  flex: 1;
+  min-width: 100px;
 }
 
 .boxModelAllLabel {
@@ -1130,9 +1143,10 @@
   justify-content: center;
   width: 18px;
   height: 18px;
-  border: none;
-  background: transparent;
-  color: var(--editor-muted-text-lighter);
+  border: 1px solid var(--editor-danger-border);
+  background: var(--editor-danger-light-bg);
+  color: var(--editor-danger);
+  opacity: 0.5;
   cursor: pointer;
   border-radius: 4px;
   font-size: var(--editor-font-lg);
@@ -1144,6 +1158,7 @@
 .clearBtn:hover {
   background: var(--editor-danger-light);
   color: var(--editor-danger);
+  opacity: 1;
 }
 
 .clearBtn:focus-visible {
@@ -1986,7 +2001,7 @@
 
 .propertyPair {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 8px;
   margin-bottom: 10px;
 }

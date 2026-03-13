@@ -350,11 +350,13 @@ export default function ThemePanel() {
                 style={headingStyle}
                 updateStyle={updateHeadingStyle}
                 clearStyle={clearHeadingStyle}
+                palette={theme.palette}
               />
               <BoxShadowControls
                 style={headingStyle}
                 updateStyle={updateHeadingStyle}
                 clearStyle={clearHeadingStyle}
+                palette={theme.palette}
               />
             </CollapsibleSection>
           );

@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef } from "react";
 import { X } from "lucide-react";
 import type { ColorPalette } from "../../models";
-import { isPaletteVar, paletteKeyFromVar, resolvePaletteVar, PALETTE_VAR_MAP } from "../../utils/paletteUtils";
+import { isPaletteVar, paletteKeyFromVar, resolvePaletteVar } from "../../utils/paletteUtils";
+import { colorToHex, colorAlpha, setColorAlpha, setColorHex } from "../../utils/colorUtils";
+import PaletteSwatches from "./PaletteSwatches";
 import styles from "./editor.module.css";
 
 export default function ColorPropRow({
@@ -21,51 +22,48 @@ export default function ColorPropRow({
   onClear: () => void;
   palette?: ColorPalette;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // Resolve var(--palette-*) to hex for display and <input type="color">
   const linkedKey = value ? paletteKeyFromVar(value) : null;
   const resolvedValue =
     value && palette && isPaletteVar(value)
       ? resolvePaletteVar(value, palette)
       : value;
 
-  const paletteColors = palette
-    ? ([
-        { key: "primary" as const, color: palette.primary },
-        { key: "secondary" as const, color: palette.secondary },
-        { key: "accent" as const, color: palette.accent },
-        { key: "muted" as const, color: palette.muted },
-        { key: "background" as const, color: palette.background },
-      ])
-    : [];
+  const alpha = resolvedValue ? colorAlpha(resolvedValue) : 1;
+  const hexForPicker = resolvedValue ? colorToHex(resolvedValue) : fallback;
 
   return (
     <div className={styles.propRow}>
       <label className={styles.propLabel}>{label}</label>
-      {paletteColors.length > 0 && (
-        <div className={styles.paletteSwatches}>
-          {paletteColors.map(({ key, color }) => (
-            <button
-              key={key}
-              className={`${styles.paletteSwatch} ${linkedKey === key ? styles.paletteSwatchActive : ""}`}
-              style={{ backgroundColor: color }}
-              title={`${key} — click to link`}
-              onClick={() => onChange(PALETTE_VAR_MAP[key])}
-            />
-          ))}
-        </div>
-      )}
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-        {value ? (
+        <input
+          type="color"
+          className={`${styles.colorInput} ${!value ? styles.colorInputUnset : ""}`}
+          value={hexForPicker}
+          aria-label={`Pick ${label.toLowerCase()} color`}
+          onChange={(e) => {
+            if (value) {
+              onChange(setColorHex(resolvedValue || fallback, e.target.value));
+            } else {
+              onChange(e.target.value);
+            }
+          }}
+        />
+        {value && (
           <>
             <input
-              type="color"
-              className={styles.colorInput}
-              value={resolvedValue}
-              aria-label={`Pick ${label.toLowerCase()} color`}
-              onChange={(e) => onChange(e.target.value)}
+              type="range"
+              className={styles.alphaSlider}
+              min={0}
+              max={100}
+              value={Math.round(alpha * 100)}
+              title={`Opacity: ${Math.round(alpha * 100)}%`}
+              aria-label={`${label} opacity`}
+              onChange={(e) => {
+                const a = Number(e.target.value) / 100;
+                onChange(setColorAlpha(resolvedValue || fallback, a));
+              }}
             />
+            <span className={styles.inheritLabel}>{Math.round(alpha * 100)}%</span>
             {linkedKey && (
               <span className={styles.inheritLabel}>{linkedKey}</span>
             )}
@@ -73,28 +71,15 @@ export default function ColorPropRow({
               <X size={12} />
             </button>
           </>
-        ) : (
-          <>
-            <button
-              className={styles.colorSwatchBtn}
-              onClick={() => inputRef.current?.click()}
-              title={`Set ${label.toLowerCase()}`}
-              aria-label={`Set ${label.toLowerCase()}`}
-            >
-              +
-            </button>
-            <input
-              ref={inputRef}
-              type="color"
-              className={styles.colorSwatchHiddenInput}
-              value={fallback}
-              aria-label={`Pick ${label.toLowerCase()} color`}
-              onChange={(e) => onChange(e.target.value)}
-            />
-            <span className={styles.inheritLabel}>Inherit</span>
-          </>
         )}
       </div>
+      {palette && (
+        <PaletteSwatches
+          palette={palette}
+          activeKey={linkedKey}
+          onChange={onChange}
+        />
+      )}
     </div>
   );
 }

@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
-import type { Style } from "../../models";
+import type { ColorPalette, Style } from "../../models";
+import { isPaletteVar, paletteKeyFromVar, resolvePaletteVar } from "../../utils/paletteUtils";
+import { colorToHex, colorAlpha, setColorAlpha, setColorHex } from "../../utils/colorUtils";
+import PaletteSwatches from "./PaletteSwatches";
 import UnitInput from "./UnitInput";
 import styles from "./editor.module.css";
 
@@ -15,7 +18,7 @@ const BORDER_STYLES = ["solid", "dashed", "dotted", "double", "none"] as const;
 type BorderStyle = (typeof BORDER_STYLES)[number];
 
 // Permissive regex: {width}{unit} {style} {color}
-// Color can be #hex, rgb(...), rgba(...), hsl(...), hsla(...), or a named color
+// Color can be #hex, rgb(...), rgba(...), hsl(...), hsla(...), var(...), or a named color
 const BORDER_REGEX =
   /^(\d+(?:\.\d+)?)(px|pt)\s+(solid|dashed|dotted|double|none)\s+(.+)$/;
 
@@ -33,15 +36,6 @@ function parseBorder(val: string): ParsedBorder | null {
     borderStyle: match[3] as BorderStyle,
     color: match[4].trim(),
   };
-}
-
-/** Convert any color string to a hex value for the color input (best effort) */
-function colorToHex(color: string): string {
-  // Already hex
-  if (/^#[0-9a-fA-F]{3,8}$/.test(color)) return color;
-  // For non-hex colors, return a fallback — the color input only accepts hex
-  // but we preserve the original string in the data
-  return "#000000";
 }
 
 interface UnifiedBorder {
@@ -78,20 +72,29 @@ function getUnifiedRadius(style: Style): { value: string; mixed: boolean } {
   return { value: nonEmpty[0], mixed: false };
 }
 
+/** Resolve a color that may be a palette var, for display purposes */
+function resolveColor(color: string, palette?: ColorPalette): string {
+  if (palette && isPaletteVar(color)) return resolvePaletteVar(color, palette);
+  return color;
+}
+
 // --- Component ---
 
 interface BorderControlsProps {
   style: Style;
   updateStyle: (patch: Record<string, string | undefined>) => void;
   clearStyle: (...keys: string[]) => void;
+  palette?: ColorPalette;
 }
 
-export default function BorderControls({ style, updateStyle, clearStyle }: BorderControlsProps) {
+export default function BorderControls({ style, updateStyle, clearStyle, palette }: BorderControlsProps) {
   const [showPerSide, setShowPerSide] = useState(false);
   const [showPerCorner, setShowPerCorner] = useState(false);
 
   // --- Unified border ---
   const unified = getUnifiedBorder(style);
+  const unifiedLinkedKey = unified.color ? paletteKeyFromVar(unified.color) : null;
+  const unifiedResolvedColor = resolveColor(unified.color, palette);
 
   const setAllBorders = (width: string, bStyle: BorderStyle, color: string) => {
     if (!width) {
@@ -122,8 +125,22 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
 
   return (
     <>
-      {/* Unified border row */}
-      <div className={styles.propRow} style={{ marginBottom: 0 }}>
+      {/* Palette swatches for border color */}
+      {palette && hasBorder && (
+        <PaletteSwatches
+          palette={palette}
+          activeKey={unifiedLinkedKey}
+          onChange={(varRef) => {
+            const w = unified.width || "1px";
+            const bs = unified.mixed ? "solid" : unified.borderStyle;
+            setAllBorders(w, bs, varRef);
+          }}
+          style={{ marginBottom: 4 }}
+        />
+      )}
+
+      {/* Unified border: width + style + clear */}
+      <div className={styles.propRow} style={{ marginBottom: 4 }}>
         <div className={styles.borderUnifiedRow}>
           <UnitInput
             value={unified.mixed ? "" : unified.width}
@@ -151,17 +168,6 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
               <option key={s} value={s}>{s}</option>
             ))}
           </select>
-          <input
-            type="color"
-            className={styles.colorInput}
-            value={unified.mixed ? "#000000" : colorToHex(unified.color)}
-            aria-label="Border color"
-            onChange={(e) => {
-              const w = unified.width || "1px";
-              const bs = unified.mixed ? "solid" : unified.borderStyle;
-              setAllBorders(w, bs, e.target.value);
-            }}
-          />
           {hasBorder ? (
             <button
               className={styles.clearBtn}
@@ -176,6 +182,41 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
           )}
         </div>
       </div>
+
+      {/* Unified border: color + opacity */}
+      {hasBorder && (
+        <div className={styles.propRow} style={{ marginBottom: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <input
+              type="color"
+              className={styles.colorInput}
+              value={colorToHex(unifiedResolvedColor)}
+              aria-label="Border color"
+              onChange={(e) => {
+                const w = unified.width || "1px";
+                const bs = unified.mixed ? "solid" : unified.borderStyle;
+                setAllBorders(w, bs, setColorHex(unifiedResolvedColor, e.target.value));
+              }}
+            />
+            <input
+              type="range"
+              className={styles.alphaSlider}
+              min={0}
+              max={100}
+              value={Math.round(colorAlpha(unifiedResolvedColor) * 100)}
+              title={`Opacity: ${Math.round(colorAlpha(unifiedResolvedColor) * 100)}%`}
+              aria-label="Border color opacity"
+              onChange={(e) => {
+                const w = unified.width || "1px";
+                const bs = unified.mixed ? "solid" : unified.borderStyle;
+                setAllBorders(w, bs, setColorAlpha(unifiedResolvedColor, Number(e.target.value) / 100));
+              }}
+            />
+            <span className={styles.inheritLabel}>{Math.round(colorAlpha(unifiedResolvedColor) * 100)}%</span>
+            {unifiedLinkedKey && <span className={styles.inheritLabel}>{unifiedLinkedKey}</span>}
+          </div>
+        </div>
+      )}
 
       {/* Per-side toggle */}
       <button
@@ -195,6 +236,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
             const borderWidth = parsed ? parsed.width : "";
             const borderColor = parsed ? parsed.color : "#000000";
             const borderBs = parsed ? parsed.borderStyle : "solid";
+            const sideResolved = resolveColor(borderColor, palette);
             return [
               <span key={`${side}-label`} className={styles.borderSideLabel}>{side}</span>,
               <UnitInput
@@ -230,11 +272,11 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
                 key={`${side}-color`}
                 type="color"
                 className={styles.colorInput}
-                value={colorToHex(borderColor)}
+                value={colorToHex(sideResolved)}
                 aria-label={`${side} border color`}
                 onChange={(e) => {
                   const w = borderWidth || "1px";
-                  updateStyle({ [key]: `${w} ${borderBs} ${e.target.value}` });
+                  updateStyle({ [key]: `${w} ${borderBs} ${setColorHex(sideResolved, e.target.value)}` });
                 }}
               />,
               style[key] ? (

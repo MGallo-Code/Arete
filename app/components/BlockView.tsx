@@ -44,8 +44,23 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
   // and children cannot remove it. We implement our own inheritance chain via
   // props: strip textDecoration from the div, compute the effective value
   // (explicit > inherited), apply to heading/content, pass to children.
-  const { textDecoration: blockTextDecoration, ...divStyle } = (block.style ?? {}) as Record<string, string | undefined>;
+  const {
+    textDecoration: blockTextDecoration,
+    backgroundImage: bgImage,
+    backgroundSize: bgSize,
+    backgroundPosition: bgPosition,
+    backgroundRepeat: bgRepeat,
+    backgroundImageOpacity: bgImageOpacity,
+    ...divStyle
+  } = (block.style ?? {}) as Record<string, string | undefined>;
   const effectiveTextDecoration = blockTextDecoration || inheritedTextDecoration;
+
+  // Background image rendered as a separate overlay div so its opacity
+  // can be controlled independently from the background color.
+  const hasBgImage = !!bgImage;
+  if (hasBgImage) {
+    divStyle.position = divStyle.position || "relative";
+  }
 
   // --- Header ---
   let header: JSX.Element | null = null;
@@ -123,6 +138,22 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
 
   return (
     <div style={divStyle as React.CSSProperties} {...editorProps}>
+      {hasBgImage && (
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: bgImage,
+            backgroundSize: bgSize || "cover",
+            backgroundPosition: bgPosition || "center",
+            backgroundRepeat: bgRepeat || "no-repeat",
+            opacity: bgImageOpacity != null ? Number(bgImageOpacity) : 1,
+            pointerEvents: "none",
+            zIndex: 0,
+          }}
+        />
+      )}
       {showToolbar && (
         <FloatingToolbar
           blockId={block.id}
@@ -134,8 +165,17 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
           hasCopiedStyle={!!editor!.copiedStyle}
         />
       )}
-      {header}
-      <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} textDecoration={effectiveTextDecoration} />
+      {hasBgImage ? (
+        <div style={{ position: "relative", zIndex: 1 }}>
+          {header}
+          <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} textDecoration={effectiveTextDecoration} />
+        </div>
+      ) : (
+        <>
+          {header}
+          <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} textDecoration={effectiveTextDecoration} />
+        </>
+      )}
     </div>
   );
 }

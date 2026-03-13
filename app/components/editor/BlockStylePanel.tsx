@@ -328,12 +328,12 @@ export default function BlockStylePanel() {
 
       {/* Borders */}
       <CollapsibleSection panelId="block" title="Borders" icon={<IconBorders />}>
-        <BorderControls style={style} updateStyle={updateStyle} clearStyle={clearStyle} />
+        <BorderControls style={style} updateStyle={updateStyle} clearStyle={clearStyle} palette={theme.palette} />
       </CollapsibleSection>
 
       {/* Box Shadow */}
       <CollapsibleSection panelId="block" title="Box Shadow" icon={<IconBoxShadow />}>
-        <BoxShadowControls style={style} updateStyle={updateStyle} clearStyle={clearStyle} />
+        <BoxShadowControls style={style} updateStyle={updateStyle} clearStyle={clearStyle} palette={theme.palette} />
       </CollapsibleSection>
 
       {/* Opacity */}

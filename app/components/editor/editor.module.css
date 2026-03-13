@@ -733,6 +733,12 @@
   margin-top: 0;
 }
 
+.colorSectionDivider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 10px 0 6px;
+}
+
 .colorInput {
   width: 32px;
   height: 24px;
@@ -741,6 +747,24 @@
   cursor: pointer;
   padding: 1px;
   background: var(--color-bg);
+}
+
+.colorInputUnset {
+  border-style: dashed;
+  opacity: 0.5;
+}
+
+.colorInputUnset:hover {
+  opacity: 1;
+  border-color: var(--editor-accent);
+}
+
+.alphaSlider {
+  width: 56px;
+  height: 4px;
+  cursor: pointer;
+  accent-color: var(--editor-accent);
+  flex-shrink: 0;
 }
 
 .headingRow {
@@ -818,6 +842,7 @@
   border-radius: 5px;
   overflow: hidden;
   min-width: 0;
+  width: fit-content;
 }
 
 .toggleBtn {
@@ -1349,8 +1374,7 @@
 }
 
 .borderUnifiedRow {
-  display: grid;
-  grid-template-columns: 80px min-content min-content min-content;
+  display: flex;
   gap: 6px;
   align-items: center;
 }
@@ -1375,8 +1399,15 @@
 
 .paletteSwatches {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   margin-bottom: 4px;
+}
+
+.paletteSwatchItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
 }
 
 .paletteSwatch {
@@ -1399,6 +1430,17 @@
 
 .paletteSwatchActive {
   box-shadow: 0 0 0 2px var(--editor-accent);
+}
+
+.paletteSwatchLabel {
+  font-size: 9px;
+  color: var(--editor-muted-text-lighter);
+  line-height: 1;
+  text-transform: capitalize;
+  max-width: 36px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .palettePresetRow {

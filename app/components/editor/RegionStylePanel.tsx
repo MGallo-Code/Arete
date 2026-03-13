@@ -150,12 +150,12 @@ export default function RegionStylePanel() {
 
       {/* Borders */}
       <CollapsibleSection panelId="region" title="Borders" icon={<IconBorders />}>
-        <BorderControls style={regionStyle} updateStyle={updateStyle} clearStyle={clearStyle} />
+        <BorderControls style={regionStyle} updateStyle={updateStyle} clearStyle={clearStyle} palette={theme.palette} />
       </CollapsibleSection>
 
       {/* Box Shadow */}
       <CollapsibleSection panelId="region" title="Box Shadow" icon={<IconBoxShadow />}>
-        <BoxShadowControls style={regionStyle} updateStyle={updateStyle} clearStyle={clearStyle} />
+        <BoxShadowControls style={regionStyle} updateStyle={updateStyle} clearStyle={clearStyle} palette={theme.palette} />
       </CollapsibleSection>
 
       {/* Opacity */}

@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import type { Style } from "../../models";
+import type { ColorPalette, Style } from "../../models";
+import { isPaletteVar, paletteKeyFromVar, resolvePaletteVar } from "../../utils/paletteUtils";
+import { colorToHex, colorAlpha, setColorAlpha, setColorHex } from "../../utils/colorUtils";
+import PaletteSwatches from "./PaletteSwatches";
 import UnitInput from "./UnitInput";
 import styles from "./editor.module.css";
 
@@ -33,9 +35,8 @@ function parseShadow(value: string): ParsedShadow | null {
     rest = rest.slice(5).trim();
   }
 
-  // Match: <offsetX> <offsetY> [blur] [spread] <color>
-  // Color can be #hex, rgb(...), rgba(...), hsl(...), hsla(...)
-  const colorRegex = /(#[0-9a-fA-F]{3,8}|rgba?\([^)]+\)|hsla?\([^)]+\))$/;
+  // Match color at end: #hex, rgb(...), rgba(...), hsl(...), hsla(...), var(...)
+  const colorRegex = /(#[0-9a-fA-F]{3,8}|rgba?\([^)]+\)|hsla?\([^)]+\)|var\([^)]+\))$/;
   const colorMatch = rest.match(colorRegex);
   let color = "rgba(0,0,0,0.15)";
   if (colorMatch) {
@@ -69,20 +70,14 @@ function buildShadow(s: ParsedShadow): string {
   return parts.join(" ");
 }
 
-/** Convert any color string to hex for <input type="color"> (best effort) */
-function colorToHex(color: string): string {
-  if (/^#[0-9a-fA-F]{3,8}$/.test(color)) return color;
-  return "#000000";
-}
-
 interface BoxShadowControlsProps {
   style: Style;
   updateStyle: (patch: Record<string, string | undefined>) => void;
   clearStyle: (...keys: string[]) => void;
+  palette?: ColorPalette;
 }
 
-export default function BoxShadowControls({ style, updateStyle, clearStyle }: BoxShadowControlsProps) {
-  const [useRgba, setUseRgba] = useState(false);
+export default function BoxShadowControls({ style, updateStyle, clearStyle, palette }: BoxShadowControlsProps) {
   const rawValue = (style.boxShadow as string) ?? "";
   const parsed = parseShadow(rawValue);
   const hasShadow = !!rawValue;
@@ -92,6 +87,14 @@ export default function BoxShadowControls({ style, updateStyle, clearStyle }: Bo
     const next = { ...current, ...patch };
     updateStyle({ boxShadow: buildShadow(next) });
   };
+
+  const shadowColor = parsed?.color ?? "rgba(0,0,0,0.15)";
+  const linkedKey = paletteKeyFromVar(shadowColor);
+  const resolvedColor = palette && isPaletteVar(shadowColor)
+    ? resolvePaletteVar(shadowColor, palette)
+    : shadowColor;
+  const alpha = colorAlpha(resolvedColor);
+
 
   return (
     <>
@@ -146,34 +149,39 @@ export default function BoxShadowControls({ style, updateStyle, clearStyle }: Bo
               />
             </div>
           </div>
+
+          {/* Palette swatches */}
+          {palette && (
+            <PaletteSwatches
+              palette={palette}
+              activeKey={linkedKey}
+              onChange={(varRef) => update({ color: varRef })}
+            />
+          )}
+
           <div className={styles.propertyPair}>
             <div>
               <div className={styles.propertyPairLabel}>Color</div>
               <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                {useRgba ? (
-                  <input
-                    type="text"
-                    className={styles.propInput}
-                    style={{ width: "auto", flex: 1 }}
-                    value={parsed?.color ?? "rgba(0,0,0,0.15)"}
-                    placeholder="rgba(0,0,0,0.15)"
-                    onChange={(e) => update({ color: e.target.value })}
-                  />
-                ) : (
-                  <input
-                    type="color"
-                    className={styles.colorInput}
-                    value={colorToHex(parsed?.color ?? "#000000")}
-                    onChange={(e) => update({ color: e.target.value })}
-                  />
-                )}
-                <button
-                  className={styles.advancedToggle}
-                  onClick={() => setUseRgba((p) => !p)}
-                  title={useRgba ? "Switch to color picker" : "Switch to text input (for rgba/hsla)"}
-                >
-                  {useRgba ? "picker" : "rgba"}
-                </button>
+                <input
+                  type="color"
+                  className={styles.colorInput}
+                  value={colorToHex(resolvedColor)}
+                  aria-label="Shadow color"
+                  onChange={(e) => update({ color: setColorHex(resolvedColor, e.target.value) })}
+                />
+                <input
+                  type="range"
+                  className={styles.alphaSlider}
+                  min={0}
+                  max={100}
+                  value={Math.round(alpha * 100)}
+                  title={`Opacity: ${Math.round(alpha * 100)}%`}
+                  aria-label="Shadow color opacity"
+                  onChange={(e) => update({ color: setColorAlpha(resolvedColor, Number(e.target.value) / 100) })}
+                />
+                <span className={styles.inheritLabel}>{Math.round(alpha * 100)}%</span>
+                {linkedKey && <span className={styles.inheritLabel}>{linkedKey}</span>}
               </div>
             </div>
             <div>

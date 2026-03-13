@@ -59,7 +59,7 @@ export default function TypographyControls({
         </div>
       </PropertyRow>
 
-      {/* Font size + Line height paired */}
+      {/* Font size + Font weight paired */}
       <div className={styles.propertyPair}>
         <div>
           <div className={styles.propertyPairLabel}>Font size</div>
@@ -74,28 +74,6 @@ export default function TypographyControls({
             )}
           </div>
         </div>
-        {showLineHeight && (
-          <div>
-            <div className={styles.propertyPairLabel}>Line height</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <UnitInput
-                value={(style.lineHeight as string) ?? ""}
-                placeholder={defaults.lineHeight || "Inherit"}
-                units={["em", "pt", "px", "%"]}
-                step={0.05}
-                allowKeywords={["inherit", "normal"]}
-                onChange={(v) => updateStyle({ lineHeight: v || undefined })}
-              />
-              {style.lineHeight && (
-                <button className={styles.clearBtn} onClick={() => clearStyle("lineHeight")} title="Clear"><X size={12} /></button>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Font weight + Font style paired */}
-      <div className={styles.propertyPair}>
         <div>
           <div className={styles.propertyPairLabel}>Font weight</div>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -127,127 +105,44 @@ export default function TypographyControls({
             )}
           </div>
         </div>
-        {showFontStyle && (
-          <div>
-            <div className={styles.propertyPairLabel}>Font style</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              {(() => {
-                const effective = (style.fontStyle as string) || defaults.fontStyle || "normal";
-                return (
-                  <div className={styles.toggleGroup}>
-                    <button
-                      className={`${styles.toggleBtn} ${effective === "normal" ? styles.toggleActive : ""}`}
-                      onClick={() => {
-                        if (style.fontStyle && style.fontStyle !== "normal") updateStyle({ fontStyle: "normal" });
-                      }}
-                    >
-                      Normal
-                    </button>
-                    <button
-                      className={`${styles.toggleBtn} ${effective === "italic" ? styles.toggleActive : ""}`}
-                      onClick={() => {
-                        if (style.fontStyle !== "italic") updateStyle({ fontStyle: "italic" });
-                      }}
-                    >
-                      Italic
-                    </button>
-                  </div>
-                );
-              })()}
-              {style.fontStyle && (
-                <button className={styles.clearBtn} onClick={() => clearStyle("fontStyle")} title="Clear"><X size={12} /></button>
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Letter spacing + Text align paired */}
-      <div className={styles.propertyPair}>
-        {showLetterSpacing && (
-          <div>
-            <div className={styles.propertyPairLabel}>Letter spacing</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <UnitInput
-                value={(style.letterSpacing as string) ?? ""}
-                placeholder={defaults.letterSpacing || "0"}
-                units={["em", "px", "pt", "rem"]}
-                allowKeywords={["inherit", "normal"]}
-                onChange={(v) => updateStyle({ letterSpacing: v || undefined })}
-              />
-              {style.letterSpacing && (
-                <button className={styles.clearBtn} onClick={() => clearStyle("letterSpacing")} title="Clear"><X size={12} /></button>
-              )}
-            </div>
-          </div>
-        )}
-        {showTextAlign && (
-          <div>
-            <div className={styles.propertyPairLabel}>Text align</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <div className={styles.toggleGroup}>
-                {(["left", "center", "right", "justify"] as const).map((align) => {
-                  const effective = (style.textAlign as string) || defaults.textAlign || "left";
-                  return (
-                    <button
-                      key={align}
-                      className={`${styles.toggleBtn} ${effective === align ? styles.toggleActive : ""}`}
-                      onClick={() => {
-                        if (style.textAlign !== align) updateStyle({ textAlign: align });
-                      }}
-                      title={align}
-                    >
-                      {align.charAt(0).toUpperCase() + align.slice(1)}
-                    </button>
-                  );
-                })}
-              </div>
-              {style.textAlign && (
-                <button className={styles.clearBtn} onClick={() => clearStyle("textAlign")} title="Clear"><X size={12} /></button>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Text transform + Text decoration paired */}
-      {(showTextTransform || showTextDecoration) && (
+      {/* Font style + Text decoration paired */}
+      {(showFontStyle || showTextDecoration) && (
         <div className={styles.propertyPair}>
-          {showTextTransform && (() => {
-            const effective = (style.textTransform as string) || defaults.textTransform || "none";
-            return (
-              <div>
-                <div className={styles.propertyPairLabel}>Transform</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <div className={styles.toggleGroup}>
-                    {TEXT_TRANSFORM_OPTIONS.map((opt) => {
-                      const label = opt === "none" ? "None"
-                        : opt === "uppercase" ? "UPPER"
-                        : opt === "lowercase" ? "lower"
-                        : "Title";
-                      return (
-                        <button
-                          key={opt}
-                          className={`${styles.toggleBtn} ${effective === opt ? styles.toggleActive : ""}`}
-                          onClick={() => {
-                            if (style.textTransform !== opt) {
-                              updateStyle({ textTransform: opt === "none" ? undefined : opt });
-                            }
-                          }}
-                          title={opt}
-                        >
-                          {label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {style.textTransform && (
-                    <button className={styles.clearBtn} onClick={() => clearStyle("textTransform")} title="Clear"><X size={12} /></button>
-                  )}
-                </div>
+          {showFontStyle && (
+            <div>
+              <div className={styles.propertyPairLabel}>Font style</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                {(() => {
+                  const effective = (style.fontStyle as string) || defaults.fontStyle || "normal";
+                  return (
+                    <div className={styles.toggleGroup}>
+                      <button
+                        className={`${styles.toggleBtn} ${effective === "normal" ? styles.toggleActive : ""}`}
+                        onClick={() => {
+                          if (style.fontStyle && style.fontStyle !== "normal") updateStyle({ fontStyle: "normal" });
+                        }}
+                      >
+                        Normal
+                      </button>
+                      <button
+                        className={`${styles.toggleBtn} ${effective === "italic" ? styles.toggleActive : ""}`}
+                        onClick={() => {
+                          if (style.fontStyle !== "italic") updateStyle({ fontStyle: "italic" });
+                        }}
+                      >
+                        Italic
+                      </button>
+                    </div>
+                  );
+                })()}
+                {style.fontStyle && (
+                  <button className={styles.clearBtn} onClick={() => clearStyle("fontStyle")} title="Clear"><X size={12} /></button>
+                )}
               </div>
-            );
-          })()}
+            </div>
+          )}
           {showTextDecoration && (() => {
             const effective = (style.textDecoration as string) || defaults.textDecoration || "none";
             return (
@@ -285,6 +180,115 @@ export default function TypographyControls({
                   </div>
                   {style.textDecoration && (
                     <button className={styles.clearBtn} onClick={() => clearStyle("textDecoration")} title="Clear"><X size={12} /></button>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* Line height + Letter spacing paired */}
+      {(showLineHeight || showLetterSpacing) && (
+        <div className={styles.propertyPair}>
+          {showLineHeight && (
+            <div>
+              <div className={styles.propertyPairLabel}>Line height</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <UnitInput
+                  value={(style.lineHeight as string) ?? ""}
+                  placeholder={defaults.lineHeight || "Inherit"}
+                  units={["em", "pt", "px", "%"]}
+                  step={0.05}
+                  allowKeywords={["inherit", "normal"]}
+                  onChange={(v) => updateStyle({ lineHeight: v || undefined })}
+                />
+                {style.lineHeight && (
+                  <button className={styles.clearBtn} onClick={() => clearStyle("lineHeight")} title="Clear"><X size={12} /></button>
+                )}
+              </div>
+            </div>
+          )}
+          {showLetterSpacing && (
+            <div>
+              <div className={styles.propertyPairLabel}>Letter spacing</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <UnitInput
+                  value={(style.letterSpacing as string) ?? ""}
+                  placeholder={defaults.letterSpacing || "0"}
+                  units={["em", "px", "pt", "rem"]}
+                  allowKeywords={["inherit", "normal"]}
+                  onChange={(v) => updateStyle({ letterSpacing: v || undefined })}
+                />
+                {style.letterSpacing && (
+                  <button className={styles.clearBtn} onClick={() => clearStyle("letterSpacing")} title="Clear"><X size={12} /></button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Text align + Text transform paired */}
+      {(showTextAlign || showTextTransform) && (
+        <div className={styles.propertyPair}>
+          {showTextAlign && (
+            <div>
+              <div className={styles.propertyPairLabel}>Text align</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <div className={styles.toggleGroup}>
+                  {(["left", "center", "right", "justify"] as const).map((align) => {
+                    const effective = (style.textAlign as string) || defaults.textAlign || "left";
+                    return (
+                      <button
+                        key={align}
+                        className={`${styles.toggleBtn} ${effective === align ? styles.toggleActive : ""}`}
+                        onClick={() => {
+                          if (style.textAlign !== align) updateStyle({ textAlign: align });
+                        }}
+                        title={align}
+                      >
+                        {align.charAt(0).toUpperCase() + align.slice(1)}
+                      </button>
+                    );
+                  })}
+                </div>
+                {style.textAlign && (
+                  <button className={styles.clearBtn} onClick={() => clearStyle("textAlign")} title="Clear"><X size={12} /></button>
+                )}
+              </div>
+            </div>
+          )}
+          {showTextTransform && (() => {
+            const effective = (style.textTransform as string) || defaults.textTransform || "none";
+            return (
+              <div>
+                <div className={styles.propertyPairLabel}>Transform</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <div className={styles.toggleGroup}>
+                    {TEXT_TRANSFORM_OPTIONS.map((opt) => {
+                      const label = opt === "none" ? "None"
+                        : opt === "uppercase" ? "UPPER"
+                        : opt === "lowercase" ? "lower"
+                        : "Title";
+                      return (
+                        <button
+                          key={opt}
+                          className={`${styles.toggleBtn} ${effective === opt ? styles.toggleActive : ""}`}
+                          onClick={() => {
+                            if (style.textTransform !== opt) {
+                              updateStyle({ textTransform: opt === "none" ? undefined : opt });
+                            }
+                          }}
+                          title={opt}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {style.textTransform && (
+                    <button className={styles.clearBtn} onClick={() => clearStyle("textTransform")} title="Clear"><X size={12} /></button>
                   )}
                 </div>
               </div>

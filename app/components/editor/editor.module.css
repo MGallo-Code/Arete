@@ -852,6 +852,12 @@
   color: var(--color-bg-inverse);
 }
 
+.toggleInherited {
+  background: var(--color-bg);
+  color: var(--editor-muted-text);
+  box-shadow: inset 0 -1.5px 0 var(--editor-accent-muted);
+}
+
 /* --- Open sidebar button --- */
 
 .openSidebarBtn {

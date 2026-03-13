@@ -22,6 +22,13 @@ interface TypographyControlsProps {
   showTextDecoration?: boolean;
 }
 
+/** Three-state toggle class: explicit (blue) > inherited (subtle) > inactive (muted) */
+function toggleCls(explicit: string | undefined, effective: string, opt: string): string {
+  if (explicit === opt) return `${styles.toggleBtn} ${styles.toggleActive}`;
+  if (effective === opt) return `${styles.toggleBtn} ${styles.toggleInherited}`;
+  return styles.toggleBtn;
+}
+
 export default function TypographyControls({
   style,
   updateStyle,
@@ -78,22 +85,19 @@ export default function TypographyControls({
           <div className={styles.propertyPairLabel}>Font weight</div>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             {(() => {
-              const effective = (style.fontWeight as string) || defaults.fontWeight || "normal";
+              const explicit = style.fontWeight as string | undefined;
+              const effective = explicit || defaults.fontWeight || "normal";
               return (
                 <div className={styles.toggleGroup}>
                   <button
-                    className={`${styles.toggleBtn} ${effective === "normal" ? styles.toggleActive : ""}`}
-                    onClick={() => {
-                      if (effective !== "normal") updateStyle({ fontWeight: "normal" });
-                    }}
+                    className={toggleCls(explicit, effective, "normal")}
+                    onClick={() => { if (explicit !== "normal") updateStyle({ fontWeight: "normal" }); }}
                   >
                     Normal
                   </button>
                   <button
-                    className={`${styles.toggleBtn} ${effective === "bold" ? styles.toggleActive : ""}`}
-                    onClick={() => {
-                      if (effective !== "bold") updateStyle({ fontWeight: "bold" });
-                    }}
+                    className={toggleCls(explicit, effective, "bold")}
+                    onClick={() => { if (explicit !== "bold") updateStyle({ fontWeight: "bold" }); }}
                   >
                     Bold
                   </button>
@@ -115,22 +119,19 @@ export default function TypographyControls({
               <div className={styles.propertyPairLabel}>Font style</div>
               <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                 {(() => {
-                  const effective = (style.fontStyle as string) || defaults.fontStyle || "normal";
+                  const explicit = style.fontStyle as string | undefined;
+                  const effective = explicit || defaults.fontStyle || "normal";
                   return (
                     <div className={styles.toggleGroup}>
                       <button
-                        className={`${styles.toggleBtn} ${effective === "normal" ? styles.toggleActive : ""}`}
-                        onClick={() => {
-                          if (effective !== "normal") updateStyle({ fontStyle: "normal" });
-                        }}
+                        className={toggleCls(explicit, effective, "normal")}
+                        onClick={() => { if (explicit !== "normal") updateStyle({ fontStyle: "normal" }); }}
                       >
                         Normal
                       </button>
                       <button
-                        className={`${styles.toggleBtn} ${effective === "italic" ? styles.toggleActive : ""}`}
-                        onClick={() => {
-                          if (effective !== "italic") updateStyle({ fontStyle: "italic" });
-                        }}
+                        className={toggleCls(explicit, effective, "italic")}
+                        onClick={() => { if (explicit !== "italic") updateStyle({ fontStyle: "italic" }); }}
                       >
                         Italic
                       </button>
@@ -144,35 +145,30 @@ export default function TypographyControls({
             </div>
           )}
           {showTextDecoration && (() => {
-            const effective = (style.textDecoration as string) || defaults.textDecoration || "none";
+            const explicit = style.textDecoration as string | undefined;
+            const effective = explicit || defaults.textDecoration || "none";
             return (
               <div>
                 <div className={styles.propertyPairLabel}>Decoration</div>
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <div className={styles.toggleGroup}>
                     <button
-                      className={`${styles.toggleBtn} ${effective === "none" ? styles.toggleActive : ""}`}
-                      onClick={() => {
-                        if (effective !== "none") updateStyle({ textDecoration: "none" });
-                      }}
+                      className={toggleCls(explicit, effective, "none")}
+                      onClick={() => { if (explicit !== "none") updateStyle({ textDecoration: "none" }); }}
                       title="None"
                     >
                       None
                     </button>
                     <button
-                      className={`${styles.toggleBtn} ${effective === "underline" ? styles.toggleActive : ""}`}
-                      onClick={() => {
-                        if (effective !== "underline") updateStyle({ textDecoration: "underline" });
-                      }}
+                      className={toggleCls(explicit, effective, "underline")}
+                      onClick={() => { if (explicit !== "underline") updateStyle({ textDecoration: "underline" }); }}
                       title="Underline"
                     >
                       Underline
                     </button>
                     <button
-                      className={`${styles.toggleBtn} ${effective === "line-through" ? styles.toggleActive : ""}`}
-                      onClick={() => {
-                        if (effective !== "line-through") updateStyle({ textDecoration: "line-through" });
-                      }}
+                      className={toggleCls(explicit, effective, "line-through")}
+                      onClick={() => { if (explicit !== "line-through") updateStyle({ textDecoration: "line-through" }); }}
                       title="Strikethrough"
                     >
                       Strike
@@ -238,14 +234,13 @@ export default function TypographyControls({
               <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                 <div className={styles.toggleGroup}>
                   {(() => {
-                    const effective = (style.textAlign as string) || defaults.textAlign || "left";
+                    const explicit = style.textAlign as string | undefined;
+                    const effective = explicit || defaults.textAlign || "left";
                     return (["left", "center", "right", "justify"] as const).map((align) => (
                       <button
                         key={align}
-                        className={`${styles.toggleBtn} ${effective === align ? styles.toggleActive : ""}`}
-                        onClick={() => {
-                          if (effective !== align) updateStyle({ textAlign: align });
-                        }}
+                        className={toggleCls(explicit, effective, align)}
+                        onClick={() => { if (explicit !== align) updateStyle({ textAlign: align }); }}
                         title={align}
                       >
                         {align.charAt(0).toUpperCase() + align.slice(1)}
@@ -260,7 +255,8 @@ export default function TypographyControls({
             </div>
           )}
           {showTextTransform && (() => {
-            const effective = (style.textTransform as string) || defaults.textTransform || "none";
+            const explicit = style.textTransform as string | undefined;
+            const effective = explicit || defaults.textTransform || "none";
             return (
               <div>
                 <div className={styles.propertyPairLabel}>Transform</div>
@@ -274,10 +270,8 @@ export default function TypographyControls({
                       return (
                         <button
                           key={opt}
-                          className={`${styles.toggleBtn} ${effective === opt ? styles.toggleActive : ""}`}
-                          onClick={() => {
-                            if (effective !== opt) updateStyle({ textTransform: opt });
-                          }}
+                          className={toggleCls(explicit, effective, opt)}
+                          onClick={() => { if (explicit !== opt) updateStyle({ textTransform: opt }); }}
                           title={opt}
                         >
                           {label}

@@ -1,5 +1,6 @@
 "use client";
 
+import { X } from "lucide-react";
 import UnitInput from "./UnitInput";
 import styles from "./editor.module.css";
 
@@ -23,6 +24,8 @@ interface BoxModelEditorProps {
   defaultPaddingBottom?: string;
   defaultPaddingLeft?: string;
   hideMargin?: boolean;
+  onClearAllMargins?: () => void;
+  onClearAllPadding?: () => void;
 }
 
 /** If all four values match (and at least one is set), return that value. Otherwise return "". */
@@ -41,9 +44,12 @@ export default function BoxModelEditor({
   defaultMarginTop, defaultMarginRight, defaultMarginBottom, defaultMarginLeft,
   defaultPaddingTop, defaultPaddingRight, defaultPaddingBottom, defaultPaddingLeft,
   hideMargin,
+  onClearAllMargins, onClearAllPadding,
 }: BoxModelEditorProps) {
   const unifiedMargin = unifiedValue(marginTop, marginRight, marginBottom, marginLeft);
   const unifiedPadding = unifiedValue(paddingTop, paddingRight, paddingBottom, paddingLeft);
+  const hasAnyMargin = !!(marginTop || marginRight || marginBottom || marginLeft);
+  const hasAnyPadding = !!(paddingTop || paddingRight || paddingBottom || paddingLeft);
 
   const setAllMargins = (v: string) => {
     onMarginChange("top", v);
@@ -89,11 +95,18 @@ export default function BoxModelEditor({
         <div className={styles.boxModelAllRows}>
           <div className={styles.boxModelAllRow}>
             <span className={styles.boxModelAllLabel}>All padding</span>
-            <UnitInput
-              value={unifiedPadding.mixed ? "" : unifiedPadding.value}
-              placeholder={unifiedPadding.mixed ? "mixed" : "0"}
-              onChange={setAllPadding}
-            />
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <UnitInput
+                value={unifiedPadding.mixed ? "" : unifiedPadding.value}
+                placeholder={unifiedPadding.mixed ? "mixed" : "0"}
+                onChange={setAllPadding}
+              />
+              {hasAnyPadding && onClearAllPadding && (
+                <button className={styles.clearBtn} onClick={onClearAllPadding} title="Clear all padding" aria-label="Clear all padding">
+                  <X size={12} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
         {paddingLayer}
@@ -107,19 +120,33 @@ export default function BoxModelEditor({
       <div className={styles.boxModelAllRows}>
         <div className={styles.boxModelAllRow}>
           <span className={styles.boxModelAllLabel}>All margin</span>
-          <UnitInput
-            value={unifiedMargin.mixed ? "" : unifiedMargin.value}
-            placeholder={unifiedMargin.mixed ? "mixed" : "0"}
-            onChange={setAllMargins}
-          />
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <UnitInput
+              value={unifiedMargin.mixed ? "" : unifiedMargin.value}
+              placeholder={unifiedMargin.mixed ? "mixed" : "0"}
+              onChange={setAllMargins}
+            />
+            {hasAnyMargin && onClearAllMargins && (
+              <button className={styles.clearBtn} onClick={onClearAllMargins} title="Clear all margins" aria-label="Clear all margins">
+                <X size={12} />
+              </button>
+            )}
+          </div>
         </div>
         <div className={styles.boxModelAllRow}>
           <span className={styles.boxModelAllLabel}>All padding</span>
-          <UnitInput
-            value={unifiedPadding.mixed ? "" : unifiedPadding.value}
-            placeholder={unifiedPadding.mixed ? "mixed" : "0"}
-            onChange={setAllPadding}
-          />
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <UnitInput
+              value={unifiedPadding.mixed ? "" : unifiedPadding.value}
+              placeholder={unifiedPadding.mixed ? "mixed" : "0"}
+              onChange={setAllPadding}
+            />
+            {hasAnyPadding && onClearAllPadding && (
+              <button className={styles.clearBtn} onClick={onClearAllPadding} title="Clear all padding" aria-label="Clear all padding">
+                <X size={12} />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

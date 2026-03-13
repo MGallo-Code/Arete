@@ -78,7 +78,7 @@ function colorToHex(color: string): string {
 interface BoxShadowControlsProps {
   style: Style;
   updateStyle: (patch: Record<string, string | undefined>) => void;
-  clearStyle: (key: string) => void;
+  clearStyle: (...keys: string[]) => void;
 }
 
 export default function BoxShadowControls({ style, updateStyle, clearStyle }: BoxShadowControlsProps) {

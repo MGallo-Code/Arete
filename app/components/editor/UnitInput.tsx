@@ -246,7 +246,7 @@ export default function UnitInput({
   const startRepeat = useCallback((direction: 1 | -1) => {
     stopRepeat();
     const timeout = setTimeout(() => {
-      const interval = setInterval(() => handleStep(direction), 60);
+      const interval = setInterval(() => handleStep(direction), 90);
       if (repeatRef.current) repeatRef.current.interval = interval;
     }, 400);
     repeatRef.current = { timeout, interval: 0 as unknown as ReturnType<typeof setInterval> };

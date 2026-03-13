@@ -79,9 +79,9 @@ export default function BlockStylePanel() {
     dispatch({ type: "UPDATE_BLOCK_STYLE", blockId: selectedBlockId, style: patch });
   };
 
-  const clearStyle = (key: string) => {
+  const clearStyle = (...keys: string[]) => {
     const newStyle = { ...style };
-    delete (newStyle as Record<string, unknown>)[key];
+    for (const key of keys) delete (newStyle as Record<string, unknown>)[key];
     dispatch({
       type: "SET_BLOCK_STYLE",
       blockId: selectedBlockId,
@@ -311,6 +311,8 @@ export default function BlockStylePanel() {
             const key = `padding${side[0].toUpperCase()}${side.slice(1)}`;
             updateStyle({ [key]: value });
           }}
+          onClearAllMargins={() => clearStyle("marginTop", "marginRight", "marginBottom", "marginLeft")}
+          onClearAllPadding={() => clearStyle("paddingTop", "paddingRight", "paddingBottom", "paddingLeft")}
         />
       </CollapsibleSection>
 

@@ -337,6 +337,14 @@ export default function ThemePanel() {
                   const key = `padding${side[0].toUpperCase()}${side.slice(1)}`;
                   updateHeadingStyle({ [key]: value });
                 }}
+                onClearAllMargins={() => updateHeadingStyle({
+                  marginTop: undefined, marginRight: undefined,
+                  marginBottom: undefined, marginLeft: undefined,
+                })}
+                onClearAllPadding={() => updateHeadingStyle({
+                  paddingTop: undefined, paddingRight: undefined,
+                  paddingBottom: undefined, paddingLeft: undefined,
+                })}
               />
               <BorderControls
                 style={headingStyle}

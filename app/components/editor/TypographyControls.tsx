@@ -12,7 +12,7 @@ const TEXT_TRANSFORM_OPTIONS = ["none", "uppercase", "lowercase", "capitalize"] 
 interface TypographyControlsProps {
   style: Style;
   updateStyle: (patch: Record<string, string | undefined>) => void;
-  clearStyle: (key: string) => void;
+  clearStyle: (...keys: string[]) => void;
   defaults?: Record<string, string>;
   showTextAlign?: boolean;
   showTextTransform?: boolean;

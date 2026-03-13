@@ -6,7 +6,7 @@ import ColorPropRow from "./ColorPropRow";
 interface ColorControlsProps {
   style: Style;
   updateStyle: (patch: Record<string, string | undefined>) => void;
-  clearStyle: (key: string) => void;
+  clearStyle: (...keys: string[]) => void;
   palette?: ColorPalette;
 }
 

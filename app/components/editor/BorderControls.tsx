@@ -83,7 +83,7 @@ function getUnifiedRadius(style: Style): { value: string; mixed: boolean } {
 interface BorderControlsProps {
   style: Style;
   updateStyle: (patch: Record<string, string | undefined>) => void;
-  clearStyle: (key: string) => void;
+  clearStyle: (...keys: string[]) => void;
 }
 
 export default function BorderControls({ style, updateStyle, clearStyle }: BorderControlsProps) {
@@ -95,7 +95,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
 
   const setAllBorders = (width: string, bStyle: BorderStyle, color: string) => {
     if (!width) {
-      for (const side of BORDER_SIDES) clearStyle(`border${side}`);
+      clearStyle(...BORDER_SIDES.map((s) => `border${s}`));
       return;
     }
     const val = `${width} ${bStyle} ${color}`;
@@ -109,7 +109,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
 
   const setAllRadii = (val: string) => {
     if (!val) {
-      for (const corner of BORDER_CORNERS) clearStyle(`border${corner}Radius`);
+      clearStyle(...BORDER_CORNERS.map((c) => `border${c}Radius`));
       return;
     }
     const patch: Record<string, string> = {};
@@ -165,9 +165,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
           {hasBorder ? (
             <button
               className={styles.clearBtn}
-              onClick={() => {
-                for (const side of BORDER_SIDES) clearStyle(`border${side}`);
-              }}
+              onClick={() => clearStyle(...BORDER_SIDES.map((s) => `border${s}`))}
               title="Clear all borders"
               aria-label="Clear all borders"
             >
@@ -266,9 +264,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
           {hasRadius ? (
             <button
               className={styles.clearBtn}
-              onClick={() => {
-                for (const corner of BORDER_CORNERS) clearStyle(`border${corner}Radius`);
-              }}
+              onClick={() => clearStyle(...BORDER_CORNERS.map((c) => `border${c}Radius`))}
               title="Clear all radii"
               aria-label="Clear all border radii"
             >

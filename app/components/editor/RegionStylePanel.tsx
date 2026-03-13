@@ -55,9 +55,9 @@ export default function RegionStylePanel() {
     dispatch({ type: "UPDATE_REGION_STYLE", regionId: selectedRegionId, style: patch });
   };
 
-  const clearStyle = (key: string) => {
+  const clearStyle = (...keys: string[]) => {
     const newStyle = { ...regionStyle };
-    delete (newStyle as Record<string, unknown>)[key];
+    for (const key of keys) delete (newStyle as Record<string, unknown>)[key];
     dispatch({ type: "SET_REGION_STYLE", regionId: selectedRegionId, style: newStyle });
   };
 
@@ -144,6 +144,7 @@ export default function RegionStylePanel() {
             const key = `padding${side[0].toUpperCase()}${side.slice(1)}`;
             updateStyle({ [key]: value });
           }}
+          onClearAllPadding={() => clearStyle("paddingTop", "paddingRight", "paddingBottom", "paddingLeft")}
         />
       </CollapsibleSection>
 

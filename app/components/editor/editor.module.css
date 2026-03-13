@@ -1047,7 +1047,6 @@
   flex-direction: column;
   gap: 3px;
   min-width: 0;
-  overflow: hidden;
 }
 
 .boxModelAllLabel {
@@ -1823,7 +1822,6 @@
   max-width: 56px;
   min-width: 0;
   justify-self: center;
-  overflow: hidden;
 }
 
 .unitInputField {
@@ -2032,7 +2030,6 @@
 
 .propertyPair > * {
   min-width: 0;
-  overflow: hidden;
 }
 
 .propertyPairLabel {

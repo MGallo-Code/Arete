@@ -220,20 +220,26 @@ export default function TypographyControls({
                 <div className={styles.propertyPairLabel}>Transform</div>
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <div className={styles.toggleGroup}>
-                    {TEXT_TRANSFORM_OPTIONS.map((opt) => (
-                      <button
-                        key={opt}
-                        className={`${styles.toggleBtn} ${effective === opt ? styles.toggleActive : ""}`}
-                        onClick={() => {
-                          if (style.textTransform !== opt) {
-                            updateStyle({ textTransform: opt === "none" ? undefined : opt });
-                          }
-                        }}
-                        title={opt}
-                      >
-                        {opt.charAt(0).toUpperCase() + opt.slice(1)}
-                      </button>
-                    ))}
+                    {TEXT_TRANSFORM_OPTIONS.map((opt) => {
+                      const label = opt === "none" ? "None"
+                        : opt === "uppercase" ? "UPPER"
+                        : opt === "lowercase" ? "lower"
+                        : "Title";
+                      return (
+                        <button
+                          key={opt}
+                          className={`${styles.toggleBtn} ${effective === opt ? styles.toggleActive : ""}`}
+                          onClick={() => {
+                            if (style.textTransform !== opt) {
+                              updateStyle({ textTransform: opt === "none" ? undefined : opt });
+                            }
+                          }}
+                          title={opt}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
                   </div>
                   {style.textTransform && (
                     <button className={styles.clearBtn} onClick={() => clearStyle("textTransform")} title="Clear"><X size={12} /></button>

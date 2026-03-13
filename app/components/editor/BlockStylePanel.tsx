@@ -19,7 +19,7 @@ import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
 
 export default function BlockStylePanel() {
-  const { resume, selectedBlockId, dispatch } = useEditorRequired();
+  const { resume, selectedBlockId, selectedPath, dispatch } = useEditorRequired();
   const theme = resume.template.theme;
 
   const block = selectedBlockId ? findBlock(resume.blocks, selectedBlockId) : null;
@@ -42,6 +42,16 @@ export default function BlockStylePanel() {
     for (const key of typographyKeys) {
       const val = root[key] as string | undefined;
       if (val) result[key] = val;
+    }
+
+    // textDecoration: walk ancestor blocks to find inherited value.
+    // CSS text-decoration doesn't inherit normally, so we implement our own chain.
+    for (let i = selectedPath.length - 2; i >= 0; i--) {
+      const ancestor = findBlock(resume.blocks, selectedPath[i]);
+      if (ancestor?.style?.textDecoration) {
+        result.textDecoration = ancestor.style.textDecoration as string;
+        break;
+      }
     }
 
     // Spacing: from tag style only
@@ -71,7 +81,7 @@ export default function BlockStylePanel() {
     if (spacingSource.paddingLeft) result.paddingLeft = spacingSource.paddingLeft as string;
 
     return result;
-  }, [block?.header?.tag, theme]);
+  }, [block?.header?.tag, theme, selectedPath, resume.blocks]);
 
   if (!selectedBlockId || !block) return null;
 

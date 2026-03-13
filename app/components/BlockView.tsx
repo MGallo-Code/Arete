@@ -25,9 +25,10 @@ interface Props {
   regionId?: string;
   blockIndex?: number;
   totalBlocks?: number;
+  inheritedTextDecoration?: string;
 }
 
-export default function BlockView({ block, ancestorPath, regionId, blockIndex, totalBlocks }: Props) {
+export default function BlockView({ block, ancestorPath, regionId, blockIndex, totalBlocks, inheritedTextDecoration }: Props) {
   const theme = useTheme();
   const editor = useEditor();
 
@@ -40,19 +41,20 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
   const editingField = editor?.editingField;
 
   // text-decoration is special in CSS: it "paints" across all descendant text
-  // and children cannot remove it. To prevent a block's textDecoration from
-  // propagating to nested child blocks, we strip it from the wrapper div and
-  // apply it directly to the heading and content elements instead.
+  // and children cannot remove it. We implement our own inheritance chain via
+  // props: strip textDecoration from the div, compute the effective value
+  // (explicit > inherited), apply to heading/content, pass to children.
   const { textDecoration: blockTextDecoration, ...divStyle } = (block.style ?? {}) as Record<string, string | undefined>;
+  const effectiveTextDecoration = blockTextDecoration || inheritedTextDecoration;
 
   // --- Header ---
   let header: JSX.Element | null = null;
   if (block.header) {
     const { tag: Tag, content } = block.header;
 
-    // Merge block-level textDecoration onto heading (overrides theme style)
-    const headingStyle = blockTextDecoration
-      ? { ...theme[Tag], textDecoration: blockTextDecoration }
+    // Apply effective textDecoration onto heading (overrides theme style)
+    const headingStyle = effectiveTextDecoration
+      ? { ...theme[Tag], textDecoration: effectiveTextDecoration }
       : theme[Tag];
 
     if (isEditing && editingField === "header") {
@@ -133,7 +135,7 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
         />
       )}
       {header}
-      <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} textDecoration={blockTextDecoration} />
+      <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} textDecoration={effectiveTextDecoration} />
     </div>
   );
 }

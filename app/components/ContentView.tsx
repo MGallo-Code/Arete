@@ -98,7 +98,7 @@ export default function ContentView({ content, blockId, ancestorPath, textDecora
 
     case "blocks":
       return content.children.map((child, index) => (
-        <BlockView key={index} block={child} ancestorPath={ancestorPath} />
+        <BlockView key={index} block={child} ancestorPath={ancestorPath} inheritedTextDecoration={textDecoration} />
       ));
   }
 }

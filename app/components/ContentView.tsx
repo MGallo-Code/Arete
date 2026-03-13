@@ -34,9 +34,10 @@ interface Props {
   content: Content;
   blockId: string;
   ancestorPath?: string[];
+  textDecoration?: string;
 }
 
-export default function ContentView({ content, blockId, ancestorPath }: Props) {
+export default function ContentView({ content, blockId, ancestorPath, textDecoration }: Props) {
   const theme = useTheme();
   const editor = useEditor();
 
@@ -68,6 +69,7 @@ export default function ContentView({ content, blockId, ancestorPath }: Props) {
 
       return (
         <div
+          style={textDecoration ? { textDecoration } : undefined}
           onDoubleClick={
             editor
               ? (e) => {
@@ -83,7 +85,11 @@ export default function ContentView({ content, blockId, ancestorPath }: Props) {
     }
 
     case "bullets":
-      return <BulletsView items={content.items} levels={content.levels ?? theme.bullets} blockId={blockId} />;
+      return (
+        <div style={textDecoration ? { textDecoration } : undefined}>
+          <BulletsView items={content.items} levels={content.levels ?? theme.bullets} blockId={blockId} />
+        </div>
+      );
 
     case "image":
       // Empty src renders nothing — no placeholder elements in the resume area.

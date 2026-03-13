@@ -39,10 +39,21 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
   const isEditing = editor?.editingBlockId === block.id;
   const editingField = editor?.editingField;
 
+  // text-decoration is special in CSS: it "paints" across all descendant text
+  // and children cannot remove it. To prevent a block's textDecoration from
+  // propagating to nested child blocks, we strip it from the wrapper div and
+  // apply it directly to the heading and content elements instead.
+  const { textDecoration: blockTextDecoration, ...divStyle } = (block.style ?? {}) as Record<string, string | undefined>;
+
   // --- Header ---
   let header: JSX.Element | null = null;
   if (block.header) {
     const { tag: Tag, content } = block.header;
+
+    // Merge block-level textDecoration onto heading (overrides theme style)
+    const headingStyle = blockTextDecoration
+      ? { ...theme[Tag], textDecoration: blockTextDecoration }
+      : theme[Tag];
 
     if (isEditing && editingField === "header") {
       // Inline editing mode
@@ -50,7 +61,7 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
         <EditableRichText
           richText={content}
           as={Tag}
-          style={theme[Tag]}
+          style={headingStyle}
           linkStyle={theme.link}
           saveOnEnter
           onSave={(rt) => {
@@ -63,7 +74,7 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
     } else {
       header = (
         <Tag
-          style={theme[Tag]}
+          style={headingStyle}
           onDoubleClick={
             editor
               ? (e: React.MouseEvent) => {
@@ -109,7 +120,7 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
   const showToolbar = isSelected && !isEditing && regionId != null && blockIndex != null && totalBlocks != null;
 
   return (
-    <div style={block.style} {...editorProps}>
+    <div style={divStyle as React.CSSProperties} {...editorProps}>
       {showToolbar && (
         <FloatingToolbar
           blockId={block.id}
@@ -122,7 +133,7 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
         />
       )}
       {header}
-      <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} />
+      <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} textDecoration={blockTextDecoration} />
     </div>
   );
 }

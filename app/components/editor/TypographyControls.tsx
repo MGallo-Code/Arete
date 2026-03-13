@@ -84,7 +84,7 @@ export default function TypographyControls({
                   <button
                     className={`${styles.toggleBtn} ${effective === "normal" ? styles.toggleActive : ""}`}
                     onClick={() => {
-                      if (style.fontWeight && style.fontWeight !== "normal") updateStyle({ fontWeight: "normal" });
+                      if (effective !== "normal") updateStyle({ fontWeight: "normal" });
                     }}
                   >
                     Normal
@@ -92,7 +92,7 @@ export default function TypographyControls({
                   <button
                     className={`${styles.toggleBtn} ${effective === "bold" ? styles.toggleActive : ""}`}
                     onClick={() => {
-                      if (style.fontWeight !== "bold") updateStyle({ fontWeight: "bold" });
+                      if (effective !== "bold") updateStyle({ fontWeight: "bold" });
                     }}
                   >
                     Bold
@@ -121,7 +121,7 @@ export default function TypographyControls({
                       <button
                         className={`${styles.toggleBtn} ${effective === "normal" ? styles.toggleActive : ""}`}
                         onClick={() => {
-                          if (style.fontStyle && style.fontStyle !== "normal") updateStyle({ fontStyle: "normal" });
+                          if (effective !== "normal") updateStyle({ fontStyle: "normal" });
                         }}
                       >
                         Normal
@@ -129,7 +129,7 @@ export default function TypographyControls({
                       <button
                         className={`${styles.toggleBtn} ${effective === "italic" ? styles.toggleActive : ""}`}
                         onClick={() => {
-                          if (style.fontStyle !== "italic") updateStyle({ fontStyle: "italic" });
+                          if (effective !== "italic") updateStyle({ fontStyle: "italic" });
                         }}
                       >
                         Italic
@@ -153,7 +153,7 @@ export default function TypographyControls({
                     <button
                       className={`${styles.toggleBtn} ${effective === "none" ? styles.toggleActive : ""}`}
                       onClick={() => {
-                        if (style.textDecoration !== "none") updateStyle({ textDecoration: "none" });
+                        if (effective !== "none") updateStyle({ textDecoration: "none" });
                       }}
                       title="None"
                     >
@@ -162,7 +162,7 @@ export default function TypographyControls({
                     <button
                       className={`${styles.toggleBtn} ${effective === "underline" ? styles.toggleActive : ""}`}
                       onClick={() => {
-                        if (style.textDecoration !== "underline") updateStyle({ textDecoration: "underline" });
+                        if (effective !== "underline") updateStyle({ textDecoration: "underline" });
                       }}
                       title="Underline"
                     >
@@ -171,7 +171,7 @@ export default function TypographyControls({
                     <button
                       className={`${styles.toggleBtn} ${effective === "line-through" ? styles.toggleActive : ""}`}
                       onClick={() => {
-                        if (style.textDecoration !== "line-through") updateStyle({ textDecoration: "line-through" });
+                        if (effective !== "line-through") updateStyle({ textDecoration: "line-through" });
                       }}
                       title="Strikethrough"
                     >
@@ -237,21 +237,21 @@ export default function TypographyControls({
               <div className={styles.propertyPairLabel}>Text align</div>
               <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                 <div className={styles.toggleGroup}>
-                  {(["left", "center", "right", "justify"] as const).map((align) => {
+                  {(() => {
                     const effective = (style.textAlign as string) || defaults.textAlign || "left";
-                    return (
+                    return (["left", "center", "right", "justify"] as const).map((align) => (
                       <button
                         key={align}
                         className={`${styles.toggleBtn} ${effective === align ? styles.toggleActive : ""}`}
                         onClick={() => {
-                          if (style.textAlign !== align) updateStyle({ textAlign: align });
+                          if (effective !== align) updateStyle({ textAlign: align });
                         }}
                         title={align}
                       >
                         {align.charAt(0).toUpperCase() + align.slice(1)}
                       </button>
-                    );
-                  })}
+                    ));
+                  })()}
                 </div>
                 {style.textAlign && (
                   <button className={styles.clearBtn} onClick={() => clearStyle("textAlign")} title="Clear"><X size={12} /></button>
@@ -276,9 +276,7 @@ export default function TypographyControls({
                           key={opt}
                           className={`${styles.toggleBtn} ${effective === opt ? styles.toggleActive : ""}`}
                           onClick={() => {
-                            if (style.textTransform !== opt) {
-                              updateStyle({ textTransform: opt === "none" ? undefined : opt });
-                            }
+                            if (effective !== opt) updateStyle({ textTransform: opt });
                           }}
                           title={opt}
                         >

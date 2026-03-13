@@ -1609,7 +1609,7 @@
   margin: 0;
   border: none;
   border-radius: 0;
-  background: var(--color-bg);
+  background: var(--color-bg-subtle);
   font-size: var(--editor-font-base);
   font-weight: 600;
   color: var(--color-fg);
@@ -1624,7 +1624,7 @@
 }
 
 .collapsibleTrigger:hover {
-  background: var(--color-bg-subtle);
+  background: var(--editor-section-bg-hover);
   color: var(--editor-accent);
 }
 
@@ -1677,6 +1677,10 @@
   overflow: hidden;
   padding: 8px 12px;
   min-width: 0;
+}
+
+.collapsibleContent[data-state="open"] {
+  overflow: visible;
 }
 
 .collapsibleContent[data-state="closed"] {
@@ -1980,7 +1984,7 @@
   position: absolute;
   top: 100%;
   right: 0;
-  z-index: 10;
+  z-index: 20;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: 4px;

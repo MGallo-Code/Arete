@@ -194,8 +194,8 @@
   display: inline-block;
   padding: 2px 6px;
   font-size: var(--editor-font-sm);
-  font-weight: 500;
-  color: var(--editor-muted-text);
+  font-weight: 600;
+  color: var(--color-fg);
   background: transparent;
   border: none;
   border-radius: var(--editor-radius-sm);
@@ -218,8 +218,9 @@
 }
 
 .breadcrumbSep {
-  font-size: var(--editor-font-sm);
-  color: var(--color-border);
+  font-size: var(--editor-font-lg);
+  font-weight: 700;
+  color: var(--color-fg);
   user-select: none;
   flex-shrink: 0;
 }
@@ -511,8 +512,8 @@
 .propLabel {
   display: block;
   font-size: var(--editor-font-sm);
-  font-weight: 500;
-  color: var(--editor-muted-text);
+  font-weight: 600;
+  color: var(--color-fg);
   margin-bottom: 4px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
@@ -719,10 +720,10 @@
 
 .themeSectionTitle {
   font-size: var(--editor-font-xs);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--editor-muted-text);
+  color: var(--color-fg);
   margin-top: 12px;
   margin-bottom: 8px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -820,14 +821,21 @@
 }
 
 .toggleBtn {
-  padding: 4px 8px;
+  padding: 4px 7px;
   font-size: var(--editor-font-sm);
+  font-weight: 500;
   border: none;
-  background: var(--color-bg);
+  background: var(--color-bg-subtle);
   min-width: 0;
-  color: var(--color-fg);
+  color: var(--editor-muted-text);
   cursor: pointer;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
+  transition: background 0.1s, color 0.1s;
+}
+
+.toggleBtn:hover:not(.toggleActive) {
+  background: var(--color-bg);
+  color: var(--color-fg);
 }
 
 .toggleBtn:not(:last-child) {
@@ -1051,7 +1059,8 @@
 
 .boxModelAllLabel {
   font-size: var(--editor-font-sm);
-  color: var(--editor-muted-text);
+  font-weight: 600;
+  color: var(--color-fg);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   white-space: nowrap;
 }
@@ -2034,7 +2043,8 @@
 
 .propertyPairLabel {
   font-size: var(--editor-font-sm);
-  color: var(--editor-muted-text);
+  font-weight: 600;
+  color: var(--color-fg);
   margin-bottom: 3px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }

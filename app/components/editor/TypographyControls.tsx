@@ -13,6 +13,7 @@ interface TypographyControlsProps {
   style: Style;
   updateStyle: (patch: Record<string, string | undefined>) => void;
   clearStyle: (key: string) => void;
+  defaults?: Record<string, string>;
   showTextAlign?: boolean;
   showTextTransform?: boolean;
   showLineHeight?: boolean;
@@ -25,6 +26,7 @@ export default function TypographyControls({
   style,
   updateStyle,
   clearStyle,
+  defaults = {},
   showTextAlign = true,
   showTextTransform = true,
   showLineHeight = true,
@@ -32,6 +34,10 @@ export default function TypographyControls({
   showFontStyle = true,
   showTextDecoration = true,
 }: TypographyControlsProps) {
+  /** Short label for an inherited font family */
+  const inheritedFontLabel = defaults.fontFamily
+    ? `Inherit (${defaults.fontFamily.split(",")[0].trim()})`
+    : "Inherit";
   return (
     <>
       {/* Font family */}
@@ -42,7 +48,7 @@ export default function TypographyControls({
             value={(style.fontFamily as string) ?? ""}
             onChange={(e) => updateStyle({ fontFamily: e.target.value || undefined })}
           >
-            <option value="">Inherit</option>
+            <option value="">{inheritedFontLabel}</option>
             {FONT_PRESETS.map((f) => (
               <option key={f.value} value={f.value}>{f.label}</option>
             ))}
@@ -60,7 +66,7 @@ export default function TypographyControls({
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
             <UnitInput
               value={(style.fontSize as string) ?? ""}
-              placeholder="0"
+              placeholder={defaults.fontSize || "Inherit"}
               onChange={(v) => updateStyle({ fontSize: v })}
             />
             {style.fontSize && (
@@ -74,7 +80,7 @@ export default function TypographyControls({
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
               <UnitInput
                 value={(style.lineHeight as string) ?? ""}
-                placeholder="Inherit"
+                placeholder={defaults.lineHeight || "Inherit"}
                 allowUnitless
                 allowKeywords={["inherit", "normal"]}
                 onChange={(v) => updateStyle({ lineHeight: v || undefined })}
@@ -99,7 +105,7 @@ export default function TypographyControls({
                   if (style.fontWeight && style.fontWeight !== "normal") updateStyle({ fontWeight: "normal" });
                 }}
               >
-                N
+                Normal
               </button>
               <button
                 className={`${styles.toggleBtn} ${style.fontWeight === "bold" ? styles.toggleActive : ""}`}
@@ -107,13 +113,13 @@ export default function TypographyControls({
                   if (style.fontWeight !== "bold") updateStyle({ fontWeight: "bold" });
                 }}
               >
-                B
+                Bold
               </button>
             </div>
             {style.fontWeight ? (
               <button className={styles.clearBtn} onClick={() => clearStyle("fontWeight")} title="Clear"><X size={12} /></button>
             ) : (
-              <span className={styles.inheritLabel}>Inherit</span>
+              <span className={styles.inheritLabel}>{defaults.fontWeight || "Inherit"}</span>
             )}
           </div>
         </div>
@@ -128,7 +134,7 @@ export default function TypographyControls({
                     if (style.fontStyle && style.fontStyle !== "normal") updateStyle({ fontStyle: "normal" });
                   }}
                 >
-                  N
+                  Normal
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${style.fontStyle === "italic" ? styles.toggleActive : ""}`}
@@ -136,13 +142,13 @@ export default function TypographyControls({
                     if (style.fontStyle !== "italic") updateStyle({ fontStyle: "italic" });
                   }}
                 >
-                  I
+                  Italic
                 </button>
               </div>
               {style.fontStyle ? (
                 <button className={styles.clearBtn} onClick={() => clearStyle("fontStyle")} title="Clear"><X size={12} /></button>
               ) : (
-                <span className={styles.inheritLabel}>Inherit</span>
+                <span className={styles.inheritLabel}>{defaults.fontStyle || "Inherit"}</span>
               )}
             </div>
           </div>
@@ -157,7 +163,8 @@ export default function TypographyControls({
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
               <UnitInput
                 value={(style.letterSpacing as string) ?? ""}
-                placeholder="Inherit"
+                placeholder={defaults.letterSpacing || "Inherit"}
+                units={["em", "px", "pt", "rem"]}
                 allowUnitless
                 allowKeywords={["inherit", "normal"]}
                 onChange={(v) => updateStyle({ letterSpacing: v || undefined })}
@@ -182,7 +189,7 @@ export default function TypographyControls({
                     }}
                     title={align}
                   >
-                    {align[0].toUpperCase()}
+                    {align.charAt(0).toUpperCase() + align.slice(1)}
                   </button>
                 ))}
               </div>
@@ -232,7 +239,7 @@ export default function TypographyControls({
                     }}
                     title="None"
                   >
-                    N
+                    None
                   </button>
                   <button
                     className={`${styles.toggleBtn} ${style.textDecoration === "underline" ? styles.toggleActive : ""}`}
@@ -241,7 +248,7 @@ export default function TypographyControls({
                     }}
                     title="Underline"
                   >
-                    U
+                    Underline
                   </button>
                   <button
                     className={`${styles.toggleBtn} ${style.textDecoration === "line-through" ? styles.toggleActive : ""}`}
@@ -250,13 +257,13 @@ export default function TypographyControls({
                     }}
                     title="Strikethrough"
                   >
-                    S
+                    Strike
                   </button>
                 </div>
                 {style.textDecoration ? (
                   <button className={styles.clearBtn} onClick={() => clearStyle("textDecoration")} title="Clear"><X size={12} /></button>
                 ) : (
-                  <span className={styles.inheritLabel}>Inherit</span>
+                  <span className={styles.inheritLabel}>{defaults.textDecoration || "Inherit"}</span>
                 )}
               </div>
             </div>

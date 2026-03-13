@@ -4,7 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import styles from "./editor.module.css";
 
-const DEFAULT_UNITS = ["px", "pt", "in", "em", "rem", "%"] as const;
+const DEFAULT_UNITS = ["pt", "px", "in", "em", "rem", "%"] as const;
 type Unit = string;
 
 /** Parse a CSS value like "10px", "0.5in", "12pt", "auto", "1.5" into parts */
@@ -14,7 +14,8 @@ function parseValue(
   allowKeywords: string[],
   units: string[],
 ): { num: string; unit: Unit; isKeyword: boolean } {
-  if (!value) return { num: "", unit: "px", isKeyword: false };
+  const defaultUnit = units[0] || "px";
+  if (!value) return { num: "", unit: defaultUnit, isKeyword: false };
 
   // Check for keyword values first
   const lower = value.trim().toLowerCase();
@@ -22,7 +23,7 @@ function parseValue(
     return { num: lower, unit: "", isKeyword: true };
   }
 
-  if (value === "0") return { num: "0", unit: allowUnitless ? "" : "px", isKeyword: false };
+  if (value === "0") return { num: "0", unit: allowUnitless ? "" : defaultUnit, isKeyword: false };
 
   // Try to match number + unit
   const unitPattern = units.map((u) => u.replace("%", "\\%")).join("|");
@@ -33,17 +34,17 @@ function parseValue(
   // If it's just a number with no unit
   const numMatch = value.match(/^(-?[\d.]+)$/);
   if (numMatch) {
-    return { num: numMatch[1], unit: allowUnitless ? "" : "px", isKeyword: false };
+    return { num: numMatch[1], unit: allowUnitless ? "" : defaultUnit, isKeyword: false };
   }
 
   // Fallback — try to extract what we can
-  return { num: value.replace(/[^-\d.]/g, ""), unit: "px", isKeyword: false };
+  return { num: value.replace(/[^-\d.]/g, ""), unit: defaultUnit, isKeyword: false };
 }
 
 /** Combine number + unit back to CSS value */
 function toCSS(num: string, unit: Unit, allowUnitless: boolean): string {
   if (!num) return "";
-  if (num === "0" && !unit && !allowUnitless) return "0px";
+  if (num === "0" && !unit && !allowUnitless) return "0";
   if (num === "0") return unit ? `0${unit}` : "0";
   return unit ? `${num}${unit}` : num;
 }
@@ -53,6 +54,7 @@ function getStepForUnit(unit: string, customStep?: number): number {
   if (customStep !== undefined) return customStep;
   switch (unit) {
     case "em":
+      return 0.01;
     case "rem":
     case "":
       return 0.1;
@@ -184,32 +186,46 @@ export default function UnitInput({
     if (e.key === "ArrowUp" || e.key === "ArrowDown") {
       if (isKeyword) return;
       e.preventDefault();
-      const base = parseFloat(num) || 0;
-      const stepSize = getStepForUnit(unit, customStep);
+      let currentUnit = unit;
+      let base = parseFloat(num);
+      if (isNaN(base)) {
+        // Fall back to placeholder (inherited) value
+        base = parseFloat(parsedPlaceholder.num) || 0;
+        if (parsedPlaceholder.unit) currentUnit = parsedPlaceholder.unit;
+        setUnit(currentUnit);
+      }
+      const stepSize = getStepForUnit(currentUnit, customStep);
       const multiplier = e.shiftKey ? 10 : 1;
       const delta = (e.key === "ArrowUp" ? 1 : -1) * stepSize * multiplier;
-      const isSmallUnit = unit === "em" || unit === "rem" || (allowUnitless && !unit);
+      const isSmallUnit = currentUnit === "em" || currentUnit === "rem" || (allowUnitless && !currentUnit);
       const next = isSmallUnit
         ? (base + delta).toFixed(2).replace(/0$/, "").replace(/\.$/, "")
         : String(Math.round(base + delta));
       setNum(next);
       setError(null);
-      onChange(toCSS(next, unit, allowUnitless));
+      onChange(toCSS(next, currentUnit, allowUnitless));
     }
   };
 
   const handleStep = (direction: 1 | -1) => {
     if (isKeyword) return;
-    const base = parseFloat(num) || 0;
-    const stepSize = getStepForUnit(unit, customStep);
+    let currentUnit = unit;
+    let base = parseFloat(num);
+    if (isNaN(base)) {
+      // Fall back to placeholder (inherited) value
+      base = parseFloat(parsedPlaceholder.num) || 0;
+      if (parsedPlaceholder.unit) currentUnit = parsedPlaceholder.unit;
+      setUnit(currentUnit);
+    }
+    const stepSize = getStepForUnit(currentUnit, customStep);
     const delta = direction * stepSize;
-    const isSmallUnit = unit === "em" || unit === "rem" || (allowUnitless && !unit);
+    const isSmallUnit = currentUnit === "em" || currentUnit === "rem" || (allowUnitless && !currentUnit);
     const next = isSmallUnit
       ? (base + delta).toFixed(2).replace(/0$/, "").replace(/\.$/, "")
       : String(Math.round(base + delta));
     setNum(next);
     setError(null);
-    onChange(toCSS(next, unit, allowUnitless));
+    onChange(toCSS(next, currentUnit, allowUnitless));
   };
 
   const handleUnitChange = (newUnit: string) => {

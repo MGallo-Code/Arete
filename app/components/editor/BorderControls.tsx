@@ -128,6 +128,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
           <UnitInput
             value={unified.mixed ? "" : unified.width}
             placeholder={unified.mixed ? "mixed" : "0"}
+            units={["px", "pt", "em", "rem"]}
             onChange={(v) => {
               const color = unified.mixed ? "#000000" : unified.color;
               const bs = unified.mixed ? "solid" : unified.borderStyle;
@@ -203,6 +204,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
                 compact
                 value={borderWidth}
                 placeholder="0"
+                units={["px", "pt", "em", "rem"]}
                 onChange={(v) => {
                   if (v) {
                     updateStyle({ [key]: `${v} ${borderBs} ${borderColor}` });
@@ -258,6 +260,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
           <UnitInput
             value={unifiedRadius.mixed ? "" : unifiedRadius.value}
             placeholder={unifiedRadius.mixed ? "mixed" : "0"}
+            units={["px", "pt", "em", "rem", "%"]}
             onChange={(v) => setAllRadii(v)}
           />
           {hasRadius ? (
@@ -303,6 +306,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
                     <UnitInput
                       value={leftVal}
                       placeholder="0"
+                      units={["px", "pt", "em", "rem", "%"]}
                       onChange={(v) => updateStyle({ [leftKey]: v })}
                     />
                     {leftVal && (
@@ -320,6 +324,7 @@ export default function BorderControls({ style, updateStyle, clearStyle }: Borde
                     <UnitInput
                       value={rightVal}
                       placeholder="0"
+                      units={["px", "pt", "em", "rem", "%"]}
                       onChange={(v) => updateStyle({ [rightKey]: v })}
                     />
                     {rightVal && (

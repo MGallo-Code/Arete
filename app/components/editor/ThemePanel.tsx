@@ -194,6 +194,7 @@ export default function ThemePanel() {
             <UnitInput
               value={(theme.root.letterSpacing as string) ?? ""}
               placeholder="Inherit"
+              units={["em", "px", "pt", "rem"]}
               allowUnitless
               allowKeywords={["inherit", "normal"]}
               onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { letterSpacing: v || undefined } })}

@@ -26,35 +26,49 @@ export default function BlockStylePanel() {
   const style = block?.style ?? {};
 
   const defaults = useMemo(() => {
-    const tag = block?.header?.tag;
-    const themeStyle: Style | undefined = tag ? theme[tag] : undefined;
-    if (!themeStyle) return {};
-
     const result: Record<string, string> = {};
+    const root = theme.root ?? {};
+    const tag = block?.header?.tag;
+    const tagStyle: Style | undefined = tag ? theme[tag] : undefined;
 
-    if (themeStyle.margin && typeof themeStyle.margin === "string") {
-      const parsed = parseShorthand(themeStyle.margin as string);
+    // Typography: only from theme.root (which cascades to the block div).
+    // theme[tag] styles apply to the heading element directly — showing them
+    // as block-level defaults is misleading because relative units like em
+    // resolve against different font sizes at different DOM levels.
+    const typographyKeys = [
+      "fontFamily", "fontSize", "lineHeight", "fontWeight",
+      "fontStyle", "letterSpacing", "textAlign", "textTransform", "textDecoration",
+    ] as const;
+    for (const key of typographyKeys) {
+      const val = root[key] as string | undefined;
+      if (val) result[key] = val;
+    }
+
+    // Spacing: from tag style only
+    const spacingSource = tagStyle ?? {};
+    if (spacingSource.margin && typeof spacingSource.margin === "string") {
+      const parsed = parseShorthand(spacingSource.margin as string);
       result.marginTop = parsed.top;
       result.marginRight = parsed.right;
       result.marginBottom = parsed.bottom;
       result.marginLeft = parsed.left;
     }
-    if (themeStyle.padding && typeof themeStyle.padding === "string") {
-      const parsed = parseShorthand(themeStyle.padding as string);
+    if (spacingSource.padding && typeof spacingSource.padding === "string") {
+      const parsed = parseShorthand(spacingSource.padding as string);
       result.paddingTop = parsed.top;
       result.paddingRight = parsed.right;
       result.paddingBottom = parsed.bottom;
       result.paddingLeft = parsed.left;
     }
 
-    if (themeStyle.marginTop) result.marginTop = themeStyle.marginTop as string;
-    if (themeStyle.marginRight) result.marginRight = themeStyle.marginRight as string;
-    if (themeStyle.marginBottom) result.marginBottom = themeStyle.marginBottom as string;
-    if (themeStyle.marginLeft) result.marginLeft = themeStyle.marginLeft as string;
-    if (themeStyle.paddingTop) result.paddingTop = themeStyle.paddingTop as string;
-    if (themeStyle.paddingRight) result.paddingRight = themeStyle.paddingRight as string;
-    if (themeStyle.paddingBottom) result.paddingBottom = themeStyle.paddingBottom as string;
-    if (themeStyle.paddingLeft) result.paddingLeft = themeStyle.paddingLeft as string;
+    if (spacingSource.marginTop) result.marginTop = spacingSource.marginTop as string;
+    if (spacingSource.marginRight) result.marginRight = spacingSource.marginRight as string;
+    if (spacingSource.marginBottom) result.marginBottom = spacingSource.marginBottom as string;
+    if (spacingSource.marginLeft) result.marginLeft = spacingSource.marginLeft as string;
+    if (spacingSource.paddingTop) result.paddingTop = spacingSource.paddingTop as string;
+    if (spacingSource.paddingRight) result.paddingRight = spacingSource.paddingRight as string;
+    if (spacingSource.paddingBottom) result.paddingBottom = spacingSource.paddingBottom as string;
+    if (spacingSource.paddingLeft) result.paddingLeft = spacingSource.paddingLeft as string;
 
     return result;
   }, [block?.header?.tag, theme]);
@@ -167,6 +181,7 @@ export default function BlockStylePanel() {
           style={style}
           updateStyle={updateStyle}
           clearStyle={clearStyle}
+          defaults={defaults}
         />
       </CollapsibleSection>
 
@@ -217,7 +232,7 @@ export default function BlockStylePanel() {
                   }}
                   title="Left"
                 >
-                  L
+                  Left
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${style.alignSelf === "center" ? styles.toggleActive : ""}`}
@@ -226,7 +241,7 @@ export default function BlockStylePanel() {
                   }}
                   title="Center"
                 >
-                  C
+                  Center
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${style.alignSelf === "flex-end" ? styles.toggleActive : ""}`}
@@ -235,7 +250,7 @@ export default function BlockStylePanel() {
                   }}
                   title="Right"
                 >
-                  R
+                  Right
                 </button>
               </div>
               {(style.width || style.alignSelf) && (

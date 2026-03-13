@@ -22,8 +22,23 @@ export default function RegionStylePanel() {
     ? resume.template.regionStyles[selectedRegionId] ?? {}
     : {};
 
+  const theme = resume.template.theme;
+
   const defaults = useMemo(() => {
     const result: Record<string, string> = {};
+    const root = theme.root ?? {};
+
+    // Typography: inherit from theme.root
+    const typographyKeys = [
+      "fontFamily", "fontSize", "lineHeight", "fontWeight",
+      "fontStyle", "letterSpacing", "textAlign", "textTransform", "textDecoration",
+    ] as const;
+    for (const key of typographyKeys) {
+      const val = root[key] as string | undefined;
+      if (val) result[key] = val;
+    }
+
+    // Spacing: from shorthand padding on regionStyle
     if (regionStyle.padding && typeof regionStyle.padding === "string") {
       const parsed = parseShorthand(regionStyle.padding as string);
       result.paddingTop = parsed.top;
@@ -32,11 +47,9 @@ export default function RegionStylePanel() {
       result.paddingLeft = parsed.left;
     }
     return result;
-  }, [regionStyle.padding]);
+  }, [regionStyle.padding, theme]);
 
   if (!selectedRegionId) return null;
-
-  const theme = resume.template.theme;
 
   const updateStyle = (patch: Record<string, string | undefined>) => {
     dispatch({ type: "UPDATE_REGION_STYLE", regionId: selectedRegionId, style: patch });
@@ -73,6 +86,7 @@ export default function RegionStylePanel() {
           style={regionStyle}
           updateStyle={updateStyle}
           clearStyle={clearStyle}
+          defaults={defaults}
         />
       </CollapsibleSection>
 

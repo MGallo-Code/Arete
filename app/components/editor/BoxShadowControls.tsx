@@ -112,6 +112,7 @@ export default function BoxShadowControls({ style, updateStyle, clearStyle }: Bo
               <UnitInput
                 value={parsed?.offsetX ?? "0px"}
                 placeholder="0"
+                units={["px", "pt", "em", "rem"]}
                 onChange={(v) => update({ offsetX: v })}
               />
             </div>
@@ -120,6 +121,7 @@ export default function BoxShadowControls({ style, updateStyle, clearStyle }: Bo
               <UnitInput
                 value={parsed?.offsetY ?? "0px"}
                 placeholder="0"
+                units={["px", "pt", "em", "rem"]}
                 onChange={(v) => update({ offsetY: v })}
               />
             </div>
@@ -130,6 +132,7 @@ export default function BoxShadowControls({ style, updateStyle, clearStyle }: Bo
               <UnitInput
                 value={parsed?.blur ?? "0px"}
                 placeholder="0"
+                units={["px", "pt", "em", "rem"]}
                 onChange={(v) => update({ blur: v })}
               />
             </div>
@@ -138,6 +141,7 @@ export default function BoxShadowControls({ style, updateStyle, clearStyle }: Bo
               <UnitInput
                 value={parsed?.spread ?? "0px"}
                 placeholder="0"
+                units={["px", "pt", "em", "rem"]}
                 onChange={(v) => update({ spread: v })}
               />
             </div>

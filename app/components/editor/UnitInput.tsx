@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import styles from "./editor.module.css";
 
@@ -121,6 +121,11 @@ export default function UnitInput({
   const [unitMenuOpen, setUnitMenuOpen] = useState(false);
   const unitMenuRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const repeatRef = useRef<{ timeout: ReturnType<typeof setTimeout>; interval: ReturnType<typeof setInterval> } | null>(null);
+  const numRef = useRef(num);
+  const unitRef = useRef(unit);
+  numRef.current = num;
+  unitRef.current = unit;
 
   /** A valid numeric string: optional minus, digits, optional decimal + digits */
   const isValidNum = (v: string) => v === "" || /^-?\d+(\.\d+)?$/.test(v);
@@ -207,10 +212,10 @@ export default function UnitInput({
     }
   };
 
-  const handleStep = (direction: 1 | -1) => {
+  const handleStep = useCallback((direction: 1 | -1) => {
     if (isKeyword) return;
-    let currentUnit = unit;
-    let base = parseFloat(num);
+    let currentUnit = unitRef.current;
+    let base = parseFloat(numRef.current);
     if (isNaN(base)) {
       // Fall back to placeholder (inherited) value
       base = parseFloat(parsedPlaceholder.num) || 0;
@@ -224,9 +229,38 @@ export default function UnitInput({
       ? (base + delta).toFixed(2).replace(/0$/, "").replace(/\.$/, "")
       : String(Math.round(base + delta));
     setNum(next);
+    numRef.current = next;
+    unitRef.current = currentUnit;
     setError(null);
     onChange(toCSS(next, currentUnit, allowUnitless));
-  };
+  }, [isKeyword, parsedPlaceholder, customStep, allowUnitless, onChange]);
+
+  const stopRepeat = useCallback(() => {
+    if (repeatRef.current) {
+      clearTimeout(repeatRef.current.timeout);
+      clearInterval(repeatRef.current.interval);
+      repeatRef.current = null;
+    }
+  }, []);
+
+  const startRepeat = useCallback((direction: 1 | -1) => {
+    stopRepeat();
+    const timeout = setTimeout(() => {
+      const interval = setInterval(() => handleStep(direction), 60);
+      if (repeatRef.current) repeatRef.current.interval = interval;
+    }, 400);
+    repeatRef.current = { timeout, interval: 0 as unknown as ReturnType<typeof setInterval> };
+  }, [stopRepeat, handleStep]);
+
+  // Clean up on unmount
+  useEffect(() => stopRepeat, [stopRepeat]);
+
+  const stepBtnProps = useCallback((direction: 1 | -1) => ({
+    onClick: () => handleStep(direction),
+    onMouseDown: (e: React.MouseEvent) => { e.preventDefault(); startRepeat(direction); },
+    onMouseUp: stopRepeat,
+    onMouseLeave: stopRepeat,
+  }), [handleStep, startRepeat, stopRepeat]);
 
   const handleUnitChange = (newUnit: string) => {
     setUnit(newUnit);
@@ -270,8 +304,7 @@ export default function UnitInput({
             <button
               type="button"
               className={styles.unitInputStepUp}
-              onClick={() => handleStep(1)}
-              onMouseDown={(e) => e.preventDefault()}
+              {...stepBtnProps(1)}
               tabIndex={-1}
               aria-label="Increase"
             >
@@ -280,8 +313,7 @@ export default function UnitInput({
             <button
               type="button"
               className={styles.unitInputStepDown}
-              onClick={() => handleStep(-1)}
-              onMouseDown={(e) => e.preventDefault()}
+              {...stepBtnProps(-1)}
               tabIndex={-1}
               aria-label="Decrease"
             >
@@ -345,8 +377,7 @@ export default function UnitInput({
           <button
             type="button"
             className={styles.unitInputStepUp}
-            onClick={() => handleStep(1)}
-            onMouseDown={(e) => e.preventDefault()}
+            {...stepBtnProps(1)}
             tabIndex={-1}
             aria-label="Increase"
           >
@@ -355,8 +386,7 @@ export default function UnitInput({
           <button
             type="button"
             className={styles.unitInputStepDown}
-            onClick={() => handleStep(-1)}
-            onMouseDown={(e) => e.preventDefault()}
+            {...stepBtnProps(-1)}
             tabIndex={-1}
             aria-label="Decrease"
           >

@@ -174,7 +174,8 @@ export default function ThemePanel() {
             <UnitInput
               value={(theme.root.lineHeight as string) ?? ""}
               placeholder="Inherit"
-              allowUnitless
+              units={["em", "pt", "px", "%"]}
+              step={0.05}
               allowKeywords={["inherit", "normal"]}
               onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { lineHeight: v || undefined } })}
             />
@@ -195,7 +196,6 @@ export default function ThemePanel() {
               value={(theme.root.letterSpacing as string) ?? ""}
               placeholder="Inherit"
               units={["em", "px", "pt", "rem"]}
-              allowUnitless
               allowKeywords={["inherit", "normal"]}
               onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { letterSpacing: v || undefined } })}
             />

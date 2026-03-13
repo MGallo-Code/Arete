@@ -15,7 +15,7 @@ function parseValue(
   units: string[],
 ): { num: string; unit: Unit; isKeyword: boolean } {
   const defaultUnit = units[0] || "px";
-  if (!value) return { num: "", unit: defaultUnit, isKeyword: false };
+  if (!value) return { num: "", unit: allowUnitless ? "" : defaultUnit, isKeyword: false };
 
   // Check for keyword values first
   const lower = value.trim().toLowerCase();
@@ -95,6 +95,7 @@ interface UnitInputProps {
   units?: string[];
   allowUnitless?: boolean;
   allowKeywords?: string[];
+  unitlessLabel?: string;
   step?: number;
   showSteppers?: "hover" | "always" | "never";
 }
@@ -108,6 +109,7 @@ export default function UnitInput({
   units = DEFAULT_UNITS as unknown as string[],
   allowUnitless = false,
   allowKeywords = [],
+  unitlessLabel = "—",
   step: customStep,
   showSteppers = "hover",
 }: UnitInputProps) {
@@ -196,7 +198,7 @@ export default function UnitInput({
       if (isNaN(base)) {
         // Fall back to placeholder (inherited) value
         base = parseFloat(parsedPlaceholder.num) || 0;
-        if (parsedPlaceholder.unit) currentUnit = parsedPlaceholder.unit;
+        if (!parsedPlaceholder.isKeyword) currentUnit = parsedPlaceholder.unit;
         setUnit(currentUnit);
       }
       const stepSize = getStepForUnit(currentUnit, customStep);
@@ -219,7 +221,7 @@ export default function UnitInput({
     if (isNaN(base)) {
       // Fall back to placeholder (inherited) value
       base = parseFloat(parsedPlaceholder.num) || 0;
-      if (parsedPlaceholder.unit) currentUnit = parsedPlaceholder.unit;
+      if (!parsedPlaceholder.isKeyword) currentUnit = parsedPlaceholder.unit;
       setUnit(currentUnit);
     }
     const stepSize = getStepForUnit(currentUnit, customStep);
@@ -280,7 +282,7 @@ export default function UnitInput({
   }, []);
 
   const unitChoices = allowUnitless ? ["", ...units] : units;
-  const displayUnit = isKeyword ? "" : (unit || (allowUnitless ? "—" : "px"));
+  const displayUnit = isKeyword ? "" : (unit || (allowUnitless ? unitlessLabel : "px"));
 
   if (compact) {
     return (
@@ -345,7 +347,7 @@ export default function UnitInput({
                   handleUnitChange(u);
                 }}
               >
-                {u || "—"}
+                {u || unitlessLabel}
               </button>
             ))}
           </div>
@@ -418,7 +420,7 @@ export default function UnitInput({
                 handleUnitChange(u);
               }}
             >
-              {u || "—"}
+              {u || unitlessLabel}
             </button>
           ))}
         </div>

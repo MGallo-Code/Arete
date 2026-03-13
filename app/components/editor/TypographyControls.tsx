@@ -81,7 +81,8 @@ export default function TypographyControls({
               <UnitInput
                 value={(style.lineHeight as string) ?? ""}
                 placeholder={defaults.lineHeight || "Inherit"}
-                allowUnitless
+                units={["em", "pt", "px", "%"]}
+                step={0.05}
                 allowKeywords={["inherit", "normal"]}
                 onChange={(v) => updateStyle({ lineHeight: v || undefined })}
               />
@@ -171,7 +172,6 @@ export default function TypographyControls({
                 value={(style.letterSpacing as string) ?? ""}
                 placeholder={defaults.letterSpacing || "0"}
                 units={["em", "px", "pt", "rem"]}
-                allowUnitless
                 allowKeywords={["inherit", "normal"]}
                 onChange={(v) => updateStyle({ letterSpacing: v || undefined })}
               />

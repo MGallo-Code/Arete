@@ -1,6 +1,5 @@
 "use client";
 
-import { X } from "lucide-react";
 import { useEditorRequired } from "../../contexts/EditorContext";
 import type { ColorPalette, Style } from "../../models";
 import { parseGridTemplate, updateColumnWidth, updateRowHeight, getColumnRegions, getRowRegions } from "../../utils/gridUtils";
@@ -55,24 +54,27 @@ export default function ThemePanel() {
           value={theme.root.color as string | undefined}
           fallback="#000000"
           onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { color: v } })}
-          onClear={() => dispatch({ type: "UPDATE_THEME_ROOT", style: { color: undefined } })}
+          onClear={() => {}}
           palette={theme.palette}
+          hideClear
         />
         <ColorPropRow
           label="Page Background"
           value={theme.root.background as string | undefined}
           fallback="#ffffff"
           onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { background: v } })}
-          onClear={() => dispatch({ type: "UPDATE_THEME_ROOT", style: { background: undefined } })}
+          onClear={() => {}}
           palette={theme.palette}
+          hideClear
         />
         <ColorPropRow
           label="Canvas Background"
           value={(theme.canvas.backgroundColor as string | undefined) ?? (theme.canvas.background as string | undefined)}
           fallback="#ffffff"
           onChange={(v) => dispatch({ type: "UPDATE_THEME_CANVAS", style: { backgroundColor: v } })}
-          onClear={() => dispatch({ type: "UPDATE_THEME_CANVAS", style: { backgroundColor: undefined, background: undefined } })}
+          onClear={() => {}}
           palette={theme.palette}
+          hideClear
         />
       </CollapsibleSection>
 
@@ -139,6 +141,7 @@ export default function ThemePanel() {
             for (const k of keys) patch[k] = undefined;
             dispatch({ type: "UPDATE_THEME_ROOT", style: patch });
           }}
+          hideClear
         />
       </CollapsibleSection>
 
@@ -149,61 +152,40 @@ export default function ThemePanel() {
           value={theme.link.color as string | undefined}
           fallback="#2563eb"
           onChange={(v) => dispatch({ type: "UPDATE_THEME_LINK", style: { color: v } })}
-          onClear={() => dispatch({ type: "UPDATE_THEME_LINK", style: { color: undefined } })}
+          onClear={() => {}}
           palette={theme.palette}
+          hideClear
         />
         <PropertyRow label="Text decoration">
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div className={styles.toggleGroup}>
-              <button
-                className={`${styles.toggleBtn} ${theme.link.textDecoration === "none" ? styles.toggleActive : ""}`}
-                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { textDecoration: "none" } })}
-              >
-                None
-              </button>
-              <button
-                className={`${styles.toggleBtn} ${!theme.link.textDecoration || theme.link.textDecoration === "underline" ? styles.toggleActive : ""}`}
-                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { textDecoration: "underline" } })}
-              >
-                Underline
-              </button>
-            </div>
-            {theme.link.textDecoration && (
-              <button
-                className={styles.clearBtn}
-                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { textDecoration: undefined } })}
-                title="Clear"
-              >
-                <X size={12} />
-              </button>
-            )}
+          <div className={styles.toggleGroup}>
+            <button
+              className={`${styles.toggleBtn} ${theme.link.textDecoration === "none" ? styles.toggleActive : ""}`}
+              onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { textDecoration: "none" } })}
+            >
+              None
+            </button>
+            <button
+              className={`${styles.toggleBtn} ${!theme.link.textDecoration || theme.link.textDecoration === "underline" ? styles.toggleActive : ""}`}
+              onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { textDecoration: "underline" } })}
+            >
+              Underline
+            </button>
           </div>
         </PropertyRow>
         <PropertyRow label="Font weight">
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div className={styles.toggleGroup}>
-              <button
-                className={`${styles.toggleBtn} ${!theme.link.fontWeight ? styles.toggleActive : ""}`}
-                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { fontWeight: undefined } })}
-              >
-                Inherit
-              </button>
-              <button
-                className={`${styles.toggleBtn} ${theme.link.fontWeight === "bold" ? styles.toggleActive : ""}`}
-                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { fontWeight: "bold" } })}
-              >
-                Bold
-              </button>
-            </div>
-            {theme.link.fontWeight && (
-              <button
-                className={styles.clearBtn}
-                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { fontWeight: undefined } })}
-                title="Clear"
-              >
-                <X size={12} />
-              </button>
-            )}
+          <div className={styles.toggleGroup}>
+            <button
+              className={`${styles.toggleBtn} ${!theme.link.fontWeight ? styles.toggleActive : ""}`}
+              onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { fontWeight: undefined } })}
+            >
+              Inherit
+            </button>
+            <button
+              className={`${styles.toggleBtn} ${theme.link.fontWeight === "bold" ? styles.toggleActive : ""}`}
+              onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { fontWeight: "bold" } })}
+            >
+              Bold
+            </button>
           </div>
         </PropertyRow>
       </CollapsibleSection>

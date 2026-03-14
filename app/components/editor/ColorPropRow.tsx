@@ -14,6 +14,7 @@ export default function ColorPropRow({
   onChange,
   onClear,
   palette,
+  hideClear = false,
 }: {
   label: string;
   value: string | undefined;
@@ -21,6 +22,7 @@ export default function ColorPropRow({
   onChange: (color: string) => void;
   onClear: () => void;
   palette?: ColorPalette;
+  hideClear?: boolean;
 }) {
   const linkedKey = value ? paletteKeyFromVar(value) : null;
   const resolvedValue =
@@ -67,9 +69,11 @@ export default function ColorPropRow({
             {linkedKey && (
               <span className={styles.inheritLabel}>{linkedKey}</span>
             )}
-            <button className={styles.clearBtn} onClick={onClear} title="Clear" aria-label={`Clear ${label.toLowerCase()}`}>
-              <X size={12} />
-            </button>
+            {!hideClear && (
+              <button className={styles.clearBtn} onClick={onClear} title="Clear" aria-label={`Clear ${label.toLowerCase()}`}>
+                <X size={12} />
+              </button>
+            )}
           </>
         )}
       </div>

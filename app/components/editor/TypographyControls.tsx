@@ -20,6 +20,7 @@ interface TypographyControlsProps {
   showLetterSpacing?: boolean;
   showFontStyle?: boolean;
   showTextDecoration?: boolean;
+  hideClear?: boolean;
 }
 
 /** Three-state toggle class: explicit (blue) > inherited (subtle) > inactive (muted) */
@@ -40,6 +41,7 @@ export default function TypographyControls({
   showLetterSpacing = true,
   showFontStyle = true,
   showTextDecoration = true,
+  hideClear = false,
 }: TypographyControlsProps) {
   /** Short label for an inherited font family */
   const inheritedFontLabel = defaults.fontFamily
@@ -60,7 +62,7 @@ export default function TypographyControls({
               <option key={f.value} value={f.value}>{f.label}</option>
             ))}
           </select>
-          {style.fontFamily && (
+          {!hideClear && style.fontFamily && (
             <button className={styles.clearBtn} onClick={() => clearStyle("fontFamily")} title="Clear"><X size={12} /></button>
           )}
         </div>
@@ -76,7 +78,7 @@ export default function TypographyControls({
               placeholder={defaults.fontSize || "Inherit"}
               onChange={(v) => updateStyle({ fontSize: v })}
             />
-            {style.fontSize && (
+            {!hideClear && style.fontSize && (
               <button className={styles.clearBtn} onClick={() => clearStyle("fontSize")} title="Clear"><X size={12} /></button>
             )}
           </div>
@@ -104,7 +106,7 @@ export default function TypographyControls({
                 </div>
               );
             })()}
-            {style.fontWeight && (
+            {!hideClear && style.fontWeight && (
               <button className={styles.clearBtn} onClick={() => clearStyle("fontWeight")} title="Clear"><X size={12} /></button>
             )}
           </div>
@@ -138,7 +140,7 @@ export default function TypographyControls({
                     </div>
                   );
                 })()}
-                {style.fontStyle && (
+                {!hideClear && style.fontStyle && (
                   <button className={styles.clearBtn} onClick={() => clearStyle("fontStyle")} title="Clear"><X size={12} /></button>
                 )}
               </div>
@@ -174,7 +176,7 @@ export default function TypographyControls({
                       Strike
                     </button>
                   </div>
-                  {style.textDecoration && (
+                  {!hideClear && style.textDecoration && (
                     <button className={styles.clearBtn} onClick={() => clearStyle("textDecoration")} title="Clear"><X size={12} /></button>
                   )}
                 </div>
@@ -199,7 +201,7 @@ export default function TypographyControls({
                   allowKeywords={["inherit", "normal"]}
                   onChange={(v) => updateStyle({ lineHeight: v || undefined })}
                 />
-                {style.lineHeight && (
+                {!hideClear && style.lineHeight && (
                   <button className={styles.clearBtn} onClick={() => clearStyle("lineHeight")} title="Clear"><X size={12} /></button>
                 )}
               </div>
@@ -216,7 +218,7 @@ export default function TypographyControls({
                   allowKeywords={["inherit", "normal"]}
                   onChange={(v) => updateStyle({ letterSpacing: v || undefined })}
                 />
-                {style.letterSpacing && (
+                {!hideClear && style.letterSpacing && (
                   <button className={styles.clearBtn} onClick={() => clearStyle("letterSpacing")} title="Clear"><X size={12} /></button>
                 )}
               </div>
@@ -248,7 +250,7 @@ export default function TypographyControls({
                     ));
                   })()}
                 </div>
-                {style.textAlign && (
+                {!hideClear && style.textAlign && (
                   <button className={styles.clearBtn} onClick={() => clearStyle("textAlign")} title="Clear"><X size={12} /></button>
                 )}
               </div>
@@ -279,7 +281,7 @@ export default function TypographyControls({
                       );
                     })}
                   </div>
-                  {style.textTransform && (
+                  {!hideClear && style.textTransform && (
                     <button className={styles.clearBtn} onClick={() => clearStyle("textTransform")} title="Clear"><X size={12} /></button>
                   )}
                 </div>

@@ -26,9 +26,10 @@ interface Props {
   blockIndex?: number;
   totalBlocks?: number;
   inheritedTextDecoration?: string;
+  inheritedFontSize?: string;
 }
 
-export default function BlockView({ block, ancestorPath, regionId, blockIndex, totalBlocks, inheritedTextDecoration }: Props) {
+export default function BlockView({ block, ancestorPath, regionId, blockIndex, totalBlocks, inheritedTextDecoration, inheritedFontSize }: Props) {
   const theme = useTheme();
   const editor = useEditor();
 
@@ -54,6 +55,8 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
     ...divStyle
   } = (block.style ?? {}) as Record<string, string | undefined>;
   const effectiveTextDecoration = blockTextDecoration || inheritedTextDecoration;
+  const blockFontSize = divStyle.fontSize as string | undefined;
+  const effectiveFontSize = blockFontSize || inheritedFontSize;
 
   // Background image rendered as a separate overlay div so its opacity
   // can be controlled independently from the background color.
@@ -168,12 +171,12 @@ export default function BlockView({ block, ancestorPath, regionId, blockIndex, t
       {hasBgImage ? (
         <div style={{ position: "relative", zIndex: 1 }}>
           {header}
-          <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} textDecoration={effectiveTextDecoration} />
+          <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} textDecoration={effectiveTextDecoration} blockFontSize={effectiveFontSize} />
         </div>
       ) : (
         <>
           {header}
-          <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} textDecoration={effectiveTextDecoration} />
+          <ContentView content={block.content} blockId={block.id} ancestorPath={blockPath} textDecoration={effectiveTextDecoration} blockFontSize={effectiveFontSize} />
         </>
       )}
     </div>

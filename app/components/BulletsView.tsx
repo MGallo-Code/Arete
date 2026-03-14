@@ -13,6 +13,8 @@ interface Props {
   items: BulletItem[];
   levels: BulletLevel[];
   blockId?: string;
+  /** When true, strip fontSize from level.style so it inherits from the block */
+  inheritFontSize?: boolean;
 }
 
 // --- Stable key generation (ref-based per instance to survive HMR) ---
@@ -94,7 +96,7 @@ function EditableBulletContent({
 
 // --- Main component ---
 
-export default function BulletsView({ items, levels, blockId }: Props) {
+export default function BulletsView({ items, levels, blockId, inheritFontSize }: Props) {
   const theme = useTheme();
   const editor = useEditor();
   const genKey = useKeyGenerator();
@@ -472,6 +474,9 @@ export default function BulletsView({ items, levels, blockId }: Props) {
     <ul ref={listRef} style={{ listStyle: "none" }}>
       {renderItems.map(({ key, item }, index) => {
         const level = levels[item.level ?? 0] ?? {};
+        // When block has explicit fontSize, strip it from level so it inherits
+        const { fontSize: _levelFontSize, ...levelStyleRest } = (level.style ?? {}) as Record<string, unknown>;
+        const effectiveLevelStyle = inheritFontSize ? levelStyleRest : level.style;
 
         const marker = level.image ? (
           <img src={level.image} alt="" style={{ display: "inline", height: "1em" }} />
@@ -481,7 +486,7 @@ export default function BulletsView({ items, levels, blockId }: Props) {
 
         if (editing) {
           return (
-            <li key={key} style={{ display: "flex", ...level.style }}>
+            <li key={key} style={{ display: "flex", ...effectiveLevelStyle }}>
               {marker}
               <EditableBulletContent
                 itemKey={key}
@@ -498,7 +503,7 @@ export default function BulletsView({ items, levels, blockId }: Props) {
         }
 
         return (
-          <li key={key} style={{ display: "flex", ...level.style }}>
+          <li key={key} style={{ display: "flex", ...effectiveLevelStyle }}>
             {marker}
             <div
               onDoubleClick={

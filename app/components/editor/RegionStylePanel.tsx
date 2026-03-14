@@ -27,14 +27,20 @@ export default function RegionStylePanel() {
   const defaults = useMemo(() => {
     const result: Record<string, string> = {};
     const root = theme.root ?? {};
+    const canvas = theme.canvas ?? {};
 
-    // Typography: inherit from theme.root
-    const typographyKeys = [
+    // CSS-inherited properties: theme.root → theme.canvas
+    const inheritedKeys = [
       "fontFamily", "fontSize", "lineHeight", "fontWeight",
       "fontStyle", "letterSpacing", "textAlign", "textTransform", "textDecoration",
+      "color",
     ] as const;
-    for (const key of typographyKeys) {
+    for (const key of inheritedKeys) {
       const val = root[key] as string | undefined;
+      if (val) result[key] = val;
+    }
+    for (const key of inheritedKeys) {
+      const val = canvas[key] as string | undefined;
       if (val) result[key] = val;
     }
 

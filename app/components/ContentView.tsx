@@ -35,9 +35,11 @@ interface Props {
   blockId: string;
   ancestorPath?: string[];
   textDecoration?: string;
+  /** When the block has an explicit fontSize, bullet levels should inherit it */
+  blockFontSize?: string;
 }
 
-export default function ContentView({ content, blockId, ancestorPath, textDecoration }: Props) {
+export default function ContentView({ content, blockId, ancestorPath, textDecoration, blockFontSize }: Props) {
   const theme = useTheme();
   const editor = useEditor();
 
@@ -87,7 +89,7 @@ export default function ContentView({ content, blockId, ancestorPath, textDecora
     case "bullets":
       return (
         <div style={textDecoration ? { textDecoration } : undefined}>
-          <BulletsView items={content.items} levels={content.levels ?? theme.bullets} blockId={blockId} />
+          <BulletsView items={content.items} levels={content.levels ?? theme.bullets} blockId={blockId} inheritFontSize={!!blockFontSize} />
         </div>
       );
 
@@ -98,7 +100,7 @@ export default function ContentView({ content, blockId, ancestorPath, textDecora
 
     case "blocks":
       return content.children.map((child, index) => (
-        <BlockView key={index} block={child} ancestorPath={ancestorPath} inheritedTextDecoration={textDecoration} />
+        <BlockView key={index} block={child} ancestorPath={ancestorPath} inheritedTextDecoration={textDecoration} inheritedFontSize={blockFontSize} />
       ));
   }
 }

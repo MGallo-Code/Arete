@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { X } from "lucide-react";
-import { useEditorRequired, findBlock, getBlockLabel } from "../../contexts/EditorContext";
+import { useEditorRequired, findBlock, findBlockRegion, getBlockLabel } from "../../contexts/EditorContext";
 import type { Style } from "../../models";
 import { parseShorthand } from "../../utils/cssUtils";
 import BorderControls from "./BorderControls";
@@ -31,25 +31,45 @@ export default function BlockStylePanel() {
     const tag = block?.header?.tag;
     const tagStyle: Style | undefined = tag ? theme[tag] : undefined;
 
-    // Typography: start from theme.root, then override with ancestor block
-    // styles (walking from outermost to innermost so nearest ancestor wins).
-    const typographyKeys = [
+    // CSS-inherited properties we track for sidebar display.
+    // Cascade: theme.root → theme.canvas → regionStyle → ancestor blocks
+    const inheritedKeys = [
       "fontFamily", "fontSize", "lineHeight", "fontWeight",
       "fontStyle", "letterSpacing", "textAlign", "textTransform", "textDecoration",
+      "color",
     ] as const;
-    for (const key of typographyKeys) {
+
+    // 1. theme.root
+    for (const key of inheritedKeys) {
       const val = root[key] as string | undefined;
       if (val) result[key] = val;
     }
 
-    // Walk ancestor blocks to find inherited typography values.
-    // CSS text-decoration doesn't inherit normally, so we implement our own chain;
-    // all other typography properties inherit via CSS but we track them here
-    // so the sidebar can show the effective inherited value.
+    // 2. theme.canvas (inheritable props only)
+    const canvas = theme.canvas ?? {};
+    for (const key of inheritedKeys) {
+      const val = canvas[key] as string | undefined;
+      if (val) result[key] = val;
+    }
+
+    // 3. Region style (top-level block's region)
+    const topBlockId = selectedPath[0];
+    if (topBlockId) {
+      const regionId = findBlockRegion(resume, topBlockId);
+      if (regionId) {
+        const regionStyle = resume.template.regionStyles[regionId] ?? {};
+        for (const key of inheritedKeys) {
+          const val = (regionStyle as Record<string, unknown>)[key] as string | undefined;
+          if (val) result[key] = val;
+        }
+      }
+    }
+
+    // 4. Walk ancestor blocks (outermost → innermost, nearest ancestor wins)
     for (let i = 0; i < selectedPath.length - 1; i++) {
       const ancestor = findBlock(resume.blocks, selectedPath[i]);
       if (!ancestor?.style) continue;
-      for (const key of typographyKeys) {
+      for (const key of inheritedKeys) {
         const val = (ancestor.style as Record<string, unknown>)[key] as string | undefined;
         if (val) result[key] = val;
       }
@@ -82,7 +102,7 @@ export default function BlockStylePanel() {
     if (spacingSource.paddingLeft) result.paddingLeft = spacingSource.paddingLeft as string;
 
     return result;
-  }, [block?.header?.tag, theme, selectedPath, resume.blocks]);
+  }, [block?.header?.tag, theme, selectedPath, resume.blocks, resume.template.regionStyles, resume]);
 
   if (!selectedBlockId || !block) return null;
 

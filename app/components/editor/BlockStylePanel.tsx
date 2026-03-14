@@ -31,10 +31,8 @@ export default function BlockStylePanel() {
     const tag = block?.header?.tag;
     const tagStyle: Style | undefined = tag ? theme[tag] : undefined;
 
-    // Typography: only from theme.root (which cascades to the block div).
-    // theme[tag] styles apply to the heading element directly — showing them
-    // as block-level defaults is misleading because relative units like em
-    // resolve against different font sizes at different DOM levels.
+    // Typography: start from theme.root, then override with ancestor block
+    // styles (walking from outermost to innermost so nearest ancestor wins).
     const typographyKeys = [
       "fontFamily", "fontSize", "lineHeight", "fontWeight",
       "fontStyle", "letterSpacing", "textAlign", "textTransform", "textDecoration",
@@ -44,13 +42,16 @@ export default function BlockStylePanel() {
       if (val) result[key] = val;
     }
 
-    // textDecoration: walk ancestor blocks to find inherited value.
-    // CSS text-decoration doesn't inherit normally, so we implement our own chain.
-    for (let i = selectedPath.length - 2; i >= 0; i--) {
+    // Walk ancestor blocks to find inherited typography values.
+    // CSS text-decoration doesn't inherit normally, so we implement our own chain;
+    // all other typography properties inherit via CSS but we track them here
+    // so the sidebar can show the effective inherited value.
+    for (let i = 0; i < selectedPath.length - 1; i++) {
       const ancestor = findBlock(resume.blocks, selectedPath[i]);
-      if (ancestor?.style?.textDecoration) {
-        result.textDecoration = ancestor.style.textDecoration as string;
-        break;
+      if (!ancestor?.style) continue;
+      for (const key of typographyKeys) {
+        const val = (ancestor.style as Record<string, unknown>)[key] as string | undefined;
+        if (val) result[key] = val;
       }
     }
 

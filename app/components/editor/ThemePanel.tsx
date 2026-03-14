@@ -3,17 +3,15 @@
 import { X } from "lucide-react";
 import { useEditorRequired } from "../../contexts/EditorContext";
 import type { ColorPalette, Style } from "../../models";
-import { FONT_PRESETS } from "../../data/constants";
 import { parseGridTemplate, updateColumnWidth, updateRowHeight, getColumnRegions, getRowRegions } from "../../utils/gridUtils";
-import { isPaletteVar, resolvePaletteVar } from "../../utils/paletteUtils";
 import BorderControls from "./BorderControls";
 import BoxModelEditor from "./BoxModelEditor";
 import BoxShadowControls from "./BoxShadowControls";
 import CollapsibleSection from "./CollapsibleSection";
 import ColorControls from "./ColorControls";
+import ColorPropRow from "./ColorPropRow";
 import PropertyRow from "./PropertyRow";
 import { IconColors, IconPalette, IconTypography, IconLinks, IconHeader, IconPage, IconGrid } from "./SectionIcons";
-import UnitInput from "./UnitInput";
 import TypographyControls from "./TypographyControls";
 import styles from "./editor.module.css";
 
@@ -52,46 +50,30 @@ export default function ThemePanel() {
 
       {/* Colors */}
       <CollapsibleSection panelId="theme" title="Colors" icon={<IconColors />}>
-        <PropertyRow label="Text color">
-          <input
-            type="color"
-            className={styles.colorInput}
-            value={theme.root.color ?? "#000000"}
-            onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { color: e.target.value } })}
-          />
-        </PropertyRow>
-        <PropertyRow label="Page background">
-          <input
-            type="color"
-            className={styles.colorInput}
-            value={(theme.root.background as string) ?? "#ffffff"}
-            onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { background: e.target.value } })}
-          />
-        </PropertyRow>
-        <PropertyRow label="Canvas background">
-          <div className={styles.headingRow}>
-            <input
-              type="color"
-              className={styles.colorInput}
-              value={(theme.canvas.backgroundColor as string) ?? (theme.canvas.background as string) ?? "#ffffff"}
-              onChange={(e) => dispatch({ type: "UPDATE_THEME_CANVAS", style: { backgroundColor: e.target.value } })}
-            />
-            {(theme.canvas.backgroundColor || theme.canvas.background) && (
-              <button
-                className={styles.clearBtn}
-                title="Remove background color"
-                onClick={() =>
-                  dispatch({
-                    type: "UPDATE_THEME_CANVAS",
-                    style: { backgroundColor: undefined, background: undefined },
-                  })
-                }
-              >
-                <X size={12} />
-              </button>
-            )}
-          </div>
-        </PropertyRow>
+        <ColorPropRow
+          label="Text Color"
+          value={theme.root.color as string | undefined}
+          fallback="#000000"
+          onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { color: v } })}
+          onClear={() => dispatch({ type: "UPDATE_THEME_ROOT", style: { color: undefined } })}
+          palette={theme.palette}
+        />
+        <ColorPropRow
+          label="Page Background"
+          value={theme.root.background as string | undefined}
+          fallback="#ffffff"
+          onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { background: v } })}
+          onClear={() => dispatch({ type: "UPDATE_THEME_ROOT", style: { background: undefined } })}
+          palette={theme.palette}
+        />
+        <ColorPropRow
+          label="Canvas Background"
+          value={(theme.canvas.backgroundColor as string | undefined) ?? (theme.canvas.background as string | undefined)}
+          fallback="#ffffff"
+          onChange={(v) => dispatch({ type: "UPDATE_THEME_CANVAS", style: { backgroundColor: v } })}
+          onClear={() => dispatch({ type: "UPDATE_THEME_CANVAS", style: { backgroundColor: undefined, background: undefined } })}
+          palette={theme.palette}
+        />
       </CollapsibleSection>
 
       {/* Color Palette */}
@@ -149,93 +131,27 @@ export default function ThemePanel() {
 
       {/* Typography */}
       <CollapsibleSection panelId="theme" title="Typography" icon={<IconTypography />}>
-        <PropertyRow label="Font family">
-          <select
-            className={styles.propSelect}
-            value={theme.root.fontFamily ?? ""}
-            onChange={(e) => dispatch({ type: "UPDATE_THEME_ROOT", style: { fontFamily: e.target.value } })}
-          >
-            {FONT_PRESETS.map((f) => (
-              <option key={f.value} value={f.value}>
-                {f.label}
-              </option>
-            ))}
-          </select>
-        </PropertyRow>
-        <PropertyRow label="Base font size">
-          <UnitInput
-            value={(theme.root.fontSize as string) ?? ""}
-            placeholder="10pt"
-            onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { fontSize: v } })}
-          />
-        </PropertyRow>
-        <PropertyRow label="Line height">
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <UnitInput
-              value={(theme.root.lineHeight as string) ?? ""}
-              placeholder="Inherit"
-              units={["em", "pt", "px", "%"]}
-              step={0.05}
-              allowKeywords={["inherit", "normal"]}
-              onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { lineHeight: v || undefined } })}
-            />
-            {theme.root.lineHeight && (
-              <button
-                className={styles.clearBtn}
-                onClick={() => dispatch({ type: "UPDATE_THEME_ROOT", style: { lineHeight: undefined } })}
-                title="Clear"
-              >
-                <X size={12} />
-              </button>
-            )}
-          </div>
-        </PropertyRow>
-        <PropertyRow label="Letter spacing">
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <UnitInput
-              value={(theme.root.letterSpacing as string) ?? ""}
-              placeholder="Inherit"
-              units={["em", "px", "pt", "rem"]}
-              allowKeywords={["inherit", "normal"]}
-              onChange={(v) => dispatch({ type: "UPDATE_THEME_ROOT", style: { letterSpacing: v || undefined } })}
-            />
-            {theme.root.letterSpacing && (
-              <button
-                className={styles.clearBtn}
-                onClick={() => dispatch({ type: "UPDATE_THEME_ROOT", style: { letterSpacing: undefined } })}
-                title="Clear"
-              >
-                <X size={12} />
-              </button>
-            )}
-          </div>
-        </PropertyRow>
+        <TypographyControls
+          style={theme.root}
+          updateStyle={(patch) => dispatch({ type: "UPDATE_THEME_ROOT", style: patch })}
+          clearStyle={(...keys) => {
+            const patch: Record<string, undefined> = {};
+            for (const k of keys) patch[k] = undefined;
+            dispatch({ type: "UPDATE_THEME_ROOT", style: patch });
+          }}
+        />
       </CollapsibleSection>
 
       {/* Links */}
       <CollapsibleSection panelId="theme" title="Links" icon={<IconLinks />}>
-        <PropertyRow label="Link color">
-          <div className={styles.headingRow}>
-            <input
-              type="color"
-              className={styles.colorInput}
-              value={(() => {
-                const c = (theme.link.color as string) ?? "#2563eb";
-                return theme.palette && isPaletteVar(c) ? resolvePaletteVar(c, theme.palette) : c;
-              })()}
-              onChange={(e) => dispatch({ type: "UPDATE_THEME_LINK", style: { color: e.target.value } })}
-            />
-            {theme.link.color && (
-              <button
-                className={styles.clearBtn}
-                title="Remove link color"
-                onClick={() => dispatch({ type: "UPDATE_THEME_LINK", style: { color: undefined } })}
-              >
-                <X size={12} />
-              </button>
-            )}
-          </div>
-        </PropertyRow>
+        <ColorPropRow
+          label="Link Color"
+          value={theme.link.color as string | undefined}
+          fallback="#2563eb"
+          onChange={(v) => dispatch({ type: "UPDATE_THEME_LINK", style: { color: v } })}
+          onClear={() => dispatch({ type: "UPDATE_THEME_LINK", style: { color: undefined } })}
+          palette={theme.palette}
+        />
         <PropertyRow label="Text decoration">
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div className={styles.toggleGroup}>
